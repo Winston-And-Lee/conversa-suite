@@ -1,0 +1,115 @@
+{
+  "projectName": "Conversa-Suite Backend",
+  "description": "A RESTful API service built with FastAPI and MongoDB following clean architecture principles",
+  
+  "architecture": {
+    "type": "clean_architecture",
+    "layers": [
+      {
+        "name": "Domain Layer",
+        "paths": ["backend/src/domain/**"],
+        "description": "Core business logic and entities"
+      },
+      {
+        "name": "Use Case Layer",
+        "paths": ["backend/src/usecase/**"],
+        "description": "Application business rules"
+      },
+      {
+        "name": "Interface Layer",
+        "paths": ["backend/src/interface/**"],
+        "description": "Interface adapters between domain/use case and external frameworks"
+      },
+      {
+        "name": "Infrastructure Layer",
+        "paths": ["backend/src/infrastructure/**"],
+        "description": "External frameworks, tools, and delivery mechanisms"
+      }
+    ]
+  },
+  
+  "dependencies": {
+    "domain": [],
+    "usecase": ["domain"],
+    "interface": ["domain"],
+    "infrastructure": ["interface", "usecase", "domain"]
+  },
+
+  "pathAliases": {
+    "src": "backend/src"
+  },
+
+  "entityPatterns": {
+    "domain_entity": "backend/src/domain/entity/**/*.py",
+    "repository_interface": "backend/src/domain/repository/**/*.py",
+    "use_case": "backend/src/usecase/**/*.py",
+    "repository_implementation": "backend/src/interface/repository/**/*.py",
+    "api_route": "backend/src/infrastructure/fastapi/routes/**/*.py",
+    "api_schema": "backend/src/infrastructure/fastapi/schemas/**/*.py",
+    "test_unit": "backend/test/unit/**/*.py",
+    "test_integration": "backend/test/integration/**/*.py"
+  },
+  
+  "codeNavigation": {
+    "repositoryToImplementation": {
+      "pattern": "backend/src/domain/repository/(.*?)_repository\\.py",
+      "target": "backend/src/interface/repository/mongodb/$1_repository.py"
+    },
+    "entityToSchema": {
+      "pattern": "backend/src/domain/entity/(.*?)\\.py",
+      "target": "backend/src/infrastructure/fastapi/schemas/$1.py"
+    },
+    "useCaseToRoute": {
+      "pattern": "backend/src/usecase/(.*?)\\.py",
+      "target": "backend/src/infrastructure/fastapi/routes/$1_routes.py"
+    }
+  },
+  
+  "fileTemplates": {
+    "domain_entity": {
+      "path": "backend/src/domain/entity/{name}.py",
+      "template": "from datetime import datetime\nfrom typing import Optional\nfrom pydantic import BaseModel, Field\n\n\nclass {Name}(BaseModel):\n    \"\"\"{Name} domain entity.\"\"\"\n    id: Optional[str] = Field(None, alias=\"_id\")\n    # Add specific fields\n    created_at: datetime = Field(default_factory=datetime.utcnow)\n    updated_at: datetime = Field(default_factory=datetime.utcnow)\n\n    class Config:\n        populate_by_name = True\n        json_encoders = {\n            datetime: lambda dt: dt.isoformat()\n        }"
+    },
+    "repository_interface": {
+      "path": "backend/src/domain/repository/{name}_repository.py",
+      "template": "from abc import ABC, abstractmethod\nfrom typing import List, Optional\n\nfrom src.domain.entity.{name} import {Name}\n\n\nclass {Name}Repository(ABC):\n    \"\"\"Abstract base class for {name} repository.\"\"\"\n\n    @abstractmethod\n    async def create(self, {name}: {Name}) -> {Name}:\n        \"\"\"Create a new {name}.\"\"\"\n        pass\n\n    @abstractmethod\n    async def get_by_id(self, {name}_id: str) -> Optional[{Name}]:\n        \"\"\"Get {name} by ID.\"\"\"\n        pass\n\n    @abstractmethod\n    async def get_all(self) -> List[{Name}]:\n        \"\"\"Get all {name}s.\"\"\"\n        pass\n\n    @abstractmethod\n    async def update(self, {name}_id: str, {name}_data: dict) -> Optional[{Name}]:\n        \"\"\"Update {name}.\"\"\"\n        pass\n\n    @abstractmethod\n    async def delete(self, {name}_id: str) -> bool:\n        \"\"\"Delete {name}.\"\"\"\n        pass"
+    },
+    "use_case": {
+      "path": "backend/src/usecase/{name}.py",
+      "template": "from typing import List, Optional\n\nfrom src.domain.entity.{name} import {Name}\nfrom src.domain.repository.{name}_repository import {Name}Repository\nfrom src.interface.repository.database.db_repository import {name}_repository\n\n\nclass {Name}UseCase:\n    \"\"\"Use cases for {name} management.\"\"\"\n\n    def __init__(self):\n        \"\"\"\n        Initialize with the {name} repository from db_repository.\n        \"\"\"\n        self.{name}_repository = {name}_repository()\n\n    async def create_{name}(self, {name}: {Name}) -> {Name}:\n        \"\"\"Create a new {name}.\"\"\"\n        # Additional business logic can be added here\n        return await self.{name}_repository.create({name})\n\n    async def get_{name}_by_id(self, {name}_id: str) -> Optional[{Name}]:\n        \"\"\"Get {name} by ID.\"\"\"\n        return await self.{name}_repository.get_by_id({name}_id)\n\n    async def get_all_{name}s(self) -> List[{Name}]:\n        \"\"\"Get all {name}s.\"\"\"\n        return await self.{name}_repository.get_all()\n\n    async def update_{name}(self, {name}_id: str, {name}_data: dict) -> Optional[{Name}]:\n        \"\"\"Update {name}.\"\"\"\n        return await self.{name}_repository.update({name}_id, {name}_data)\n\n    async def delete_{name}(self, {name}_id: str) -> bool:\n        \"\"\"Delete {name}.\"\"\"\n        return await self.{name}_repository.delete({name}_id)"
+    },
+    "repository_implementation": {
+      "path": "backend/src/interface/repository/mongodb/{name}_repository.py",
+      "template": "from typing import List, Optional\nfrom bson import ObjectId\nfrom motor.motor_asyncio import AsyncIOMotorDatabase\n\nfrom src.domain.entity.{name} import {Name}\nfrom src.domain.repository.{name}_repository import {Name}Repository\n\n\nclass MongoDB{Name}Repository({Name}Repository):\n    \"\"\"{Name} repository MongoDB implementation.\"\"\"\n\n    def __init__(self, db: AsyncIOMotorDatabase):\n        self.db = db\n        self.collection = db.{name}s\n\n    async def create(self, {name}: {Name}) -> {Name}:\n        \"\"\"Create a new {name}.\"\"\"\n        {name}_dict = {name}.model_dump(exclude={\"id\"})\n        result = await self.collection.insert_one({name}_dict)\n        {name}.id = str(result.inserted_id)\n        return {name}\n\n    async def get_by_id(self, {name}_id: str) -> Optional[{Name}]:\n        \"\"\"Get {name} by ID.\"\"\"\n        {name}_dict = await self.collection.find_one({\"_id\": ObjectId({name}_id)})\n        if {name}_dict:\n            {name}_dict[\"_id\"] = str({name}_dict[\"_id\"])\n            return {Name}(**{name}_dict)\n        return None\n\n    async def get_all(self) -> List[{Name}]:\n        \"\"\"{Name}s.\"\"\"\n        {name}s = []\n        cursor = self.collection.find()\n        async for {name}_dict in cursor:\n            {name}_dict[\"_id\"] = str({name}_dict[\"_id\"])\n            {name}s.append({Name}(**{name}_dict))\n        return {name}s\n\n    async def update(self, {name}_id: str, {name}_data: dict) -> Optional[{Name}]:\n        \"\"\"Update {name}.\"\"\"\n        result = await self.collection.update_one(\n            {\"_id\": ObjectId({name}_id)},\n            {\"$set\": {name}_data}\n        )\n        if result.modified_count == 1:\n            return await self.get_by_id({name}_id)\n        return None\n\n    async def delete(self, {name}_id: str) -> bool:\n        \"\"\"Delete {name}.\"\"\"\n        result = await self.collection.delete_one({\"_id\": ObjectId({name}_id)})\n        return result.deleted_count == 1"
+    }
+  },
+  
+  "formattingRules": {
+    "python": {
+      "formatter": "black",
+      "lineLength": 88,
+      "sortImports": true
+    }
+  },
+  
+  "codeLintingRules": {
+    "python": {
+      "linters": ["flake8", "mypy"],
+      "ignorePatterns": ["**/test/**/*.py"]
+    }
+  },
+  
+  "testPatterns": {
+    "unit": {
+      "filePattern": "backend/test/unit/test_*.py",
+      "command": "pytest {file} -v"
+    },
+    "integration": {
+      "filePattern": "backend/test/integration/test_*.py",
+      "command": "pytest {file} -v"
+    },
+    "coverage": {
+      "command": "pytest --cov=src tests/"
+    }
+  }
+} 

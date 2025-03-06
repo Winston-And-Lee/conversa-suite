@@ -1,0 +1,682 @@
+---
+title: User API
+description: API Specification for User Management in Conversa-Suite
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+#### Versioning
+
+| Version | Date Modified | Who | Description |
+| --- | --- | --- | --- |
+| 1.0.0 | Current Date | Conversa-Suite Team | Initial Document |
+| 1.1.0 | Current Date | Conversa-Suite Team | Removed update_user method and related endpoints |
+| 1.2.0 | Current Date | Conversa-Suite Team | Added refresh token functionality |
+
+# User Management API
+
+This document outlines the API endpoints for user management in the Conversa-Suite platform, based on the implementation in `user_usecase.py`.
+
+## 1. Authentication Endpoints
+
+### 1.1 Register User
+
+Registers a new user in the system.
+
+#### Method: `POST`
+```txt
+/api/users/register
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "first_name": "John", 
+    "last_name": "Doe", 
+    "password": "Password123!"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "username": "string (required) - Unique username",
+    "email": "string (required) - Valid email address",
+    "first_name": "string (optional) - User's first name", 
+    "last_name": "string (optional) - User's last name", 
+    "password": "string (required) - Password (minimum 8 characters)"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "user": {
+        "id": "5f8d0d55b54764421b7156c1",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": true,
+        "is_admin": false,
+        "created_at": "2023-01-01T12:00:00Z",
+        "updated_at": "2023-01-01T12:00:00Z"
+    },
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440000",
+    "token_type": "bearer"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (400 Bad Request)">
+  ```json
+{
+    "error": "Email already registered"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.2 Request Verification
+
+Requests a verification code to be sent to the user's email.
+
+#### Method: `POST`
+```txt
+/api/users/verify/request
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "email": "john.doe@example.com"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "email": "string (required) - Email address to verify"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "reference_token": "550e8400-e29b-41d4-a716-446655440000",
+    "message": "Verification code sent to email"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (400 Bad Request)">
+  ```json
+{
+    "error": "User not found"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.3 Verify User
+
+Verifies a user's email using the verification code.
+
+#### Method: `POST`
+```txt
+/api/users/verify
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "email": "john.doe@example.com",
+    "code": "123456"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "email": "string (required) - Email address to verify",
+    "code": "string (required) - Verification code"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "user": {
+        "id": "5f8d0d55b54764421b7156c1",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "is_active": true,
+        "is_verified": true,
+        "first_name": "John",
+        "last_name": "Doe",
+        "created_at": "2023-01-01T12:00:00Z",
+        "updated_at": "2023-01-01T12:00:00Z"
+    },
+    "message": "User verified successfully"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (400 Bad Request)">
+  ```json
+{
+    "error": "Invalid verification code"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.4 User Login
+
+Authenticates a user and returns an access token.
+
+#### Method: `POST`
+```txt
+/api/users/login
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "username": "johndoe",
+    "password": "Password123!"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "username": "string (required) - Username or email",
+    "password": "string (required) - User password"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "user": {
+        "id": "5f8d0d55b54764421b7156c1",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": true,
+        "is_admin": false
+    },
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440000",
+    "token_type": "bearer"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (401 Unauthorized)">
+  ```json
+{
+    "error": "Invalid credentials"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.5 OAuth Login - Google
+
+Authenticates a user using Google OAuth.
+
+#### Method: `POST`
+```txt
+/api/users/login/google
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "token": "google_oauth_token",
+    "profile": {
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe"
+    }
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "token": "string (required) - Google OAuth token",
+    "profile": {
+        "email": "string (required) - User email from Google",
+        "first_name": "string (optional) - User first name from Google",
+        "last_name": "string (optional) - User last name from Google"
+    }
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "user": {
+        "id": "5f8d0d55b54764421b7156c1",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": true,
+        "is_admin": false
+    },
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440000",
+    "token_type": "bearer"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (401 Unauthorized)">
+  ```json
+{
+    "error": "Invalid OAuth token"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.6 OAuth Login - Microsoft
+
+Authenticates a user using Microsoft OAuth.
+
+#### Method: `POST`
+```txt
+/api/users/login/microsoft
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "token": "microsoft_oauth_token",
+    "profile": {
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe"
+    }
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "token": "string (required) - Microsoft OAuth token",
+    "profile": {
+        "email": "string (required) - User email from Microsoft",
+        "first_name": "string (optional) - User first name from Microsoft",
+        "last_name": "string (optional) - User last name from Microsoft"
+    }
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "user": {
+        "id": "5f8d0d55b54764421b7156c1",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": true,
+        "is_admin": false
+    },
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440000",
+    "token_type": "bearer"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (401 Unauthorized)">
+  ```json
+{
+    "error": "Invalid OAuth token"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.7 User Logout
+
+Logs out a user by invalidating their refresh token.
+
+#### Method: `POST`
+```txt
+/api/users/logout
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+| Authorization | Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440000"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "refresh_token": "string (required) - Refresh token to invalidate"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "message": "Successfully logged out"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (401 Unauthorized)">
+  ```json
+{
+    "error": "Invalid token"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 1.8 Refresh Access Token
+
+Refreshes an access token using a refresh token.
+
+#### Method: `POST`
+```txt
+/api/users/refresh
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440000"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "refresh_token": "string (required) - Valid refresh token"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "550e8400-e29b-41d4-a716-446655440001",
+    "token_type": "bearer"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (401 Unauthorized)">
+  ```json
+{
+    "error": "Invalid refresh token"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+## 2. User Profile Endpoints
+
+### 2.1 Get User Profile
+
+Retrieves a user's profile information.
+
+#### Method: `GET`
+```txt
+/api/users/profile
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Authorization | Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... |
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "id": "5f8d0d55b54764421b7156c1",
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "is_active": true,
+    "is_admin": false,
+    "created_at": "2023-01-01T12:00:00Z",
+    "updated_at": "2023-01-01T12:00:00Z"
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (401 Unauthorized)">
+  ```json
+{
+    "error": "Not authenticated"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+### 2.2 Reset Password
+
+Resets a user's password.
+
+#### Method: `POST`
+```txt
+/api/users/reset-password
+```
+#### Headers
+| Key | Value |
+| --- | --- |
+| Content-Type | application/json |
+| Authorization | Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... |
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+  ```json
+{
+    "current_password": "OldPassword123!",
+    "new_password": "NewPassword456!"
+}
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```json
+{
+    "current_password": "string (required) - Current password",
+    "new_password": "string (required) - New password"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success (200 OK)">
+  ```json
+{
+    "message": "Password reset successfully",
+    "user": {
+        "id": "5f8d0d55b54764421b7156c1",
+        "username": "johndoe",
+        "email": "john.doe@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": true,
+        "is_admin": false,
+        "created_at": "2023-01-01T12:00:00Z",
+        "updated_at": "2023-01-01T12:00:00Z"
+    }
+}
+  ```
+  </TabItem>
+  <TabItem label="Error (400 Bad Request)">
+  ```json
+{
+    "error": "Current password is incorrect"
+}
+  ```
+  </TabItem>
+</Tabs>
+
+## 3. Authentication
+
+All protected endpoints require authentication using JWT tokens.
+
+### 3.1 Authentication Header
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### 3.2 Token Format
+
+The access token is a JWT token with the following claims:
+- `sub`: User ID
+- `exp`: Expiration time (30 minutes from issuance)
+
+### 3.3 Permission Checking
+
+The system uses a `has_permission` method to determine if a user has the required permissions to access certain resources or perform actions. This is a synchronous (non-async) method with the following signature:
+
+```python
+def has_permission(user: User, permissions: List[str], is_any: bool = False) -> bool
+```
+
+- `user`: The user object to check permissions for
+- `permissions`: List of permission names required
+- `is_any`: If True, user needs any of the permissions; if False (default), user needs all permissions
+- Returns: Boolean indicating if the user has the required permissions
+
+Admin users automatically have all permissions granted.
+
+### 3.4 API Function Signatures
+
+Below are the key function signatures used in the API implementation:
+
+```python
+# User registration
+async def register_user(self, user_data: UserCreate) -> Tuple[User, str]
+
+# User verification
+async def user_request_verification(self, email: str) -> str
+async def user_verify(self, email: str, code: str) -> Optional[User]
+
+# Authentication
+async def user_authentication(self, token: str) -> Optional[User]
+async def user_login(self, username: str, password: str) -> Tuple[Optional[User], Optional[str], Optional[str]]
+async def user_refresh_token(self, refresh_token: str) -> Tuple[Optional[User], Optional[str], Optional[str]]
+async def user_logout(self, refresh_token: str) -> bool
+
+# Profile and password management
+async def get_user_profile(self, user_id: str) -> Optional[User]
+async def reset_password(self, user_id: str, current_password: str, new_password: str) -> bool
+
+# OAuth authentication
+async def user_login_via_google(self, email: str, token: str, first_name: str, last_name: str) -> Tuple[Optional[User], Optional[str], Optional[str]]
+async def user_login_via_microsoft(self, email: str, token: str, first_name: str, last_name: str) -> Tuple[Optional[User], Optional[str], Optional[str]]
+```
+
+### 3.5 Error Responses
+
+#### 401 Unauthorized
+```json
+{
+    "error": "Not authenticated"
+}
+```
+
+#### 403 Forbidden
+```json
+{
+    "error": "Insufficient permissions"
+} 

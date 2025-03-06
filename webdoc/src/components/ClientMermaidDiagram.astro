@@ -1,0 +1,17 @@
+---
+// ClientMermaidDiagram.astro
+import ClientMermaid from './ClientMermaid';
+const { chart } = Astro.props;
+---
+
+<div class="client-mermaid-wrapper">
+  {/* We use client:only to ensure the component only runs on the client side */}
+  <ClientMermaid chart={chart} client:only="react" />
+</div>
+
+<style>
+  .client-mermaid-wrapper {
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+</style> 

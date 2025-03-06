@@ -1,0 +1,198 @@
+---
+title: User Profile Management
+description: Business requirements for user profile management features including profile updates, password changes, and authentication
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import ClientMermaidDiagram from '../../../components/ClientMermaidDiagram.astro';
+
+#### Versioning
+
+| Version | Date Modified | Who | Description |
+| --- | --- | --- | --- |
+| 1.0.0 | Current Date | Conversa-Suite Team | Initial Document |
+
+# User Profile Management
+
+This document outlines the business requirements for user profile management features in the Conversa-Suite platform, including retrieving profile information and password resets.
+
+## 1. View User Profile
+
+### 1.1 Business Description
+
+The View User Profile feature allows users to access their personal information including username, email, name, and account status.
+
+### 1.2 Flow Diagram
+
+<ClientMermaidDiagram chart={`
+flowchart TD
+    A[User logs in] --> B[User navigates to profile page]
+    B --> C[System fetches user profile data]
+    C --> D[System displays user profile information]
+`} />
+
+### 1.3 Process Steps
+
+<Steps>
+  <ol>
+    <li>User logs into the system using their credentials</li>
+    <li>User navigates to their profile page</li>
+    <li>System retrieves the user's profile information from the database</li>
+    <li>System displays the user's profile information</li>
+  </ol>
+</Steps>
+
+### 1.4 API Specification
+
+#### Get User Profile API
+
+- **Endpoint**: `GET /api/users/profile`
+- **Authentication**: JWT Bearer token required
+
+#### Response
+<Tabs>
+  <TabItem label="Success">
+```json
+200 OK
+{
+  "id": "5f8d0d55b54764421b7156c1",
+  "username": "johndoe",
+  "email": "john.doe@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "is_active": true,
+  "is_admin": false,
+  "created_at": "2023-01-01T12:00:00Z",
+  "updated_at": "2023-01-01T12:00:00Z"
+}
+```
+  </TabItem>
+  <TabItem label="Error">
+```json
+401 Unauthorized
+{
+  "error": "Not authenticated"
+}
+```
+  </TabItem>
+</Tabs>
+
+## 2. Reset Password
+
+### 2.1 Business Description
+
+The Reset Password feature allows authenticated users to update their password. This feature is essential for maintaining account security.
+
+### 2.2 Flow Diagram
+
+<ClientMermaidDiagram chart={`
+flowchart TD
+    A[User logs in] --> B[User navigates to password reset page]
+    B --> C[User enters current password and new password]
+    C --> D[User submits changes]
+    D --> E[System validates input]
+    E -->|Valid input| F[System verifies current password]
+    E -->|Invalid input| H[System displays error message]
+    F -->|Verification successful| G[System updates password]
+    F -->|Verification failed| H
+    G --> I[System displays success message]
+    H -->|User corrects input| C
+`} />
+
+### 2.3 Process Steps
+
+<Steps>
+  <ol>
+    <li>User logs into the system using their credentials</li>
+    <li>User navigates to the password reset page</li>
+    <li>User enters their current password and new password</li>
+    <li>User submits the changes</li>
+    <li>System validates the input</li>
+    <li>System verifies the current password against the stored password hash</li>
+    <li>If verification passes, system updates the password hash in the database</li>
+    <li>System displays a success message to the user</li>
+  </ol>
+</Steps>
+
+### 2.4 API Specification
+
+#### Reset Password API
+
+- **Endpoint**: `POST /api/users/reset-password`
+- **Authentication**: JWT Bearer token required
+
+#### Request
+<Tabs>
+  <TabItem label="Example">
+```json
+{
+  "current_password": "OldPassword123!",
+  "new_password": "NewPassword456!"
+}
+```
+  </TabItem>
+  <TabItem label="Schema">
+```json
+{
+  "current_password": "string (required) - Current password",
+  "new_password": "string (required) - New password"
+}
+```
+  </TabItem>
+</Tabs>
+
+#### Response
+<Tabs>
+  <TabItem label="Success">
+```json
+200 OK
+{
+  "message": "Password reset successfully",
+  "user": {
+    "id": "5f8d0d55b54764421b7156c1",
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "is_active": true,
+    "is_admin": false,
+    "created_at": "2023-01-01T12:00:00Z",
+    "updated_at": "2023-01-01T12:00:00Z"
+  }
+}
+```
+  </TabItem>
+  <TabItem label="Error">
+```json
+400 Bad Request
+{
+  "error": "Current password is incorrect"
+}
+```
+  </TabItem>
+</Tabs>
+
+## 3. Security Considerations
+
+### 3.1 Password Storage
+
+Passwords are securely hashed using bcrypt before storage in the database. The system never stores plaintext passwords.
+
+### 3.2 Authentication Requirements
+
+All profile management operations require proper authentication:
+
+1. User must be logged in with a valid JWT token
+2. Token must not be expired
+3. For password changes, current password must be verified
+
+## 4. Implementation Details
+
+### 4.1 Key Methods
+
+The profile management functionality is implemented in `user_usecase.py` with these key methods:
+
+- `get_user_profile(user_id: str) -> Optional[User]`: Retrieves a user's complete profile information
+- `reset_password(user_id: str, current_password: str, new_password: str) -> bool`: Handles password changes with current password verification and returns updated user information
+- `user_authentication(token: str) -> Optional[User]`: Verifies the identity of the user for protected operations
+- `has_permission(user: User, permissions: List[str], is_any: bool = False) -> bool`: Synchronous method that checks if a user has specific permissions 

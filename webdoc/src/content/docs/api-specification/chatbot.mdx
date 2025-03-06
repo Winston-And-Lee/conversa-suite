@@ -1,0 +1,270 @@
+---
+title: Chatbot API
+description: API Specification for Chatbot Management in Conversa-Suite
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+#### Versioning
+
+| Version | Date Modified | Who | Description |
+| --- | --- | --- | --- |
+| 1.0.0 | Current Date | Conversa-Suite Team | Initial Document |
+
+# Chatbot Management API
+
+This document outlines the API endpoints for chatbot functionality in the Conversa-Suite platform, based on the implementation in `chatbot_routes.py`.
+
+## 1. Session Management Endpoints
+
+### 1.1 Create Chat Session
+
+Creates a new chat session with an optional assistant ID.
+
+#### Method: `POST`
+```txt
+/api/chatbot/sessions
+```
+
+#### Query Parameters
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| assistant_id | string | No | Specific assistant ID to use for this session |
+
+#### Response
+```json
+{
+  "session_id": "string"
+}
+```
+
+#### Response Codes
+| Code | Description |
+| --- | --- |
+| 200 | Success |
+| 500 | Server Error |
+
+#### Example
+```bash
+curl -X POST "http://localhost:8000/api/chatbot/sessions" -H "accept: application/json"
+```
+
+### 1.2 Delete Chat Session
+
+Deletes an existing chat session.
+
+#### Method: `DELETE`
+```txt
+/api/chatbot/sessions/{session_id}
+```
+
+#### Path Parameters
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| session_id | string | Yes | ID of the session to delete |
+
+#### Response
+```json
+{
+  "message": "Session deleted successfully"
+}
+```
+
+#### Response Codes
+| Code | Description |
+| --- | --- |
+| 200 | Success |
+| 404 | Session not found |
+
+#### Example
+```bash
+curl -X DELETE "http://localhost:8000/api/chatbot/sessions/123e4567-e89b-12d3-a456-426614174000" -H "accept: application/json"
+```
+
+## 2. Message Endpoints
+
+### 2.1 Send Message
+
+Sends a message to the chatbot and receives a response.
+
+#### Method: `POST`
+```txt
+/api/chatbot/sessions/{session_id}/messages
+```
+
+#### Path Parameters
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| session_id | string | Yes | ID of the session to send the message to |
+
+#### Request Body
+```json
+{
+  "message": "string"
+}
+```
+
+#### Response
+```json
+{
+  "session_id": "string",
+  "response": "string",
+  "messages": [
+    {
+      "role": "string",
+      "content": "string"
+    }
+  ]
+}
+```
+
+#### Response Codes
+| Code | Description |
+| --- | --- |
+| 200 | Success |
+| 404 | Session not found |
+| 500 | Server Error |
+
+#### Example
+```bash
+curl -X POST "http://localhost:8000/api/chatbot/sessions/123e4567-e89b-12d3-a456-426614174000/messages" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Hello, how can you help me today?"}'
+```
+
+### 2.2 Get Chat History
+
+Retrieves the message history for a specific chat session.
+
+#### Method: `GET`
+```txt
+/api/chatbot/sessions/{session_id}/history
+```
+
+#### Path Parameters
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| session_id | string | Yes | ID of the session to retrieve history for |
+
+#### Response
+```json
+{
+  "messages": [
+    {
+      "role": "string",
+      "content": "string"
+    }
+  ]
+}
+```
+
+#### Response Codes
+| Code | Description |
+| --- | --- |
+| 200 | Success |
+| 404 | Session not found |
+
+#### Example
+```bash
+curl -X GET "http://localhost:8000/api/chatbot/sessions/123e4567-e89b-12d3-a456-426614174000/history" -H "accept: application/json"
+```
+
+## 3. Debug Endpoints
+
+### 3.1 Test Message
+
+A debug endpoint that creates a new session and sends a test message.
+
+#### Method: `GET`
+```txt
+/api/chatbot/debug/test-message
+```
+
+#### Response
+```json
+{
+  "success": true,
+  "session_id": "string",
+  "result": {
+    "response": "string",
+    "messages": [
+      {
+        "role": "string",
+        "content": "string"
+      }
+    ]
+  }
+}
+```
+
+#### Response Codes
+| Code | Description |
+| --- | --- |
+| 200 | Success |
+| 500 | Server Error |
+
+#### Example
+```bash
+curl -X GET "http://localhost:8000/api/chatbot/debug/test-message" -H "accept: application/json"
+```
+
+## 4. Error Handling
+
+The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+| Status Code | Description |
+| --- | --- |
+| 200 | OK - The request was successful |
+| 400 | Bad Request - The request could not be understood or was missing required parameters |
+| 404 | Not Found - Resource not found (e.g., session ID does not exist) |
+| 500 | Internal Server Error - An error occurred on the server |
+
+Error responses include a detail message that provides more information about the error.
+
+```json
+{
+  "detail": "Error message description"
+}
+```
+
+## 5. Data Models
+
+### 5.1 ChatSessionResponse
+```json
+{
+  "session_id": "string" // Unique identifier for the chat session
+}
+```
+
+### 5.2 ChatMessageRequest
+```json
+{
+  "message": "string" // User message to be sent to the chatbot
+}
+```
+
+### 5.3 ChatMessageResponse
+```json
+{
+  "session_id": "string", // ID of the chat session
+  "response": "string", // The chatbot's response to the user's message
+  "messages": [ // Complete history of the conversation
+    {
+      "role": "string", // Either "user" or "assistant"
+      "content": "string" // Content of the message
+    }
+  ]
+}
+```
+
+### 5.4 ChatHistoryResponse
+```json
+{
+  "messages": [ // Complete history of the conversation
+    {
+      "role": "string", // Either "user" or "assistant"
+      "content": "string" // Content of the message
+    }
+  ]
+} 

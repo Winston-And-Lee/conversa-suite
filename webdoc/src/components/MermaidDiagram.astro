@@ -1,0 +1,43 @@
+---
+// MermaidDiagram.astro
+---
+
+<script>
+  import mermaid from 'mermaid';
+
+  // Initialize mermaid with default configuration
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+    fontFamily: 'system-ui, sans-serif',
+  });
+
+  // Find all mermaid diagrams and render them
+  document.addEventListener('DOMContentLoaded', () => {
+    const mermaidDivs = document.querySelectorAll('.mermaid-diagram');
+    mermaidDivs.forEach((element) => {
+      const chart = element.getAttribute('data-chart');
+      if (chart) {
+        try {
+          mermaid.render(`mermaid-${Math.random().toString(36).substring(2, 11)}`, chart)
+            .then(({ svg }) => {
+              element.innerHTML = svg;
+            });
+        } catch (error: any) {
+          console.error('Failed to render mermaid diagram:', error);
+          element.innerHTML = `<pre>Error rendering diagram: ${error.message}</pre>`;
+        }
+      }
+    });
+  });
+</script>
+
+<div class="mermaid-diagram" data-chart={Astro.props.chart}></div>
+
+<style>
+  .mermaid-diagram {
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+</style> 

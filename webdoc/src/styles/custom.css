@@ -1,0 +1,55 @@
+/* Custom styles for the documentation site */
+
+/* Mermaid diagram styles */
+.client-mermaid-wrapper {
+  margin: 2rem 0;
+  overflow-x: auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.mermaid-wrapper {
+  margin: 2rem 0;
+  overflow-x: auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Make sure diagrams are responsive */
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Improve readability of diagram text */
+.mermaid .label {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+}
+
+/* Style diagram nodes */
+.mermaid .node rect, 
+.mermaid .node circle, 
+.mermaid .node ellipse, 
+.mermaid .node polygon, 
+.mermaid .node path {
+  fill: #f0f7ff;
+  stroke: #3b82f6;
+  stroke-width: 1px;
+}
+
+/* Style diagram edges */
+.mermaid .edgePath .path {
+  stroke: #64748b;
+  stroke-width: 1.5px;
+}
+
+/* Style edge labels */
+.mermaid .edgeLabel {
+  background-color: #ffffff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+} 

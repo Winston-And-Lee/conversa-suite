@@ -1,0 +1,306 @@
+---
+title: User Management
+description: Business requirements for user management features including registration, verification, authentication, and profile management
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import ClientMermaidDiagram from '../../../components/ClientMermaidDiagram.astro';
+
+#### Versioning
+
+| Version | Date Modified | Who | Description |
+| --- | --- | --- | --- |
+| 1.0.0 | Current Date | Conversa-Suite Team | Initial Document |
+| 1.1.0 | Current Date | Conversa-Suite Team | Removed update_user method and related functionality |
+| 1.2.0 | Current Date | Conversa-Suite Team | Added refresh token functionality |
+
+# User Management
+
+This document outlines the business requirements for user management features in the Conversa-Suite platform, including user registration, verification, authentication, and profile management.
+
+## 1. User Registration and Authentication
+
+### 1.1 Business Description
+
+The User Registration and Authentication feature allows users to create accounts, verify their email addresses, and securely authenticate to access the platform. The system supports both traditional username/password authentication and OAuth-based social logins (Google and Microsoft).
+
+### 1.2 Flow Diagram
+
+<ClientMermaidDiagram chart={`
+flowchart TD
+    A[User starts registration] -->|Submits registration form| B[Backend validates input]
+    B -->|Input valid| C[Create user record]
+    B -->|Input invalid| A
+    C --> D[Generate verification code]
+    D --> E[Send verification email]
+    E --> F[User receives verification email]
+    F --> G[User submits verification code]
+    G --> H[Backend validates code]
+    H -->|Code valid| I[Mark user as verified]
+    H -->|Code invalid| F
+    I --> J[User can now login]
+    
+    K[User starts login] -->|Submits credentials| L[Backend validates credentials]
+    L -->|Credentials valid| M[Generate access token]
+    L -->|Credentials invalid| K
+    M --> N[User authenticated]
+    
+    O[User starts OAuth login] -->|Chooses OAuth provider| P[Redirected to provider]
+    P --> Q[Authenticates with provider]
+    Q --> R[Provider returns user info]
+    R --> S[Backend creates/updates user]
+    S --> T[Generate access token]
+    T --> U[User authenticated]
+`} />
+
+### 1.3 Registration Process
+
+<Steps>
+  <ol>
+    <li>User navigates to the registration page</li>
+    <li>
+      User enters their information:
+      <ul>
+        <li>Username (unique identifier)</li>
+        <li>Email address (must be valid and unique)</li>
+        <li>First and last name (optional)</li>
+        <li>Password (minimum 8 characters)</li>
+      </ul>
+    </li>
+    <li>
+      System validates the input:
+      <ul>
+        <li>Username must be unique</li>
+        <li>Email must be valid and unique</li>
+        <li>Password must meet complexity requirements</li>
+      </ul>
+    </li>
+    <li>If validation passes, system creates a new user account</li>
+    <li>System hashes the password using bcrypt before storing it</li>
+    <li>System generates an access token for immediate authentication</li>
+    <li>User is directed to complete verification</li>
+  </ol>
+</Steps>
+
+### 1.4 Verification Process
+
+<Steps>
+  <ol>
+    <li>User can request a verification code for their email</li>
+    <li>System generates a unique verification code and reference token</li>
+    <li>System stores the verification code with an expiration time</li>
+    <li>System sends the verification code to the user's email using Postmark</li>
+    <li>User enters the verification code on the verification page</li>
+    <li>
+      System validates the code:
+      <ul>
+        <li>Code must match the one sent to the user</li>
+        <li>Code must not be expired (valid for 24 hours)</li>
+      </ul>
+    </li>
+    <li>If validation passes, system marks the user as verified</li>
+    <li>System returns updated user information</li>
+  </ol>
+</Steps>
+
+### 1.5 Authentication Process
+
+<Steps>
+  <ol>
+    <li>User navigates to the login page</li>
+    <li>User can choose between traditional login or OAuth providers (Google, Microsoft)</li>
+    <li>
+      For traditional login:
+      <ul>
+        <li>User enters username/email and password</li>
+        <li>System validates credentials by comparing with stored password hash</li>
+        <li>If valid, system generates a JWT access token with 30-minute expiration</li>
+        <li>System includes user ID and permissions in the token payload</li>
+        <li>User is authenticated and can access protected resources</li>
+      </ul>
+    </li>
+    <li>
+      For OAuth login:
+      <ul>
+        <li>User clicks on the OAuth provider button (Google or Microsoft)</li>
+        <li>User is redirected to the provider's authentication page</li>
+        <li>User authenticates with the provider</li>
+        <li>Provider redirects back to the application with user information</li>
+        <li>System verifies the OAuth token with the provider</li>
+        <li>System creates or updates user account based on provider response</li>
+        <li>System generates a JWT access token</li>
+        <li>User is authenticated and can access protected resources</li>
+      </ul>
+    </li>
+  </ol>
+</Steps>
+
+### 1.6 Logout Process
+
+<Steps>
+  <ol>
+    <li>User initiates logout from the application</li>
+    <li>System invalidates the user's refresh token</li>
+    <li>Client removes the access token from local storage</li>
+    <li>User is redirected to the login page</li>
+  </ol>
+</Steps>
+
+## 2. User Profile Management
+
+### 2.1 Business Description
+
+The User Profile Management feature allows users to view and update their profile information, including personal details and password.
+
+### 2.2 Flow Diagram
+
+<ClientMermaidDiagram chart={`
+flowchart TD
+    A[User accesses profile] --> B[System retrieves user details]
+    B --> C[System displays current profile information]
+    C --> D1[User views profile information]
+    C --> D2[User initiates password change]
+    D2 --> E[User enters current and new passwords]
+    E --> F[System validates passwords]
+    F -->|Valid| G[System updates password hash]
+    F -->|Invalid| E
+    G --> H[System confirms successful update]
+`} />
+
+### 2.3 Profile Retrieval Process
+
+<Steps>
+  <ol>
+    <li>User navigates to the profile management section</li>
+    <li>System retrieves user details based on the authenticated user ID</li>
+    <li>System displays user information including:</li>
+    <ul>
+      <li>Username</li>
+      <li>Email address</li>
+      <li>First and last name</li>
+      <li>Account status</li>
+      <li>Admin status</li>
+      <li>Creation and update timestamps</li>
+    </ul>
+  </ol>
+</Steps>
+
+### 2.4 Password Change Process
+
+<Steps>
+  <ol>
+    <li>User navigates to the password change section</li>
+    <li>User enters their current password and new password</li>
+    <li>
+      System validates the input:
+      <ul>
+        <li>Current password must match the stored password hash</li>
+        <li>New password must meet complexity requirements</li>
+        <li>New password must be different from the current password</li>
+      </ul>
+    </li>
+    <li>System verifies current password by comparing with stored hash using bcrypt</li>
+    <li>If verification passes, system hashes the new password</li>
+    <li>System updates the password hash in the database</li>
+    <li>User receives a success message confirming the password change</li>
+  </ol>
+</Steps>
+
+## 3. Security Considerations
+
+### 3.1 Password Storage
+
+Passwords are securely hashed using bcrypt before storage in the database. The system never stores plaintext passwords. Key security measures include:
+
+- Use of bcrypt hashing algorithm with appropriate work factor
+- Unique salt for each password hash
+- No storage or logging of plaintext passwords
+
+### 3.2 Authentication Tokens
+
+Access tokens are implemented using JWT (JSON Web Tokens) with the following properties:
+- JWT secret key stored in environment variables
+- HS256 signing algorithm 
+- Short expiration time (30 minutes by default, configurable via environment variables)
+- Contains user ID and permissions in the payload
+- Required for all protected endpoints
+
+Refresh tokens are implemented with the following properties:
+- UUID-based tokens stored in the user document
+- Long-lived compared to access tokens
+- Used to obtain new access tokens when they expire
+- Invalidated on logout
+
+### 3.3 Access Control
+
+The system implements permission-based access control:
+- Each user has associated permissions
+- API endpoints check for required permissions before processing requests
+- Admin users have elevated permissions to access restricted features
+- Permission validation occurs on every protected request
+
+The `has_permission` method provides a straightforward way to check if a user has the required permissions:
+- This is a synchronous method (not async)
+- Takes a user object, a list of permission names, and an optional flag (`is_any`)
+- If `is_any` is True, the user needs to have any of the specified permissions
+- If `is_any` is False (default), the user needs to have all of the specified permissions
+- Admin users automatically have all permissions granted
+- Returns a boolean indicating whether the user has the required permissions
+
+This implementation allows for flexible permission checking across the application.
+
+### 3.4 Email Verification
+
+Email verification is implemented using Postmark for email delivery:
+- Verification codes are randomly generated
+- Codes have a limited validity period
+- System tracks verification status of each user
+- Unverified accounts may have limited functionality
+
+## 4. Technical Implementation Details
+
+### 4.1 User Entity Structure
+
+The User domain entity includes the following fields:
+- `id`: Unique identifier
+- `username`: Unique username
+- `email`: Email address
+- `password_hash`: Securely hashed password
+- `first_name`: User's first name (optional)
+- `last_name`: User's last name (optional)
+- `is_active`: Account status flag
+- `is_admin`: Administrator role flag
+- `is_verified`: Email verification status
+- `created_at`: Account creation timestamp
+- `updated_at`: Last update timestamp
+- `verification_code`: Email verification code
+- `verification_expires`: Expiration timestamp for verification
+- `google_id`: Google OAuth identifier (optional)
+- `microsoft_id`: Microsoft OAuth identifier (optional)
+- `refresh_tokens`: List of active refresh tokens
+
+### 4.2 Authentication Flow
+
+The authentication flow is implemented in `user_usecase.py` through the following key methods:
+
+1. `register_user(user_data: UserCreate) -> Tuple[User, str]`: Creates a new user account and returns a JWT token
+2. `user_request_verification(email: str) -> str`: Generates and sends a verification code
+3. `user_verify(email: str, code: str) -> Optional[User]`: Validates verification code and updates user status
+4. `user_login(username: str, password: str) -> Tuple[Optional[User], Optional[str], Optional[str]]`: Authenticates user with username/password and returns user, access token, and refresh token
+5. `user_login_via_google(email: str, token: str, first_name: str, last_name: str) -> Tuple[Optional[User], Optional[str], Optional[str]]`: Authenticates user with Google OAuth
+6. `user_login_via_microsoft(email: str, token: str, first_name: str, last_name: str) -> Tuple[Optional[User], Optional[str], Optional[str]]`: Authenticates user with Microsoft OAuth
+7. `user_authentication(token: str) -> Optional[User]`: Validates JWT token for authenticated requests
+8. `user_refresh_token(refresh_token: str) -> Tuple[Optional[User], Optional[str]]`: Generates a new access token using a refresh token
+9. `user_logout(refresh_token: str) -> bool`: Invalidates refresh token during logout
+10. `reset_password(user_id: str, current_password: str, new_password: str) -> bool`: Updates user password with verification
+11. `get_user_profile(user_id: str) -> Optional[User]`: Retrieves user profile information
+12. `has_permission(user: User, permissions: List[str], is_any: bool = False) -> bool`: Checks if a user has specific permissions (synchronous method)
+
+### 4.3 Environment Configuration
+
+The system uses environment variables for configuration:
+- `JWT_SECRET_KEY`: Secret key for signing JWT tokens
+- `JWT_ALGORITHM`: Algorithm used for JWT (default: HS256)
+- `JWT_ACCESS_TOKEN_EXPIRE_MINUTES`: Token expiration time (default: 30)
+- `POSTMARK_API_TOKEN`: API token for Postmark email service
+- `POSTMARK_SENDER_EMAIL`: Email address used as sender 

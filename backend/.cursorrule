@@ -1,0 +1,254 @@
+{
+  "project": {
+    "name": "conversa-suite-backend",
+    "description": "Backend service for Conversa-Suite using FastAPI and MongoDB with clean architecture",
+    "tech_stack": ["python", "fastapi", "mongodb", "motor", "pydantic", "pytest"],
+    "architecture": "clean_architecture"
+  },
+  
+  "architecture_layers": {
+    "domain": {
+      "description": "Core business entities and business rules",
+      "path": "src/domain",
+      "components": {
+        "entity": {
+          "description": "Business entities and value objects",
+          "path": "src/domain/entity"
+        },
+        "repository": {
+          "description": "Repository interfaces for data access abstraction",
+          "path": "src/domain/repository"
+        },
+        "models": {
+          "description": "Domain models and data structures",
+          "path": "src/domain/models"
+        },
+        "interfaces": {
+          "description": "Domain interfaces for services and operations",
+          "path": "src/domain/interfaces"
+        },
+        "constant": {
+          "description": "Domain-specific constants",
+          "path": "src/domain/constant"
+        }
+      }
+    },
+    "usecase": {
+      "description": "Application-specific business rules and use cases",
+      "path": "src/usecase"
+    },
+    "interface": {
+      "description": "Adapters between the domain/usecase and external layers",
+      "path": "src/interface",
+      "components": {
+        "repository": {
+          "description": "Repository implementations",
+          "path": "src/interface/repository",
+          "components": {
+            "database": {
+              "description": "Database repository factory functions",
+              "path": "src/interface/repository/database"
+            },
+            "mongodb": {
+              "description": "MongoDB repository implementations",
+              "path": "src/interface/repository/mongodb"
+            }
+          }
+        }
+      }
+    },
+    "infrastructure": {
+      "description": "External frameworks, libraries and tools",
+      "path": "src/infrastructure",
+      "components": {
+        "database": {
+          "description": "Database connection and management",
+          "path": "src/infrastructure/database"
+        },
+        "fastapi": {
+          "description": "FastAPI web framework implementation",
+          "path": "src/infrastructure/fastapi",
+          "components": {
+            "routes": {
+              "description": "API routes and endpoints",
+              "path": "src/infrastructure/fastapi/routes"
+            },
+            "schemas": {
+              "description": "Request and response schemas",
+              "path": "src/infrastructure/fastapi/schemas"
+            }
+          }
+        }
+      }
+    },
+    "config": {
+      "description": "Application configuration",
+      "path": "src/config"
+    },
+    "shared": {
+      "description": "Shared utilities and helpers",
+      "path": "src/shared"
+    }
+  },
+  
+  "dependency_rules": {
+    "domain": {
+      "can_import_from": ["domain"],
+      "description": "Domain should not depend on outer layers"
+    },
+    "usecase": {
+      "can_import_from": ["domain", "usecase"],
+      "description": "Use cases can depend on domain layer"
+    },
+    "interface": {
+      "can_import_from": ["domain", "interface"],
+      "description": "Interface can depend on domain layer but not on infrastructure"
+    },
+    "infrastructure": {
+      "can_import_from": ["domain", "usecase", "interface", "infrastructure", "config", "shared"],
+      "description": "Infrastructure can depend on all inner layers"
+    },
+    "shared": {
+      "can_import_from": ["shared"],
+      "description": "Shared should not depend on any other layer"
+    },
+    "config": {
+      "can_import_from": ["config"],
+      "description": "Config should not depend on any other layer"
+    }
+  },
+  
+  "file_patterns": {
+    "entity": {
+      "pattern": "src/domain/entity/*.py",
+      "description": "Domain entities (user.py, etc.)"
+    },
+    "repository_interface": {
+      "pattern": "src/domain/repository/*_repository.py",
+      "description": "Repository interfaces (user_repository.py, etc.)"
+    },
+    "repository_implementation": {
+      "pattern": "src/interface/repository/mongodb/*.py",
+      "description": "MongoDB repository implementations"
+    },
+    "usecase": {
+      "pattern": "src/usecase/*.py",
+      "description": "Use case implementations"
+    },
+    "route": {
+      "pattern": "src/infrastructure/fastapi/routes/*_routes.py",
+      "description": "API routes"
+    },
+    "schema": {
+      "pattern": "src/infrastructure/fastapi/schemas/*.py",
+      "description": "Request/response schemas"
+    },
+    "test": {
+      "pattern": "test/**/*_test.py",
+      "description": "Test files"
+    }
+  },
+  
+  "naming_conventions": {
+    "entity": {
+      "pattern": "src/domain/entity/{name}.py",
+      "description": "Named after the business entity"
+    },
+    "repository_interface": {
+      "pattern": "src/domain/repository/{name}_repository.py",
+      "description": "Named with the entity name followed by _repository"
+    },
+    "repository_implementation": {
+      "pattern": "src/interface/repository/mongodb/{name}_repository.py",
+      "description": "Named with the entity name followed by _repository"
+    },
+    "usecase": {
+      "pattern": "src/usecase/{name}.py",
+      "description": "Named after the business entity or feature"
+    },
+    "route": {
+      "pattern": "src/infrastructure/fastapi/routes/{name}_routes.py",
+      "description": "Named with the entity or feature name followed by _routes"
+    },
+    "schema": {
+      "pattern": "src/infrastructure/fastapi/schemas/{name}.py",
+      "description": "Named after the business entity or feature"
+    }
+  },
+  
+  "class_patterns": {
+    "entity": {
+      "pattern": "{EntityName}",
+      "example": "User"
+    },
+    "repository_interface": {
+      "pattern": "{EntityName}Repository",
+      "example": "UserRepository"
+    },
+    "repository_implementation": {
+      "pattern": "MongoDB{EntityName}Repository",
+      "example": "MongoDBUserRepository"
+    },
+    "usecase": {
+      "pattern": "{EntityName}UseCase",
+      "example": "UserUseCase"
+    },
+    "schema_base": {
+      "pattern": "{EntityName}Base",
+      "example": "UserBase"
+    },
+    "schema_create": {
+      "pattern": "{EntityName}Create",
+      "example": "UserCreate"
+    },
+    "schema_update": {
+      "pattern": "{EntityName}Update",
+      "example": "UserUpdate"
+    },
+    "schema_response": {
+      "pattern": "{EntityName}Response",
+      "example": "UserResponse"
+    }
+  },
+  
+  "repository_pattern": {
+    "interface": {
+      "methods": ["create", "get_by_id", "get_all", "update", "delete"],
+      "path": "src/domain/repository"
+    },
+    "implementation": {
+      "path": "src/interface/repository/mongodb"
+    },
+    "factory": {
+      "path": "src/interface/repository/database/db_repository.py"
+    }
+  },
+  
+  "dependency_injection": {
+    "repository": {
+      "factory": "src/interface/repository/database/db_repository.py",
+      "function_pattern": "{entity_name}_repository"
+    },
+    "usecase": {
+      "factory": "src/infrastructure/fastapi/routes/{entity_name}_routes.py",
+      "function_pattern": "get_{entity_name}_usecase"
+    }
+  },
+  
+  "main_entry_points": {
+    "application": "src/infrastructure/fastapi/main.py",
+    "testing": "pytest",
+    "docker": "../docker-compose.yml"
+  },
+  
+  "project_structure": {
+    "docker_compose": {
+      "path": "../docker-compose.yml",
+      "description": "Docker Compose configuration at root project level"
+    },
+    "deployment": {
+      "path": "../deployment",
+      "description": "Deployment configurations at root project level"
+    }
+  }
+} 
