@@ -11,3 +11,4 @@ This section contains detailed API specifications for the Conversa-Suite service
 
 - [User API](./user) - User management, authentication, and profile operations 
 - [Chatbot API](./chatbot) - Chat session management, message sending, and history retrieval 
+- [Assistant UI API](./assistant-ui) - Integration with the Assistant UI framework for modern chat interfaces 

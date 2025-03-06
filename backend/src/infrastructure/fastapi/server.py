@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes
+from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes
 
 
 def create_app() -> FastAPI:
@@ -25,5 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(health_routes.router, prefix="/api/health", tags=["Health"])
     app.include_router(user_routes.router, prefix="/api/users", tags=["Users"])
     app.include_router(chatbot_routes.router)
+    app.include_router(assistant_routes.router, prefix="/api/assistant", tags=["Assistant"])
+    app.include_router(assistant_ui_routes.router, prefix="/api/assistant-ui", tags=["Assistant UI"])
 
     return app 

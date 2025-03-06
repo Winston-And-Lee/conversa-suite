@@ -15,6 +15,20 @@ from src.domain.entity.chatbot import (
     ChatHistoryResponse
 )
 
+from src.domain.entity.assistant import (
+    # Assistant models
+    CreateThreadRequest,
+    CreateThreadResponse,
+    SendMessageRequest,
+    AssistantMessage,
+    SendMessageResponse,
+    
+    # Assistant UI models
+    ContentPart,
+    ChatMessage,
+    ChatRequest
+)
+
 __all__ = [
     # User entities
     "UserCreate",
@@ -29,5 +43,17 @@ __all__ = [
     "ChatSessionResponse",
     "ChatMessageRequest",
     "ChatMessageResponse",
-    "ChatHistoryResponse"
+    "ChatHistoryResponse",
+    
+    # Assistant entities
+    "CreateThreadRequest",
+    "CreateThreadResponse",
+    "SendMessageRequest",
+    "AssistantMessage",
+    "SendMessageResponse",
+    
+    # Assistant UI entities
+    "ContentPart",
+    "ChatMessage",
+    "ChatRequest"
 ]

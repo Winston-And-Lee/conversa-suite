@@ -13,7 +13,7 @@ from src.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
-def create_llm(run_name: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None):
+def create_llm(run_name: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None, streaming: bool = False):
     """Create and configure the language model."""
     if not OPENAI_API_KEY:
         logger.warning("No OpenAI API key provided. LLM functionality will be limited.")
@@ -34,6 +34,7 @@ def create_llm(run_name: Optional[str] = None, metadata: Optional[Dict[str, Any]
         callbacks=callbacks if callbacks else None,
         tags=["conversa-suite", "chatbot"],  # Tags for identifying runs in LangSmith
         metadata=metadata or {},  # Custom metadata for the run
+        streaming=streaming,  # Enable streaming if requested
     )
     
     return llm

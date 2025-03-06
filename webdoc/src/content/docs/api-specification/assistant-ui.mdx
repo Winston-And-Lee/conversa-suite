@@ -1,0 +1,253 @@
+---
+title: Assistant UI API
+description: API specifications for Assistant UI integration
+---
+
+# Assistant UI API
+
+This document outlines the API endpoints for integrating with the Assistant UI framework, which provides a modern chat interface for AI assistants.
+
+## Overview
+
+The Assistant UI API provides endpoints for creating and managing chat threads, sending messages, and receiving responses from the AI assistant. It supports both streaming and non-streaming responses.
+
+## Base URL
+
+```
+https://api.conversa-suite.com/api/assistant
+```
+
+For local development:
+
+```
+http://localhost:8000/api/assistant
+```
+
+## Authentication
+
+Authentication is required for all endpoints. Include an API key in the request headers:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Endpoints
+
+### Create Thread
+
+Creates a new chat thread with the assistant.
+
+**Endpoint:** `POST /threads`
+
+**Request Body:**
+
+```json
+{
+  "system_message": "You are a helpful assistant that provides concise answers.",
+  "assistant_id": "default"
+}
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| system_message | string | No | Initial system message to set the assistant's behavior |
+| assistant_id | string | No | ID of the assistant to use (defaults to "default") |
+
+**Response:**
+
+```json
+{
+  "thread_id": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Status Codes:**
+
+- 200: Success
+- 400: Bad request
+- 500: Server error
+
+### Send Message
+
+Sends a message to the assistant and receives a response.
+
+**Endpoint:** `POST /threads/{thread_id}/messages`
+
+**Path Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| thread_id | string | Yes | ID of the thread to send the message to |
+
+**Request Body:**
+
+```json
+{
+  "content": "What is the capital of France?",
+  "stream": false
+}
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| content | string | Yes | The message content to send |
+| stream | boolean | No | Whether to stream the response (default: false) |
+
+**Response (non-streaming):**
+
+```json
+{
+  "thread_id": "550e8400-e29b-41d4-a716-446655440000",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the capital of France?"
+    },
+    {
+      "role": "assistant",
+      "content": "The capital of France is Paris."
+    }
+  ]
+}
+```
+
+**Response (streaming):**
+
+The streaming response is sent as a series of server-sent events (SSE) with the following format:
+
+```
+data: {"thread_id":"550e8400-e29b-41d4-a716-446655440000","messages":[{"role":"user","content":"What is the capital of France?"},{"role":"assistant","content":"The"}]}
+
+data: {"thread_id":"550e8400-e29b-41d4-a716-446655440000","messages":[{"role":"user","content":"What is the capital of France?"},{"role":"assistant","content":"The capital"}]}
+
+data: {"thread_id":"550e8400-e29b-41d4-a716-446655440000","messages":[{"role":"user","content":"What is the capital of France?"},{"role":"assistant","content":"The capital of France"}]}
+
+data: {"thread_id":"550e8400-e29b-41d4-a716-446655440000","messages":[{"role":"user","content":"What is the capital of France?"},{"role":"assistant","content":"The capital of France is Paris."}]}
+
+data: [DONE]
+```
+
+**Status Codes:**
+
+- 200: Success
+- 404: Thread not found
+- 500: Server error
+
+### Get Thread Messages
+
+Retrieves the message history for a thread.
+
+**Endpoint:** `GET /threads/{thread_id}/messages`
+
+**Path Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| thread_id | string | Yes | ID of the thread to retrieve messages from |
+
+**Response:**
+
+```json
+{
+  "thread_id": "550e8400-e29b-41d4-a716-446655440000",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that provides concise answers."
+    },
+    {
+      "role": "user",
+      "content": "What is the capital of France?"
+    },
+    {
+      "role": "assistant",
+      "content": "The capital of France is Paris."
+    }
+  ]
+}
+```
+
+**Status Codes:**
+
+- 200: Success
+- 404: Thread not found
+- 500: Server error
+
+### Delete Thread
+
+Deletes a thread and all its messages.
+
+**Endpoint:** `DELETE /threads/{thread_id}`
+
+**Path Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| thread_id | string | Yes | ID of the thread to delete |
+
+**Response:**
+
+```json
+{
+  "message": "Thread deleted successfully"
+}
+```
+
+**Status Codes:**
+
+- 200: Success
+- 404: Thread not found
+- 500: Server error
+
+## Assistant UI Chat API
+
+This endpoint is specifically designed to support the assistant-ui framework's chat interface.
+
+### Chat Endpoint
+
+**Endpoint:** `POST /chat`
+
+**Request Body:**
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the capital of France?"
+    }
+  ],
+  "system": "You are a helpful assistant that provides concise answers.",
+  "tools": {}
+}
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| messages | array | Yes | Array of message objects with role and content |
+| system | string | No | System message to set the assistant's behavior |
+| tools | object | No | Tools available to the assistant |
+
+**Response:**
+
+The response is a streaming response in the format expected by the assistant-ui framework.
+
+**Status Codes:**
+
+- 200: Success
+- 400: Bad request
+- 500: Server error
+
+## Error Handling
+
+All endpoints return standard HTTP status codes. In case of an error, the response body will contain an error message:
+
+```json
+{
+  "error": "Thread not found"
+}
+```
+
+## Rate Limiting
+
+API requests are rate-limited to 60 requests per minute per API key. If you exceed this limit, you will receive a 429 Too Many Requests response. 
