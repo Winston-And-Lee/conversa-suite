@@ -14,16 +14,16 @@ def create_app() -> FastAPI:
     )
 
     # Get frontend URL from environment or use default
-    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3001")
     
     # CORS middleware with comprehensive configuration
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[frontend_url],  # Only allow requests from our frontend
+        allow_origins=[frontend_url, "http://localhost:3001"],  # Allow requests from our frontend
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["*", "Content-Type", "Authorization", "X-Requested-With"],
-        expose_headers=["Content-Length", "Content-Type"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        allow_headers=["*"],
+        expose_headers=["*"],
         max_age=600,  # Cache preflight requests for 10 minutes
     )
     
@@ -31,6 +31,11 @@ def create_app() -> FastAPI:
     @app.middleware("http")
     async def add_security_headers(request: Request, call_next):
         response = await call_next(request)
+        
+        # Skip adding security headers for OPTIONS requests (CORS preflight)
+        if request.method == "OPTIONS":
+            return response
+            
         # Allow unsafe-eval for development if needed
         # In production, you should remove unsafe-eval
         response.headers["Content-Security-Policy"] = "default-src 'self'; connect-src 'self' *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"

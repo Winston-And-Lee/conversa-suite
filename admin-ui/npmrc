@@ -1,0 +1,6 @@
+auto-install-peers=true
+strict-peer-dependencies=false
+git-checks=false
+@insightblue-co:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=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
+always-auth=true 

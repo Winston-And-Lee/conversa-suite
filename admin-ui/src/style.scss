@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
+
+:root {
+  --status_error_01: #d92d20;
+  --status_error_02: #f97066;
+  --status_error_03: #fef3f2;
+  --status_warning_01: #dc6803;
+  --status_warning_02: #fdb022;
+  --status_warning_03: #fffaeb;
+  --status_success_01: #079455;
+  --status_success_02: #47cd89;
+  --status_success_03: #ecfdf3;
+  --status_blue_01: #1570ef;
+  --status_blue_02: #53b1fd;
+  --status_blue_03: #eff8ff;
+  --status_orange_01: #ec4a0a;
+  --status_orange_02: #fd853a;
+  --status_orange_03: #fff6ed;
+  --status_pink_01: #dd2590;
+  --status_pink_02: #f670c7;
+  --status_pink_03: #fdf2fa;
+  --neutral_01: #0c111d;
+  --neutral_02: #101923;
+  --neutral_03: #1d2939;
+  --neutral_04: #344054;
+  --neutral_05: #475467;
+  --neutral_06: #667085;
+  --neutral_07: #98a2b3;
+  --neutral_08: #d0d5dd;
+  --neutral_09: #e4e7ec;
+  --neutral_10: #e4e7ec;
+  --neutral_11: #f2f4f7;
+  --neutral_12: #fcfcfd;
+  --neutral_13: #ffffff;
+
+  --light_secondary_01: #7FB3D5;
+  --light_secondary_02: #EDEEF2;
+  
+  --light_accent_01: "#FFC07F", 
+  --light_accent_02: "#FFC493", 
+
+  --light_primary_01: #001F3D;
+  --light_primary_02: #00335E;
+  --light_primary_03: #00497E;
+  --light_primary_04: #F4AE75;
+  --light_primary_05: #FAD7B2;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.custom-microsoft-button:hover, .custom-microsoft-button:focus {
+    -webkit-box-shadow: none!important;
+    box-shadow: none!important;
+    border-color: rgb(210,227,252)!important;
+    border: 1px solid #dadce0;
+    color: rgba(0, 0, 0, 0.88)!important;
+    background-color: rgba(66,133,244,.04)!important;
+}
