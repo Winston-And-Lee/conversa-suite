@@ -31,58 +31,143 @@ backend/
 └── env.template         # Environment variables template
 ```
 
-## Setup and Installation
+## Setup
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.8+
 - MongoDB
+- AWS S3 account
+- Pinecone account
+- OpenAI API key
 
-### Environment Setup
+### Environment Variables
 
-1. Clone the repository
-2. Create a virtual environment:
+Create a `.env` file based on the provided `env.template` with the following settings:
+
+```
+# Application settings
+APP_NAME=backend-service
+APP_ENV=development
+DEBUG=true
+LOG_LEVEL=debug
+
+# Server settings
+HOST=0.0.0.0
+PORT=8000
+
+# MongoDB settings
+MONGO_URI=mongodb://localhost:27017
+MONGO_DB=backend_db
+MONGO_USER=
+MONGO_PASSWORD=
+
+# JWT settings
+JWT_SECRET_KEY=your-secret-key
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# CORS settings
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000
+
+# AWS S3 settings
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+AWS_REGION=ap-southeast-1
+S3_BUCKET_NAME=your-bucket-name
+
+# Pinecone settings
+PINECONE_API_KEY=your-pinecone-api-key
+PINECONE_ENVIRONMENT=your-pinecone-environment
+PINECONE_INDEX_NAME=your-pinecone-index
+
+# OpenAI for embeddings
+OPENAI_API_KEY=your-openai-api-key
+```
+
+### Installation
+
+1. Create a virtual environment:
    ```
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
+
+2. Activate the virtual environment:
+   ```
+   # On Windows
+   venv\Scripts\activate
+   
+   # On Unix or MacOS
+   source venv/bin/activate
+   ```
+
 3. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
-4. Copy the environment template:
-   ```
-   cp env.template .env
-   ```
-5. Update the environment variables in `.env` as needed
 
 ### Running the Application
 
-Start the application:
+Run the application with:
+
 ```
-python -m src.infrastructure.fastapi.main
+python main.py
 ```
 
-Or with uvicorn directly:
-```
-uvicorn src.infrastructure.fastapi.main:app --reload
-```
+The API will be available at `http://localhost:8000`.
 
-## Docker Setup
+API documentation is available at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-Build and run with Docker Compose:
-```
-docker-compose up -d
-```
+### Running Tests
 
-## Testing
+Run tests with:
 
-Run tests:
 ```
 pytest
 ```
 
-Run tests with coverage:
+## Docker
+
+Build and run the Docker container:
+
 ```
-pytest --cov=src tests/
-``` 
+docker build -t backend-service .
+docker run -p 8000:8000 backend-service
+```
+
+## API Usage Examples
+
+### Submit Data
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/api/data-ingestion/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'title=Sample Title' \
+  -F 'specified_text=Sample text content' \
+  -F 'data_type=ตัวบทกฎหมาย' \
+  -F 'law=Sample Law' \
+  -F 'reference=Sample Reference' \
+  -F 'keywords=keyword1,keyword2' \
+  -F 'file=@document.pdf;type=application/pdf'
+```
+
+### Search Data
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/api/data-ingestion/search' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "sample search query",
+  "limit": 10
+}'
+```
+
+## License
+
+This project is proprietary and confidential. 

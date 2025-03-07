@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # CORS settings
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    ALLOWED_ORIGINS: List[str] = ["*", "http://localhost:5173", "http://localhost:3000", "http://localhost:8000"]
     
     # OpenAI settings
     OPENAI_API_KEY: str = ""
@@ -42,6 +42,21 @@ class Settings(BaseSettings):
     LANGCHAIN_TRACING_V2: bool = False
     LANGCHAIN_PROJECT: str = ""
     LANGCHAIN_ENDPOINT: str = "https://api.smith.langchain.com"
+
+    # Postmark settings
+    POSTMARK_API_TOKEN: str = ""
+    POSTMARK_SENDER_EMAIL: str = "no-reply@example.com"
+    
+    # AWS S3 settings
+    AWS_ACCESS_KEY_ID: str = ""
+    AWS_SECRET_ACCESS_KEY: str = ""
+    AWS_REGION: str = "ap-southeast-1"
+    S3_BUCKET_NAME: str = "conversa-suite-files"
+    
+    # Pinecone settings
+    PINECONE_API_KEY: str = ""
+    PINECONE_ENVIRONMENT: str = ""
+    PINECONE_INDEX_NAME: str = ""
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod

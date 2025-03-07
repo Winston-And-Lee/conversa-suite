@@ -1,12 +1,12 @@
 import { ROUTES } from '@/constant';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-export const TOKEN_KEY = 'khaojai-auth';
-export const TOKEN_REFRESH_KEY = 'khaojai-refresh';
-export const USER_KEY = 'khaojai-user';
+export const TOKEN_KEY = 'conversa-suite-auth';
+export const TOKEN_REFRESH_KEY = 'conversa-suite-refresh';
+export const USER_KEY = 'conversa-suite-user';
 export const USER_PERMISSION = 'khaojai-user-permission';
-export const USER_WORKSPACES_KEY = 'ekhaojairp-user-workspaces';
-export const USER_MENU_SETTING_KEY = 'khaojai-menu-setting';
+export const USER_WORKSPACES_KEY = 'conversa-suite-user-workspaces';
+export const USER_MENU_SETTING_KEY = 'conversa-suite-menu-setting';
 export const USER_VERIFY_TEMP = 'user-verify-temp';
 export const USER_ICON_TEMP = 'user-icon-temp';
 
@@ -26,10 +26,11 @@ interface ResponseData {
 }
 
 export const request = async ({ method, url, headers, body }: RequestConfig): Promise<ResponseData | any> => {
-  if (localStorage.getItem(TOKEN_KEY)) {
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token) {
     headers = {
       ...headers,
-      Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`
+      Authorization: `Bearer ${token}`
     };
   }
 

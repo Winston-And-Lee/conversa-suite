@@ -21,8 +21,6 @@ from src.domain.entity.user import (
     ProfileResponse,
     PasswordResetResponse
 )
-from src.domain.repository.user_repository import UserRepository
-from src.domain.repository.user_verification_repository import UserVerificationRepository
 from src.interface.repository.database.db_repository import user_repository, user_verification_repository
 
 logger = logging.getLogger(__name__)
@@ -33,8 +31,8 @@ class UserUsecase:
     def __init__(self):
         """Initialize with repositories."""
         # Repositories will be injected later
-        self.user_repository = None
-        self.user_verification_repository = None
+        self.user_repository = user_repository()
+        self.user_verification_repository = user_verification_repository()
         
         # JWT settings
         self.jwt_secret_key = os.getenv("JWT_SECRET_KEY", "")

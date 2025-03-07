@@ -110,7 +110,7 @@ function App() {
                         Title={({ collapsed }: { collapsed: boolean }) => (
                           <ThemedTitleV2
                             collapsed={collapsed}
-                            text={appName ? appName : 'Khaojai AI'}
+                            text={appName ? appName : 'Conversa Suite'}
                             icon={<Avatar src={iconUrl} />}
                             wrapperStyles={{
                               height: '32px',

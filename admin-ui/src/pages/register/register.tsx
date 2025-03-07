@@ -2,6 +2,7 @@ import { ROUTES } from '@/constant';
 import { AuthenticateTemplate } from '@/layouts/authenticate';
 import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+// import { CreateWorkspaceBox } from './components/createWorkspace';
 import { InformationBox } from './components/informationBox';
 import { OtpBox } from './components/otpBox';
 

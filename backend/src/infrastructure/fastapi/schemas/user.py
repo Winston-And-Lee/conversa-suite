@@ -32,11 +32,14 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     """Model for user response data."""
-    _id: str
+    id: str = Field(alias="_id")  # Map _id to id
     is_active: bool
     is_admin: bool
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class UserLogin(BaseModel):
@@ -45,12 +48,16 @@ class UserLogin(BaseModel):
     password: str
 
 
+class TokenResponse(BaseModel):
+    """Model for token response data."""
+    access: str
+    refresh: str
+
+
 class UserLoginResponse(BaseModel):
     """Model for user login response data."""
     user: UserResponse
-    access_token: str
-    refresh_token: str
-    token_type: str
+    token: TokenResponse
 
 
 class UserRefreshToken(BaseModel):
@@ -60,9 +67,7 @@ class UserRefreshToken(BaseModel):
 
 class UserRefreshResponse(BaseModel):
     """Model for token refresh response."""
-    access_token: str
-    refresh_token: str
-    token_type: str
+    token: TokenResponse
 
 
 class UserResetPassword(BaseModel):

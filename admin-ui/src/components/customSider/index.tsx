@@ -1,5 +1,5 @@
 import { USER_KEY, USER_MENU_SETTING_KEY, USER_PERMISSION, USER_WORKSPACES_KEY } from '@/api-requests';
-import { getSetActiveWorkspace, getUserPermission } from '@/api-requests/auth';
+// import { getSetActiveWorkspace, getUserPermission } from '@/api-requests/auth';
 import { ColorMode, COLORS } from '@/constant';
 import { THEME_STORAGE_KEY, useThemeContext } from '@/contexts/color-mode';
 import { ICustomThemedLayoutProps, IUser } from '@/interfaces';
@@ -63,7 +63,7 @@ export const CustomSider: ICustomThemedLayoutProps['Sider'] = ({ setIsOpenSubMen
   if (link) {
     let elementFavicon: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
     if (!elementFavicon) return;
-    elementFavicon.href = userProfile.workspace.logo_favicon ?? userProfile.workspace.logo;
+    // elementFavicon.href = userProfile.workspace.logo_favicon ?? userProfile.workspace.logo;
   }
 
   menu_settings.map((data: any) => {
@@ -361,7 +361,7 @@ export const CustomSider: ICustomThemedLayoutProps['Sider'] = ({ setIsOpenSubMen
           <a onClick={() => navigate('/')}>
             <Image
               width={'100%'}
-              src={userProfile.workspace.logo}
+              // src={userProfile.workspace.logo}
               fallback='/assets/images/app-logo/logo.png'
               preview={false}
             />

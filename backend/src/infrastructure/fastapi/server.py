@@ -1,29 +1,70 @@
+import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
-from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes
+from src.config.settings import get_settings
+from src.infrastructure.database.mongodb import MongoDB
+from src.infrastructure.ai.tracing import setup_langchain_tracing
+from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes, data_ingestion_routes
 
+logger = logging.getLogger(__name__)
+settings = get_settings()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan context manager for the FastAPI app.
+    This handles database connections at startup and shutdown.
+    """
+    # Startup: Initialize database connection
+    try:
+        logger.info("Starting up: Connecting to MongoDB...")
+        await MongoDB.connect_to_database()
+        
+        # Force initialize the user_usecase to ensure it has a valid repository
+        from src.usecase.user import get_user_usecase_async
+        user_usecase = await get_user_usecase_async()
+        if user_usecase.user_repository is None:
+            logger.error("Failed to initialize user repository during startup")
+        else:
+            logger.info("Successfully initialized user repository")
+            
+        logger.info("Database connection established successfully during startup")
+        
+        # Set up LangChain tracing
+        logger.info("Setting up LangChain tracing...")
+        setup_langchain_tracing()
+    except Exception as e:
+        logger.error(f"Failed to initialize database connection during startup: {str(e)}")
+        # Don't crash the app, but log the error
+    
+    yield  # Application runs here
+    
+    # Shutdown: Close database connection
+    try:
+        logger.info("Shutting down: Closing MongoDB connection...")
+        await MongoDB.close_database_connection()
+        logger.info("MongoDB connection closed successfully")
+    except Exception as e:
+        logger.error(f"Error during database disconnection: {str(e)}")
 
 def create_app() -> FastAPI:
     """Create FastAPI application."""
     app = FastAPI(
-        title="ConverSA Suite API",
-        description="API for ConverSA Suite",
-        version="0.1.0",
+        title="Conversa Suite API",
+        description="API for Conversa Suite",
+        version="1.0.0",
+        lifespan=lifespan
     )
-
-    # Get frontend URL from environment or use default
-    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3001")
     
     # CORS middleware with comprehensive configuration
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[frontend_url, "http://localhost:3001"],  # Allow requests from our frontend
+        allow_origins=settings.ALLOWED_ORIGINS,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=["*"],
         max_age=600,  # Cache preflight requests for 10 minutes
     )
     
@@ -53,5 +94,23 @@ def create_app() -> FastAPI:
     app.include_router(chatbot_routes.router)
     app.include_router(assistant_routes.router, prefix="/api/assistant", tags=["Assistant"])
     app.include_router(assistant_ui_routes.router, prefix="/api/assistant-ui", tags=["Assistant UI"])
+    app.include_router(data_ingestion_routes.router)  # Data ingestion routes already have prefix
+
+    # Add root and debug endpoints
+    @app.get("/")
+    async def root():
+        return {"message": "Welcome to Conversa Suite API!"}
+
+    @app.get("/debug/routes")
+    async def debug_routes():
+        """Return all registered routes for debugging."""
+        routes = []
+        for route in app.routes:
+            routes.append({
+                "path": route.path if hasattr(route, "path") else str(route),
+                "name": route.name if hasattr(route, "name") else None,
+                "methods": route.methods if hasattr(route, "methods") else None
+            })
+        return {"routes": routes}
 
     return app 

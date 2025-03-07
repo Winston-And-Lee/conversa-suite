@@ -3,6 +3,9 @@ from src.domain.repository.user_verification_repository import UserVerificationR
 from src.infrastructure.database.mongodb import MongoDB
 from src.interface.repository.mongodb.user_repository import MongoDBUserRepository
 from src.interface.repository.mongodb.user_verification_repository import MongoDBUserVerificationRepository
+from src.interface.repository.mongodb.data_ingestion_repository import DataIngestionRepository
+from src.interface.repository.s3.s3_repository import S3Repository
+from src.interface.repository.pinecone.pinecone_repository import PineconeRepository
 import logging
 import asyncio
 
@@ -10,31 +13,29 @@ logger = logging.getLogger(__name__)
 
 async def ensure_db_connected(max_retries=3, retry_delay=1.0):
     """
-    Ensures that the database connection is established.
-    This should be called before creating any repositories.
-    
+    Ensures that the database is connected before proceeding.
+    This function tries to connect to the database and retries
+    in case of failure.
+
     Args:
-        max_retries: Maximum number of connection attempts
+        max_retries: Maximum number of retry attempts
         retry_delay: Delay between retries in seconds
-        
-    Returns:
-        Database instance if connection is successful
-        
+
     Raises:
-        RuntimeError: If connection cannot be established after max_retries
+        RuntimeError: If all retry attempts fail
     """
     last_error = None
-    
     for attempt in range(max_retries):
         try:
-            # Use the reconnect method to ensure we have a valid connection
-            logger.info(f"Database connection attempt {attempt + 1}/{max_retries}")
-            db = await MongoDB.reconnect_if_needed()
-            logger.info("Database connection established successfully")
-            return db
+            # Attempt to connect to MongoDB
+            await MongoDB.connect_to_database()
+            logger.info("Successfully connected to database")
+            return
         except Exception as e:
-            last_error = str(e)
-            logger.warning(f"Failed to connect to database (attempt {attempt + 1}/{max_retries}): {last_error}")
+            last_error = e
+            logger.warning(f"Failed to connect to database (attempt {attempt + 1}/{max_retries}): {str(e)}")
+            
+            # Don't wait if this is the last attempt
             if attempt < max_retries - 1:
                 logger.info(f"Retrying in {retry_delay} seconds...")
                 await asyncio.sleep(retry_delay)
@@ -73,6 +74,43 @@ def user_verification_repository() -> UserVerificationRepository:
         return MongoDBUserVerificationRepository(db)
     except RuntimeError as e:
         logger.error(f"Failed to create user verification repository: {str(e)}")
+        raise
+
+def data_ingestion_repository() -> DataIngestionRepository:
+    """
+    Factory function that returns a DataIngestionRepository implementation.
+    This centralizes the creation of repository instances.
+    
+    Note: Make sure the database is connected by calling ensure_db_connected()
+    before using this function.
+    """
+    try:
+        db = MongoDB.get_db()
+        return DataIngestionRepository(db)
+    except RuntimeError as e:
+        logger.error(f"Failed to create data ingestion repository: {str(e)}")
+        raise
+
+def s3_repository() -> S3Repository:
+    """
+    Factory function that returns an S3Repository implementation.
+    This centralizes the creation of repository instances.
+    """
+    try:
+        return S3Repository()
+    except Exception as e:
+        logger.error(f"Failed to create S3 repository: {str(e)}")
+        raise
+
+def pinecone_repository() -> PineconeRepository:
+    """
+    Factory function that returns a PineconeRepository implementation.
+    This centralizes the creation of repository instances.
+    """
+    try:
+        return PineconeRepository()
+    except Exception as e:
+        logger.error(f"Failed to create Pinecone repository: {str(e)}")
         raise
 
 

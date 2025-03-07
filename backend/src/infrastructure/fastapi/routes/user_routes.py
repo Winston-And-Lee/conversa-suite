@@ -10,7 +10,7 @@ from src.infrastructure.fastapi.schemas.user import (
     UserBase, UserCreate, UserResponse, UserUpdate, 
     UserLogin, UserLoginResponse, UserResetPassword,
     UserVerification, UserVerify, UserProfile,
-    UserRefreshToken, UserRefreshResponse
+    UserRefreshToken, UserRefreshResponse, TokenResponse
 )
 from src.usecase.user.user_usecase import UserUsecase
 from src.usecase.user import get_user_usecase_async
@@ -112,9 +112,10 @@ async def register_user(
                 created_at=auth_response.user.created_at,
                 updated_at=auth_response.user.updated_at
             ),
-            access_token=auth_response.access_token,
-            refresh_token=auth_response.refresh_token or "",
-            token_type="bearer"
+            token=TokenResponse(
+                access=auth_response.access_token,
+                refresh=auth_response.refresh_token or ""
+            )
         )
         
     except Exception as e:
@@ -188,9 +189,10 @@ async def login_user(
                 created_at=auth_response.user.created_at,
                 updated_at=auth_response.user.updated_at
             ),
-            access_token=auth_response.access_token,
-            refresh_token=auth_response.refresh_token,
-            token_type="bearer"
+            token=TokenResponse(
+                access=auth_response.access_token,
+                refresh=auth_response.refresh_token
+            )
         )
         
     except Exception as e:
@@ -390,9 +392,10 @@ async def refresh_token(
             )
             
         return UserRefreshResponse(
-            access_token=refresh_response.access_token,
-            refresh_token=refresh_response.refresh_token,
-            token_type="bearer"
+            token=TokenResponse(
+                access=refresh_response.access_token,
+                refresh=refresh_response.refresh_token
+            )
         )
     except Exception as e:
         logger.error(f"Error refreshing token: {str(e)}")
@@ -504,9 +507,10 @@ async def login_with_google(
                 created_at=auth_response.user.created_at,
                 updated_at=auth_response.user.updated_at
             ),
-            access_token=auth_response.access_token,
-            refresh_token=auth_response.refresh_token,
-            token_type="bearer"
+            token=TokenResponse(
+                access=auth_response.access_token,
+                refresh=auth_response.refresh_token
+            )
         )
         
     except Exception as e:
@@ -578,9 +582,10 @@ async def login_with_microsoft(
                 created_at=auth_response.user.created_at,
                 updated_at=auth_response.user.updated_at
             ),
-            access_token=auth_response.access_token,
-            refresh_token=auth_response.refresh_token,
-            token_type="bearer"
+            token=TokenResponse(
+                access=auth_response.access_token,
+                refresh=auth_response.refresh_token
+            )
         )
         
     except Exception as e:

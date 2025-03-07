@@ -1,0 +1,336 @@
+---
+title: Data Ingestion API
+description: API specifications for the Data Ingestion service
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+# Data Ingestion API
+
+The Data Ingestion API allows submission, retrieval, search, and deletion of content with file support. This API enables ingesting Thai legal content, FAQ, and recommendations into the system with support for semantic search.
+
+## Base URL
+
+```
+https://api.example.com/api/data-ingestion
+```
+
+## Authentication
+
+All endpoints require Bearer token authentication except where noted.
+
+```
+Authorization: Bearer {token}
+```
+
+## Endpoints
+
+### Submit Data
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  POST /api/data-ingestion/
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Submit new data with an optional file attachment.
+  </TabItem>
+
+  <TabItem label="Request">
+  **Content-Type**: `multipart/form-data`
+
+  **Form Fields**:
+  ```
+  title:         string    // หัวข้อ (Heading/Title), required
+  specified_text: string    // ระบุ (Specify), required
+  data_type:     string    // ประเภทข้อมูล (Data Type), required
+                           // Options: "ตัวบทกฎหมาย", "FAQ", "คำแนะนำ"
+  law:           string    // กฎหมาย (Law/Regulation), required
+  reference:     string    // อ้างอิง (Reference), required
+  keywords:      string[]  // คีย์เวิร์ด (Keywords), optional
+  file:          file      // File upload (PDF/DOC), optional, max 10MB
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `201 Created`
+
+  **Response Body**:
+  ```json
+  {
+    "id": "64f123a789b2e45678901234",
+    "title": "ตัวอย่างหัวข้อ",
+    "specified_text": "เนื้อหาตัวอย่าง",
+    "data_type": "ตัวบทกฎหมาย",
+    "law": "พ.ร.บ. ข้อมูลข่าวสารของราชการ",
+    "reference": "มาตรา 7",
+    "keywords": ["ข้อมูลข่าวสาร", "ราชการ", "สิทธิ"],
+    "file_url": "https://bucket-name.s3.ap-southeast-1.amazonaws.com/f123a789b2e45678901234.pdf",
+    "file_name": "document.pdf",
+    "file_type": "application/pdf",
+    "file_size": 2048576,
+    "created_at": "2023-09-12T08:32:15.123Z",
+    "updated_at": "2023-09-12T08:32:15.123Z"
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Errors">
+  - `400 Bad Request`: Invalid input or file type/size not supported
+  - `401 Unauthorized`: Missing or invalid authentication
+  - `500 Internal Server Error`: Server-side error
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X 'POST' \
+    'https://api.example.com/api/data-ingestion/' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'title=ตัวอย่างหัวข้อ' \
+    -F 'specified_text=เนื้อหาตัวอย่าง' \
+    -F 'data_type=ตัวบทกฎหมาย' \
+    -F 'law=พ.ร.บ. ข้อมูลข่าวสารของราชการ' \
+    -F 'reference=มาตรา 7' \
+    -F 'keywords=ข้อมูลข่าวสาร,ราชการ,สิทธิ' \
+    -F 'file=@document.pdf;type=application/pdf'
+  ```
+  </TabItem>
+</Tabs>
+
+### Get Data by ID
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  GET /api/data-ingestion/{data_id}
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Retrieve data by its ID.
+  </TabItem>
+
+  <TabItem label="Parameters">
+  **Path Parameters**:
+  ```
+  data_id: string    // The ID of the data to retrieve
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `200 OK`
+
+  **Response Body**:
+  ```json
+  {
+    "id": "64f123a789b2e45678901234",
+    "title": "ตัวอย่างหัวข้อ",
+    "specified_text": "เนื้อหาตัวอย่าง",
+    "data_type": "ตัวบทกฎหมาย",
+    "law": "พ.ร.บ. ข้อมูลข่าวสารของราชการ",
+    "reference": "มาตรา 7",
+    "keywords": ["ข้อมูลข่าวสาร", "ราชการ", "สิทธิ"],
+    "file_url": "https://bucket-name.s3.ap-southeast-1.amazonaws.com/f123a789b2e45678901234.pdf",
+    "file_name": "document.pdf",
+    "file_type": "application/pdf",
+    "file_size": 2048576,
+    "created_at": "2023-09-12T08:32:15.123Z",
+    "updated_at": "2023-09-12T08:32:15.123Z"
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Errors">
+  - `401 Unauthorized`: Missing or invalid authentication
+  - `404 Not Found`: Data not found
+  - `500 Internal Server Error`: Server-side error
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X 'GET' \
+    'https://api.example.com/api/data-ingestion/64f123a789b2e45678901234' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  ```
+  </TabItem>
+</Tabs>
+
+### Search Data
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  POST /api/data-ingestion/search
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Search for data using semantic search (vector similarity).
+  </TabItem>
+
+  <TabItem label="Request">
+  **Content-Type**: `application/json`
+
+  **Request Body**:
+  ```json
+  {
+    "query": "ค้นหาข้อมูลที่เกี่ยวกับสิทธิของประชาชน",
+    "limit": 10
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `200 OK`
+
+  **Response Body**:
+  ```json
+  {
+    "results": [
+      {
+        "id": "64f123a789b2e45678901234",
+        "title": "สิทธิในการเข้าถึงข้อมูลข่าวสาร",
+        "specified_text": "ประชาชนมีสิทธิในการเข้าถึงข้อมูลข่าวสารของราชการ",
+        "data_type": "ตัวบทกฎหมาย",
+        "similarity_score": 0.89
+      },
+      {
+        "id": "64f123a789b2e45678901235",
+        "title": "การใช้สิทธิตามกฎหมาย",
+        "specified_text": "ประชาชนสามารถใช้สิทธิตามกฎหมายได้โดย...",
+        "data_type": "คำแนะนำ",
+        "similarity_score": 0.78
+      }
+    ],
+    "total": 2
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Errors">
+  - `400 Bad Request`: Invalid search query
+  - `401 Unauthorized`: Missing or invalid authentication
+  - `500 Internal Server Error`: Server-side error
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X 'POST' \
+    'https://api.example.com/api/data-ingestion/search' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "query": "ค้นหาข้อมูลที่เกี่ยวกับสิทธิของประชาชน",
+      "limit": 10
+    }'
+  ```
+  </TabItem>
+</Tabs>
+
+### Delete Data
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  DELETE /api/data-ingestion/{data_id}
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Delete data by its ID. This also removes associated files from S3 and vector embeddings from Pinecone.
+  </TabItem>
+
+  <TabItem label="Parameters">
+  **Path Parameters**:
+  ```
+  data_id: string    // The ID of the data to delete
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `204 No Content`
+
+  **Response Body**: Empty
+  </TabItem>
+
+  <TabItem label="Errors">
+  - `401 Unauthorized`: Missing or invalid authentication
+  - `404 Not Found`: Data not found
+  - `500 Internal Server Error`: Server-side error
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X 'DELETE' \
+    'https://api.example.com/api/data-ingestion/64f123a789b2e45678901234' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  ```
+  </TabItem>
+</Tabs>
+
+## Data Models
+
+### DataIngestion
+
+```typescript
+interface DataIngestion {
+  id: string;
+  title: string;              // หัวข้อ (Heading/Title)
+  specified_text: string;     // ระบุ (Specify)
+  data_type: string;          // ประเภทข้อมูล (Data Type)
+  law: string;                // กฎหมาย (Law/Regulation)
+  reference: string;          // อ้างอิง (Reference)
+  keywords: string[];         // คีย์เวิร์ด (Keywords)
+  file_url?: string;          // S3 URL for uploaded file
+  file_name?: string;         // Original filename
+  file_type?: string;         // File type (PDF or DOC)
+  file_size?: number;         // File size in bytes
+  created_at: string;         // ISO 8601 datetime
+  updated_at: string;         // ISO 8601 datetime
+}
+```
+
+### SearchRequest
+
+```typescript
+interface SearchRequest {
+  query: string;              // Text query to search for
+  limit?: number;             // Maximum number of results (default: 10)
+}
+```
+
+### SearchResultItem
+
+```typescript
+interface SearchResultItem {
+  id: string;
+  title: string;
+  specified_text: string;
+  data_type: string;
+  similarity_score: number;   // Similarity score (0-1)
+}
+```
+
+### SearchResponse
+
+```typescript
+interface SearchResponse {
+  results: SearchResultItem[];
+  total: number;
+}
+```
+
+## Implementation Notes
+
+- The API uses MongoDB for data storage
+- Files are stored in AWS S3
+- Semantic search is powered by Pinecone vector database and OpenAI embeddings
+- Text is extracted from PDF and DOC files for indexing
+- Keywords can be automatically generated using AI if not provided 

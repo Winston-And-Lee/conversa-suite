@@ -32,9 +32,9 @@ export const HomePage: React.FC = () => {
         style={{ height: '200px', width: '200px' }}
       ></Player> */}
 
-      <Title style={{ textAlign: 'center', marginBottom: '6px', marginTop: '26px' }} level={2} >
+      {/* <Title style={{ textAlign: 'center', marginBottom: '6px', marginTop: '26px' }} level={2} >
         {user?.workspace.name}
-      </Title>
+      </Title> */}
       <Title style={{ textAlign: 'center', marginBottom: '16px', marginTop: '16px' }} level={3} >
         {t('label.welcome')}
         {user?.name}

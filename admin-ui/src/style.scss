@@ -60,3 +60,35 @@ iframe {
     color: rgba(0, 0, 0, 0.88)!important;
     background-color: rgba(66,133,244,.04)!important;
 }
+
+/* Auth Layout Styles */
+
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f2f5;
+}
+
+.auth-content {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-container {
+  max-width: 450px;
+  width: 100%;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
