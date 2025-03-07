@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes
 
@@ -12,14 +13,34 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
 
-    # CORS middleware
+    # Get frontend URL from environment or use default
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    
+    # CORS middleware with comprehensive configuration
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # In production, replace with specific origins
+        allow_origins=[frontend_url],  # Only allow requests from our frontend
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["*", "Content-Type", "Authorization", "X-Requested-With"],
+        expose_headers=["Content-Length", "Content-Type"],
+        max_age=600,  # Cache preflight requests for 10 minutes
     )
+    
+    # Add middleware to handle security headers
+    @app.middleware("http")
+    async def add_security_headers(request: Request, call_next):
+        response = await call_next(request)
+        # Allow unsafe-eval for development if needed
+        # In production, you should remove unsafe-eval
+        response.headers["Content-Security-Policy"] = "default-src 'self'; connect-src 'self' *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+        # Set more permissive referrer policy
+        response.headers["Referrer-Policy"] = "no-referrer-when-downgrade"
+        # Other security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
 
     # Register routes
     app.include_router(health_routes.router, prefix="/api/health", tags=["Health"])
