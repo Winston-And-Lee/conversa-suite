@@ -95,6 +95,7 @@ data/processed/
 backend/__pycache__/
 backend/test/__pycache__/
 backend/.pytest_cache/
+example/
 
 # Documentation build
 webdoc/build/

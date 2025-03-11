@@ -15,7 +15,7 @@ export default function Home() {
                   Welcome to Conversa Suite
                 </h1>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                  A modern AI assistant platform with customizable theming.
+                  A modern AI assistant platform.
                 </p>
               </div>
               <div className="space-x-4">
