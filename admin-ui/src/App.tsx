@@ -24,6 +24,7 @@ import { accessControlProvider } from './providers/permissionProvider';
 import { HomePage } from './pages/home';
 import { LoginPage } from './pages/login';
 import { SignupPage, VerifyPage } from './pages/register';
+import { AssistantUIPage } from './pages/assistant-ui/page';
 
 import { Avatar } from 'antd';
 import 'reactflow/dist/style.css';
@@ -144,6 +145,10 @@ function App() {
                     <Route path=':id' element={<ReportServiceShow />} />
                     <Route path='create' element={<ReportServiceCreate />} />
                     <Route path='edit/:id' element={<ReportServiceEdit />} />
+                  </Route>
+
+                  <Route path={ROUTES.ASSISTANT_UI}>
+                    <Route index={true} element={<AssistantUIPage />} />
                   </Route>
 
                   <Route path='' element={<HomePage />} />
