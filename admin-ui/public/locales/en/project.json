@@ -1,0 +1,43 @@
+{
+  "_project": {
+    "fields": {
+      "code": "Code",
+      "name": "Name",
+      "startDate": "Start Date",
+      "status": "Status",
+      "updatedAt": "Updated At"
+    },
+    "filter": {
+      "name": "Name",
+      "code": "Code"
+    },
+    "actions": {
+      "export": "Export"
+    },
+    "tabs": {
+      "all": "All",
+      "inProgress": "In Progress",
+      "done": "Done",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    },
+    "title": "Project List"
+  },
+  "_project-boq": {
+    "fields": {
+      "code": "Code",
+      "name": "Name",
+      "qty": "Quantity",
+      "startDate": "Start Date",
+      "updatedAt": "Last Updated"
+    },
+    "filter": {
+      "name": "Name",
+      "code": "Code"
+    },
+    "actions": {
+      "export": "Export"
+    },
+    "title": "Project BOQ List"
+  }
+}

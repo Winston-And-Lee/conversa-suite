@@ -1,0 +1,114 @@
+{
+  "_approvalGroup": {
+    "label": {
+      "createApprovalStep": "ออกแบบขั้นตอนการอนุมัติ:",
+      "addDetail": "เพิ่มรายละเอียด"
+    },
+    "fields": {
+      "approvalGroupName": "ชื่อกลุ่มการอนุมัติ",
+      "approvalGroup": "กลุ่มการอนุมัติ",
+      "actions": "การกระทำ",
+      "approvalNamePlaceholder": "ระบุชื่อการอนุมัติ",
+      "approvalGroupPlaceHolder": "เลือกกลุ่มการอนุมัติ",
+      "startDateEndDate": "วันที่เริ่มต้น-สิ้นสุด",
+      "startDate": "วันที่เริ่มต้น",
+      "endDate": "วันที่สิ้นสุด",
+      "detail": "รายละเอียด",
+      "detailPlaceholder": "ระบุรายละเอียด",
+      "createApprovalStepSuccess": "ออกแบบขั้นตอนการอนุมัติ {{name}} สำเร็จ",
+      "approvalName": "การอนุมัติ",
+      "approvalDescription": "รายละเอียดการอนุมัติ",
+      "copy": "คัดลอก",
+      "view": "ดู",
+      "edit": "แก้ไข",
+      "delete": "ลบ",
+      "noData": "ไม่มีข้อมูล"
+    },
+    "actions": {
+      "add": "เพิ่ม",
+      "import": "นำเข้า",
+      "export": "ส่งออก",
+      "addApproval": "เพิ่มการอนุมัติ",
+      "edit": "แก้ไข",
+      "delete": "ลบ",
+      "detail": "รายละเอียด",
+      "setting": "ตั้งค่า",
+      "cancel": "ยกเลิก",
+      "saveDraft": "บันทึกร่าง",
+      "save": "บันทึก",
+      "confirm": "ยืนยัน"
+    }
+  },
+  "drawer": {
+    "createTitle": "สร้างกลุ่มการอนุมัติ",
+    "editTitle": "แก้ไขกลุ่มการอนุมัติ",
+    "approvalGroupName": "ชื่อกลุ่มการอนุมัติ",
+    "approvalGroupNamePlaceholder": "ระบุชื่อกลุ่มการอนุมัติ",
+    "required": "กรุณากรอกข้อมูล"
+  },
+  "messages": {
+    "editSuccess": "แก้ไขกลุ่มการอนุมัติสำเร็จแล้ว",
+    "fieldRequired": "กรุณากรอกข้อมูล"
+  },
+  "fields": {
+    "groupName": "ชื่อกลุ่มการอนุมัติ",
+    "groupNamePlaceholder": "ระบุชื่อการอนุมัติ"
+  },
+  "form": {
+    "title": "สร้างฟอร์ม",
+    "formNamePlaceholder": "ระบุชื่อฟอร์ม",
+    "preview": "ดูตัวอย่าง",
+    "editor": {
+      "clickToEdit": "คลิกฟิลด์ในแบบฟอร์มของคุณ เพื่อแก้ไข",
+      "addPage": "เพิ่มหน้า",
+      "settings": "ตั้งค่า"
+    },
+    "buttons": {
+      "cancel": "ยกเลิก",
+      "saveDraft": "บันทึกร่าง",
+      "save": "บันทึก"
+    },
+    "components": {
+      "title": "องค์ประกอบ",
+      "text": {
+        "heading": "หัวข้อ",
+        "paragraph": "ย่อหน้า"
+      }
+    }
+  },
+  "approveBoxFlow": {
+    "label": {
+      "approvalRequester": "ยื่นขออนุมัติ",
+      "selectApprovalRequesterFromRole": "เลือกผู้ขออนุมัติจากบทบาท: {{count}}",
+      "selectApprovalRequesterFromUser": "เลือกผู้ขออนุมัติจากสมาชิก: {{count}}",
+      "selectApprovalRequesterFromDepartment": "เลือกผู้ขออนุมัติจากหน่วยงาน: {{count}}",
+      "selectApprovalRequesterFromDepartmentSupervisor": "เลือกผู้ขออนุมัติจากหัวหน้าหน่วยงาน"
+    },
+    "fields": {
+      "form": "แบบฟอร์ม",
+      "approvalRequester": "ผู้ขออนุมัติ",
+      "approvalQualification": "ผู้ขออนุมัติจะต้องมีคุณสมบัติ",
+      "matchAll": "ตรงทุกเงื่อนไข",
+      "matchSome": "ตรงบางเงื่อนไข",
+      "submit": "ยื่นขออนุมัติ",
+      "approver": "ผู้อนุมัติ",
+      "cc_to": "สำเนาถึง",
+      "processing": "ดำเนินการ",
+      "condition": "เงื่อนไข",
+      "next_approval": "การอนุมัติถัดไป",
+      "end": "สิ้นสุด",
+      "everyone": "ทุกคนในองค์กร",
+      "department": "หน่วยงาน",
+      "departmentManager": "หัวหน้าหน่วยงาน",
+      "role": "บทบาท",
+      "selectMember": "ระบุสมาชิก",
+      "user": "สมาชิก",
+      "aboveDepartmentManager": "สูงกว่าหัวหน้าหน่วยงาน {{level}}"
+    },
+    "actions": {
+      "addData": "เพิ่มข้อมูล",
+      "cancel": "ยกเลิก",
+      "confirm": "ยืนยัน"
+    }
+  }
+}

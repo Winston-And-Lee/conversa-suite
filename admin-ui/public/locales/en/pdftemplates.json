@@ -1,0 +1,14 @@
+{
+  "create": {
+    "name": "Name",
+    "description": "Description",
+    "template": "Template"
+  },
+  "list": {
+    "name": "Name",
+    "updatedAt": "Updated At",
+    "table": {
+      "actions": "Actions"
+    }
+  }
+}

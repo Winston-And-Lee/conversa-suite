@@ -1,0 +1,62 @@
+{
+  "userWorkspaces": {
+    "fields": {
+      "email": "อีเมล",
+      "name": "ชื่อ",
+      "role": "บทบาท",
+      "updateDate": "วันที่อัปเดต",
+      "user": "ผู้ใช้"
+    },
+    "roles": {
+      "select": "เลือกบทบาท",
+      "admin": "ผู้ดูแลระบบ",
+      "member": "สมาชิก",
+      "inactive": "ไม่ได้ใช้งาน"
+    }
+  },
+  "workspaces": {
+    "edit": {
+      "workspaceDetail": "รายละเอียด Workspace",
+      "lastUpdate": "อัปเดตล่าสุด",
+      "detail": "รายละเอียด",
+      "color": "สี",
+      "recommendedResolution": "ความละเอียดที่แนะนำ: อัตราส่วน 1:1, ขนาดสูงสุด 10MB"
+    },
+    "segmentCard": {
+      "label": {
+        "add": "เพิ่มผู้ใช้",
+        "name": "ชื่อ",
+        "status": "สถานะ",
+        "email": "อีเมล",
+        "user": "ผู้ใช้",
+        "delete": "ลบ",
+        "save": "บันทึก",
+        "addUser": "เพิ่มผู้ใช้",
+        "cancel": "ยกเลิก",
+        "confirm": "ยืนยัน",
+        "pleaseSelect": "กรุณาเลือก",
+        "role": "บทบาท",
+        "deleteUser": "ลบผู้ใช้",
+        "selected": "เลือก {{count}} รายการ"
+      },
+      "addUser": {
+        "title": "เพิ่มผู้ใช้",
+        "success": "เพิ่มผู้ใช้สำเร็จ!",
+        "failed": "ไม่สามารถเพิ่มผู้ใช้ได้"
+      },
+      "userDeleted": "ลบผู้ใช้แล้ว!",
+      "userDeletedFailed": "ไม่สามารถลบผู้ใช้ได้",
+      "wantToDelete": "คุณต้องการลบผู้ใช้นี้หรือไม่?",
+      "reset": "รีเซ็ต",
+      "detail": {
+        "workspaceName": "ชื่อ Workspace",
+        "user": "ผู้ใช้",
+        "color": "สี",
+        "primary": "หลัก",
+        "createDateTime": "วันที่และเวลาในการสร้าง",
+        "latestUpdateDateTime": "วันที่และเวลาในการอัปเดตล่าสุด",
+        "note": "หมายเหตุ"
+      }
+    }
+  }
+}

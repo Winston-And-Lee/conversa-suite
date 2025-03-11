@@ -1,0 +1,57 @@
+{
+  "information": {
+    "title": "Create Account",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "example@gmail.com",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "errors": {
+      "firstNameRequired": "Please input your first name",
+      "lastNameRequired": "Please input your last name",
+      "emailRequired": "Please input your email",
+      "passwordRequired": "Please input your password",
+      "passwordNotMatch": "Passwords do not match"
+    },
+    "buttons": {
+      "signup": "Sign Up",
+      "google": "Continue with Google"
+    },
+    "divider": "or",
+    "haveAccount": "Already have account?",
+    "signin": "Sign In"
+  },
+  "otp": {
+    "title": "Verify Email",
+    "subtitle": "Please enter the verification code sent to your email",
+    "reference": "Reference Code",
+    "buttons": {
+      "confirm": "Confirm",
+      "send": "Send OTP",
+      "resend": "Resend"
+    },
+    "errors": {
+      "validateFailed": "Validate OTP Failed",
+      "enterCode": "Please enter OTP code correctly"
+    }
+  },
+  "workspace": {
+    "title": "Create Workspace",
+    "name": "Workspace Name",
+    "button": "Create Workspace",
+    "errors": {
+      "required": "Workspace Name Required",
+      "nameRequired": "Please input workspace name",
+      "createFailed": "Create Workspace Failed"
+    }
+  }
+}

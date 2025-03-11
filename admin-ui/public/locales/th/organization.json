@@ -1,0 +1,156 @@
+{
+  "_user_department": {
+    "label": {
+      "userDepartment": "หน่วยงาน",
+      "userDepartmentMember": "สมาชิกในหน่วยงาน",
+      "selectDepartment": "เลือกหน่วยงาน",
+      "department": "หน่วยงาน",
+      "search": "ค้นหา",
+      "select": "เลือก",
+      "edit": "แก้ไข"
+    },
+    "fields": {
+      "searchPlaceholder": "ค้นหาชื่อหน่วยงาน",
+      "item": "รายการ",
+      "paginationTotal": "ทั้งหมด {{total}} รายการ"
+    },
+    "actions": {
+      "add": "เพิ่ม",
+      "import": "นำเข้า",
+      "export": "ส่งออก",
+      "search": "ค้นหา",
+      "save": "บันทึก",
+      "cancel": "ยกเลิก"
+    }
+  },
+  "_departmentMemberDrawer": {
+    "titleHead": "เพิ่มหัวหน้าหน่วยงาน",
+    "titleMember": "สมาชิกในหน่วยงาน",
+    "actions": {
+      "cancel": "ยกเลิก",
+      "submit": "ยืนยัน"
+    },
+    "tabs": {
+      "all": "รายชื่อทั้งหมด",
+      "selected": "เลือกแล้ว {{count}}"
+    },
+    "table": {
+      "member": "สมาชิก",
+      "department": "หน่วยงาน",
+      "status": "สถานะ",
+      "active": "ใช้งาน",
+      "inactive": "ไม่ใช้งาน"
+    }
+  },
+  "_addDepartmentMember": {
+    "titleDrawer": "เพิ่มหน่วยงาน",
+    "titleSubDepartment": "เพิ่มหัวหน้าหน่วยงาน",
+    "titleEditDrawer": "แก้ไขหน่วยงาน",
+    "label": {
+      "select": "เลือก",
+      "edit": "แก้ไข"
+    },
+    "form": {
+      "departmentName": {
+        "label": "ชื่อหน่วยงาน",
+        "placeholder": "ระบุชื่อหน่วยงาน",
+        "required": "กรุณาระบุชื่อหน่วยงาน"
+      },
+      "departmentCode": {
+        "label": "รหัสหน่วยงาน",
+        "placeholder": "ระบุรหัสหน่วยงาน"
+      },
+      "parentDepartment": {
+        "label": "หน่วยงานหลัก"
+      },
+      "departmentHead": {
+        "label": "หัวหน้าหน่วยงาน"
+      }
+    },
+    "actions": {
+      "cancel": "ยกเลิก",
+      "submit": "ยืนยัน"
+    }
+  },
+  "_viewDepartmentMember": {
+    "table": {
+      "userName": "ชื่อ",
+      "departmentName": "หน่วยงาน",
+      "mobile": "เบอร์โทรศัพท์",
+      "action": "การกระทำ"
+    },
+    "label": {
+      "view": "ดู",
+      "delete": "ลบ"
+    },
+    "messages": {
+      "createSuccess": "เพิ่มสมาชิกในหน่วยงานสำเร็จ",
+      "createFailed": "เพิ่มสมาชิกในหน่วยงานไม่สำเร็จ"
+    }
+  },
+  "_viewDepartmentMemberDetail": {
+    "label": {
+      "userName": "ชื่อ",
+      "mobile": "เบอร์โทรศัพท์",
+      "departmentName": "หน่วยงาน",
+      "role": "บทบาท",
+      "closeDrawer": "ปิด"
+    }
+  },
+  "_role": {
+    "label": {
+      "role": "บทบาท"
+    },
+    "fields": {
+      "searchRoleName": "ค้นหาชื่อบทบาท",
+      "permission": "สิทธิ์การใช้งาน",
+      "roleName": "ชื่อบทบาท",
+      "roleNamePlaceholder": "ระบุชื่อบทบาท",
+      "requiredRoleName": "กรุณาระบุชื่อบทบาท"
+    },
+    "actions": {
+      "savePermission": "บันทึกสิทธิ์การใช้งาน",
+      "submit": "ยืนยัน",
+      "cancel": "ยกเลิก"
+    },
+    "tabs": {
+      "roleDetails": "รายละเอียดบทบาท",
+      "permissions": "สิทธิ์การใช้งาน",
+      "members": "สมาชิก"
+    },
+    "addRoleDrawer": {
+      "title": "เพิ่มบทบาท",
+      "fields": {
+        "roleName": "ชื่อบทบาท",
+        "roleNamePlaceholder": "ระบุชื่อบทบาท",
+        "requiredRoleName": "กรุณาระบุชื่อบทบาท"
+      },
+      "actions": {
+        "submit": "ยืนยัน",
+        "cancel": "ยกเลิก"
+      }
+    },
+    "deleteMemberModal": {
+      "title": "ลบสมาชิก",
+      "deleteDescription": "คุณแน่ใจหรือไม่ที่จะลบ {{user}} ออกจากบทบาท {{role}}?",
+      "deleteUserSuccess": "ลบ {{user}} ออกจากบทบาท {{role}} สำเร็จ",
+      "deleteUserFailed": "ไม่สามารถลบผู้ใช้ออกจากบทบาทได้",
+      "buttons": {
+        "delete": "ลบ",
+        "cancel": "ยกเลิก"
+      }
+    },
+    "showMemberDrawer": {
+      "title": "รายละเอียดสมาชิก",
+      "fields": {
+        "member": "สมาชิก",
+        "phone": "เบอร์โทรศัพท์",
+        "department": "หน่วยงาน",
+        "role": "บทบาท"
+      },
+      "buttons": {
+        "close": "ปิด"
+      }
+    }
+  }
+}

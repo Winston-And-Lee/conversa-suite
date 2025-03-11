@@ -1,0 +1,53 @@
+{
+  "workspace": {
+    "detail": {
+      "workspaceName": "Workspace Name",
+      "user": "Users",
+      "color": "Color",
+      "primary": "Primary",
+      "createDateTime": "Create Date Time",
+      "latestUpdateDateTime": "Latest Update Date Time",
+      "note": "Note"
+    },
+    "edit": {
+      "workspaceDetail": "Workspace Detail",
+      "lastUpdate": "Last Update",
+      "detail": "Detail",
+      "color": "Color",
+      "recommendedResolution": "Recommended resolution: 1:1 ratio, maximum size 10MB"
+    },
+    "label": {
+      "save": "Save",
+      "user": "Users",
+      "add": "Add User",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "email": "Email",
+      "role": "Role",
+      "pleaseSelect": "Please Select",
+      "deleteUser": "Delete User"
+    },
+    "addUser": {
+      "title": "Add User",
+      "success": "User added successfully",
+      "failed": "Failed to add user",
+      "userDeleted": "User deleted successfully"
+    },
+    "items": {
+      "accessibility": "Accessibility"
+    },
+    "reset": "Reset"
+  },
+  "user_status": {
+    "pending": "Pending",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "table": {
+    "id": "ID",
+    "name": "Name",
+    "service": "Service",
+    "createdAt": "Created At",
+    "actions": "Actions"
+  }
+}

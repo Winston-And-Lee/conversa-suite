@@ -1,0 +1,1048 @@
+{
+  "components": {
+    "pagination": {
+      "label": {},
+      "fields": {
+        "paginationTotal": "Total {{total}} items",
+        "approvalGroupName": "Approval Group Name",
+        "approvalGroup": "Approval Group",
+        "actions": "Actions",
+        "approvalNamePlaceholder": "Enter approval name",
+        "approvalGroupPlaceHolder": "Select approval group",
+        "startDateEndDate": "Start Date - End Date",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "detail": "Detail",
+        "detailPlaceholder": "Enter detail",
+        "approvalName": "Approval",
+        "approvalDescription": "Approval Description",
+        "copy": "Copy",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "noData": "No Data",
+        "id": "ID",
+        "name": "Name",
+        "service": "Service",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "projectId": "Project ID",
+        "projectName": "Project Name",
+        "projectDescription": "Project Description"
+      },
+      "actions": {
+        "list": "List",
+        "create": "Create",
+        "edit": "Edit",
+        "show": "Show",
+        "view": "View",
+        "delete": "Delete"
+      },
+      "buttons": {
+        "create": "Create",
+        "save": "Save",
+        "logout": "Logout",
+        "profile": "Profile",
+        "delete": "Delete",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "confirm": "Confirm?",
+        "filter": "Filter",
+        "clear": "Clear",
+        "refresh": "Refresh",
+        "show": "Show",
+        "undo": "Undo",
+        "import": "Import",
+        "clone": "Clone",
+        "notAccessTitle": "You don't have permission to access",
+        "syncOrder": "Sync Order",
+        "export": "Export",
+        "search": "Search",
+        "reset": "Reset",
+        "advance": "Advanced",
+        "hideAdvance": "Hide Advanced",
+        "clickToUpload": "Click to Upload",
+        "update": "Update",
+        "next": "Next",
+        "previous": "Previous",
+        "Accept": "Accept",
+        "Reject": "Reject",
+        "add": "Add",
+        "loginWithMicrosoft": "Login with Microsoft"
+      },
+      "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes",
+      "notifications": {
+        "success": "Success",
+        "error": "Error (status code: {{statusCode}})",
+        "undoable": "You have {{seconds}} seconds to undo",
+        "createSuccess": "{{resource}} successfully created",
+        "createError": "Error creating {{resource}} (status code: {{statusCode}})",
+        "deleteSuccess": "{{resource}} successfully deleted",
+        "deleteError": "Error deleting {{resource}} (status code: {{statusCode}})",
+        "editSuccess": "{{resource}} successfully edited",
+        "editError": "Error editing {{resource}} (status code: {{statusCode}})",
+        "importProgress": "{{processed}}/{{total}} imported"
+      },
+      "loading": "Loading",
+      "tags": {
+        "clone": "Clone"
+      },
+      "dashboard": {
+        "title": "Dashboard"
+      },
+      "blog_posts": {
+        "blog_posts": "Blog Posts",
+        "fields": {
+          "id": "ID",
+          "title": "Title",
+          "content": "Content",
+          "status": "Status",
+          "createdAt": "Created At",
+          "category": "Category"
+        },
+        "titles": {
+          "create": "Create",
+          "edit": "Edit",
+          "list": "List",
+          "show": "Show"
+        }
+      },
+      "categories": {
+        "categories": "Categories",
+        "fields": {
+          "id": "ID",
+          "title": "Title",
+          "createdAt": "Created At"
+        },
+        "titles": {
+          "create": "Create",
+          "edit": "Edit",
+          "list": "List",
+          "show": "Show"
+        }
+      },
+      "documentTitle": {
+        "default": "Khaojai AI",
+        "suffix": " | Khaojai AI"
+      },
+      "user_status": {
+        "pending": "Pending",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "approval": {
+        "createApproval": "Create Approval Form",
+        "details": "Details"
+      },
+      "fallback": {
+        "loading": "Loading..."
+      }
+    },
+    "approvalRequestStatus": {
+      "label": {},
+      "fields": {
+        "inProgress": "In Progress",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "approveBoxFlow": {
+      "label": {},
+      "fields": {
+        "submit": "ยื่นขออนุมัติ",
+        "approver": "ผู้อนุมัติ",
+        "cc_to": "สำเนาถึง",
+        "processing": "ดำเนินการ",
+        "condition": "เงื่อนไข",
+        "next_approval": "การอนุมัติถัดไป",
+        "end": "สิ้นสุด"
+      },
+      "actions": {
+        "addData": "เพิ่มข้อมูล"
+      }
+    },
+    "approvalSetting": {
+      "form": {
+        "components": {
+          "title": "Components",
+          "text": {
+            "label": "Display Text",
+            "heading": "Heading",
+            "paragraph": "Paragraph"
+          },
+          "textInput": {
+            "label": "Text Input",
+            "shortAnswer": "Short Answer",
+            "longAnswer": "Long Answer"
+          },
+          "options": {
+            "label": "Options",
+            "dropdown": "Dropdown",
+            "multiSelect": "Multi Select",
+            "imageSelect": "Image Select",
+            "multipleChoice": "Multiple Choice",
+            "switch": "Switch",
+            "checkbox": "Single Checkbox",
+            "multiCheckbox": "Multiple Checkbox",
+            "optionMatrix": "Option Matrix"
+          },
+          "dateTime": {
+            "label": "Date and Time",
+            "date": "Date Picker",
+            "dateTime": "Date Time Picker",
+            "timer": "Timer",
+            "dateRange": "Date Range"
+          },
+          "contact": {
+            "label": "Contact Information",
+            "fullName": "Full Name",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address"
+          },
+          "number": {
+            "label": "Number",
+            "number": "Number",
+            "currency": "Currency"
+          },
+          "general": {
+            "label": "General",
+            "url": "URL Input",
+            "password": "Password",
+            "fileUpload": "File Upload",
+            "signature": "Signature",
+            "table": "Table"
+          },
+          "media": {
+            "label": "Media",
+            "image": "Image",
+            "video": "Video",
+            "pdfViewer": "PDF Viewer"
+          },
+          "layout": {
+            "label": "Layout",
+            "divider": "Divider",
+            "spacing": "Line Spacing"
+          }
+        },
+        "editor": {
+          "clickToEdit": "Click on a field in your form to edit",
+          "addPage": "Add Page",
+          "page": "Page",
+          "settings": "Settings"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "saveDraft": "Save Draft",
+          "save": "Save"
+        }
+      },
+      "messages": {
+        "editSuccess": "Approval group edited successfully",
+        "fieldRequired": "Please fill in the information"
+      },
+      "fields": {
+        "groupName": "Approval Group Name",
+        "groupNamePlaceholder": "Enter approval name"
+      }
+    },
+    "approvalListDetailDrawer": {
+      "label": {
+        "showComment": "Show Comment",
+        "enterComment": "Enter Comment",
+        "shouldApprove": "Should Approve",
+        "document": "Document",
+        "image": "Image"
+      },
+      "buttons": {
+        "close": "Close"
+      }
+    },
+    "addUserWorkSpace": {
+      "title": "Add Member to Unit: {{departmentName}}",
+      "labels": {
+        "all": "All",
+        "selected": "Selected ({{total}})",
+        "member": "Member",
+        "department": "Department",
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "submit": "Submit"
+      }
+    }
+  },
+  "pages": {
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "fields": {
+        "email": "Email"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Send reset instructions"
+      }
+    },
+    "register": {
+      "title": "Sign up for your account",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Register",
+        "haveAccount": "Have an account?"
+      },
+      "workspace": {
+        "title": "Create your Workspace",
+        "name": "Workspace Name",
+        "button": "Create workspace",
+        "errors": {
+          "required": "Missing required field",
+          "nameRequired": "Workspace name is required",
+          "createFailed": "Create Workspace Failed"
+        }
+      },
+      "information": {
+        "errors": {
+          "passwordNotMatch": "Password not match",
+          "firstNameRequired": "Please input your first name",
+          "lastNameRequired": "Please input your last name",
+          "emailRequired": "Please input your email",
+          "passwordRequired": "Please input your password"
+        }
+      },
+      "otp": {
+        "title": "Verify your account",
+        "subtitle": "Enter the 6-digit",
+        "reference": "OTP Code Reference",
+        "errors": {
+          "resendFailed": "Resend OTP Failed",
+          "validateFailed": "Validate OTP Failed",
+          "enterCorrectly": "Please enter OTP code correctly"
+        },
+        "buttons": {
+          "confirm": "Confirm",
+          "send": "Send OTP"
+        }
+      }
+    },
+    "updatePassword": {
+      "title": "Update password",
+      "fields": {
+        "password": "New Password",
+        "confirmPassword": "Confirm new password"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Passwords do not match"
+      },
+      "buttons": {
+        "submit": "Update"
+      }
+    },
+    "error": {
+      "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+      "404": "Sorry, the page you visited does not exist.",
+      "resource404": "Are you sure you have created the {{resource}} resource.",
+      "backHome": "Back Home"
+    },
+    "organization": {
+      "_user_department": {
+        "label": {
+          "userDepartment": "Department",
+          "userDepartmentMember": "Members and Departments",
+          "createUser": "Add Member",
+          "selectDepartment": "Select Department",
+          "deleteUser": "Delete Member"
+        },
+        "fields": {
+          "searchPlaceholder": "Search",
+          "item": "Items",
+          "paginationTotal": "Total {{total}} items",
+          "addUserSuccess": "Member added successfully",
+          "addUserFailed": "Failed to add member",
+          "firstName": "First Name (without title)",
+          "firstNamePlaceholder": "Enter first name (without title)",
+          "lastName": "Last Name",
+          "lastNamePlaceholder": "Enter last name",
+          "cid": "13-digit Citizen ID",
+          "cidPlaceholder": "Enter 13-digit citizen ID",
+          "mobile": "Phone Number",
+          "mobilePlaceholder": "Enter phone number",
+          "department": "Department (can select multiple)",
+          "deleteUserSuccess": "Deleted member {{user}} from department {{department}} successfully",
+          "deleteUserFailed": "Failed to delete member from department",
+          "deleteText": "Do you want to delete '{{user}}'?"
+        },
+        "actions": {
+          "search": "ค้นหา",
+          "add": "เพิ่ม",
+          "import": "นำเข้า",
+          "export": "ส่งออก",
+          "select": "เลือก",
+          "cancel": "ยกเลิก",
+          "save": "ยืนยัน",
+          "deleteUser": "ลบสมาชิก",
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      },
+      "_role": {
+        "label": {
+          "role": "Role"
+        },
+        "fields": {
+          "searchPlaceholder": "search",
+          "item": "items",
+          "paginationTotal": "ทั้งหมด {{total}} รายการ",
+          "searchRoleName": "Search by role name",
+          "permission": "Permission"
+        },
+        "search": {
+          "member": "Member"
+        },
+        "actions": {
+          "search": "search",
+          "add": "add",
+          "import": "import",
+          "export": "export",
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View",
+          "savePermission": "Save Permission"
+        },
+        "table": {
+          "member": "Member",
+          "email": "Email",
+          "phone": "Phone Number",
+          "action": "action",
+          "view": "view",
+          "delete": "delete"
+        },
+        "showMemberDrawer": {
+          "title": "Member Details",
+          "fields": {
+            "member": "Member",
+            "phone": "Phone Number",
+            "department": "Department",
+            "role": "Role"
+          },
+          "buttons": {
+            "close": "Close"
+          }
+        },
+        "deleteMemberModal": {
+          "title": "ลบสมาชิกในบทบาท",
+          "deleteDescription": "คุณต้องการลบ '{{user}}' ออกจากบทบาท '{{role}}' ใช่หรือไม่ ?",
+          "deleteUserSuccess": "ลบสมาชิก {{user}} ออกจากบทบาท {{role}} สำเร็จแล้ว",
+          "deleteUserError": "ไม่สามารถลบสมาชิกออกจากบทบาทได้",
+          "buttons": {
+            "delete": "ลบสมาชิก",
+            "cancel": "ยกเลิก"
+          }
+        },
+        "addRoleDrawer": {
+          "title": "เพิ่มบทบาท",
+          "fields": {
+            "roleName": "ชื่อบทบาท",
+            "requiredRoleName": "กรุณาระบุชื่อบทบาท",
+            "roleNamePlaceholder": "ระบุบทบาท",
+            "memberInRole": "สมาชิกในบทบาท  (เลือกได้มากกว่า 1 รายการ)"
+          },
+          "actions": {
+            "add": "เพิ่ม",
+            "cancel": "ยกเลิก",
+            "submit": "ยืนยัน"
+          }
+        },
+        "editRoleDrawer": {
+          "title": "แก้ไขบทบาท",
+          "fields": {
+            "roleName": "ชื่อบทบาท",
+            "requiredRoleName": "กรุณาระบุชื่อบทบาท",
+            "roleNamePlaceholder": "ระบุบทบาท",
+            "memberInRole": "สมาชิกในบทบาท  (เลือกได้มากกว่า 1 รายการ)"
+          },
+          "actions": {
+            "add": "เพิ่ม",
+            "cancel": "ยกเลิก",
+            "submit": "ยืนยัน"
+          },
+          "tabs": {
+            "roleDetails": "รายละเอียดบทบาท",
+            "permissions": "สิทธิ์การใช้งาน",
+            "members": "สมาชิก"
+          }
+        },
+        "tabs": {
+          "roleDetails": "Role Details",
+          "permissions": "Permissions",
+          "members": "Members"
+        }
+      },
+      "_addDepartmentMember": {
+        "titleDrawer": "เพิ่มหน่วยงาน",
+        "titleSubDepartment": "เพิ่มหัวหน้าหน่วยงาน",
+        "titleEditDrawer": "แก้ไขหน่วยงาน",
+        "label": {
+          "select": "เลือก",
+          "edit": "แก้ไข",
+          "messageCreateSuccess": "Department created successfully!",
+          "messageUpdateSuccess": "Department updated successfully!",
+          "messageCreateFail": "Department create failed!",
+          "messageUpdateFail": "Department update failed!"
+        },
+        "actions": {
+          "cancel": "ยกเลิก",
+          "submit": "ยืนยัน"
+        },
+        "form": {
+          "departmentName": {
+            "label": "ชื่อหน่วยงาน",
+            "placeholder": "ระบุชื่อหน่วยงาน",
+            "required": "กรุณากรอกชื่อหน่วยงาน"
+          },
+          "departmentCode": {
+            "label": "รหัสหน่วยงาน",
+            "placeholder": "ระบุรหัสหน่วยงาน"
+          },
+          "parentDepartment": {
+            "label": "หน่วยงานต้นสังกัด (เลือกได้ 1 รายการ)",
+            "placeholder": "ระบุหน่วยงานต้นสังกัด"
+          },
+          "departmentHead": {
+            "label": "หัวหน้าหน่วยงาน (เลือกได้ 1 รายการ)"
+          },
+          "departmentMembers": {
+            "label": "สมาชิกในหน่วยงาน (เลือกได้มากกว่า 1 รายการ)"
+          }
+        }
+      },
+      "_departmentMemberDrawer": {
+        "titleHead": "เพิ่มหัวหน้าหน่วยงาน",
+        "titleMember": "สมาชิกในหน่วยงาน",
+        "actions": {
+          "cancel": "ยกเลิก",
+          "submit": "ยืนยัน"
+        },
+        "tabs": {
+          "all": "รายชื่อทั้งหมด",
+          "selected": "เลือกแล้ว {{count}}"
+        },
+        "table": {
+          "member": "สมาชิก",
+          "department": "หน่วยงาน",
+          "status": "สถานะ",
+          "active": "ใช้งาน",
+          "inactive": "ไม่ใช้งาน"
+        }
+      },
+      "_viewDepartmentMemberDetail": {
+        "titleDrawer": "ดูรายละเอียดสมาชิก",
+        "label": {
+          "userName": "สมาชิก",
+          "departmentName": "ชื่อหน่วยงาน",
+          "mobile": "เบอร์โทรศัพท์",
+          "role": "บทบาท",
+          "closeDrawer": "ปิด"
+        }
+      },
+      "_viewDepartmentMember": {
+        "label": {
+          "view": "ดู",
+          "delete": "ลบ",
+          "titleDelete": "ลบสมาชิกในสมาชิกเเละหน่วยงาน",
+          "deleteDescription": "คุณต้องการลบ \"{{user}}\" ออกจากสมาชิกเเละหน่วยงาน \"{{department}}\" ใช่หรือไม่ ?",
+          "deleteSuccess": "ลบสมาชิกในสมาชิกเเละหน่วยงานสำเร็จแล้ว",
+          "deleteMember": "ลบสมาชิก",
+          "cancelDeleteMember": "ยกเลิก"
+        },
+        "table": {
+          "userName": "สมาชิก",
+          "departmentName": "ชื่อหน่วยงาน",
+          "mobile": "เบอร์โทรศัพท์",
+          "action": "การกระทำ"
+        }
+      }
+    },
+    "approvalCenter": {
+      "_approvalList": {
+        "label": {
+          "approvalList": "รายการการขออนุมัติ",
+          "uploadDocument": "อัปโหลดเอกสาร",
+          "uploadIamge": "อัปโหลดรูปภาพ"
+        },
+        "tabs": {
+          "all": "ทั้งหมด",
+          "inProgress": "กำลังดำเนินการ",
+          "pending": "ที่ต้องดำเนินการ"
+        },
+        "table": {
+          "member": "Member",
+          "email": "Email",
+          "phone": "Phone Number",
+          "action": "action",
+          "view": "view",
+          "delete": "delete"
+        },
+        "actions": {
+          "upload": "Click to Upload",
+          "back": "ย้อนกลับ",
+          "unapprove": "ไม่อนุมัติ",
+          "approve": "อนุมัติ"
+        },
+        "columns": {
+          "approvalName": "Approval Name",
+          "requestDate": "Request Date",
+          "approvalStep": "Approval Step",
+          "status": "Status",
+          "lastUpdated": "Last Updated",
+          "actions": "Actions",
+          "view": "View"
+        },
+        "filter": {
+          "approvalName": "Approval Name"
+        }
+      },
+      "_approvalRequestGroup": {
+        "fields": {
+          "approvalGroupName": "ชื่อกลุ่มการอนุมัติ",
+          "approvalGroup": "กลุ่มการอนุมัติ",
+          "actions": "การกระทำ",
+          "detail": "รายละเอียด"
+        },
+        "actions": {
+          "export": "ส่งออก",
+          "confirm": "ยืนยัน",
+          "submitRequest": "ยื่นขออนุมัติ"
+        },
+        "label": {
+          "createGroup": "Create Approval Group",
+          "editGroup": "Edit Approval Group",
+          "groupName": "Approval Group Name",
+          "groupNamePlaceholder": "Enter approval name"
+        },
+        "messages": {
+          "createSuccess": "Created successfully!",
+          "createError": "Failed to create approval group.",
+          "updateSuccess": "Updated successfully!",
+          "updateError": "Failed to update.",
+          "fieldRequired": "This field is required"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "confirm": "Confirm"
+        }
+      }
+    },
+    "approvalSetting": {
+      "label": {
+        "description": "Description",
+        "actions": "Actions",
+        "submitApproval": "Submit Approval"
+      },
+      "form": {
+        "components": {
+          "title": "Components",
+          "text": {
+            "label": "Display Text",
+            "heading": "Heading",
+            "paragraph": "Paragraph"
+          },
+          "textInput": {
+            "label": "Text Input",
+            "shortAnswer": "Short Answer",
+            "longAnswer": "Long Answer"
+          },
+          "options": {
+            "label": "Options",
+            "dropdown": "Dropdown",
+            "multiSelect": "Multi Select",
+            "imageSelect": "Image Select",
+            "multipleChoice": "Multiple Choice",
+            "switch": "Switch",
+            "checkbox": "Checkbox",
+            "multiCheckbox": "Multi Checkbox",
+            "optionMatrix": "Option Matrix"
+          },
+          "dateTime": {
+            "label": "Date & Time",
+            "date": "Date",
+            "dateTime": "Date & Time",
+            "timer": "Timer",
+            "dateRange": "Date Range"
+          },
+          "contact": {
+            "label": "Contact Information",
+            "fullName": "Full Name",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address"
+          },
+          "number": {
+            "label": "Numbers",
+            "number": "Number",
+            "currency": "Currency"
+          },
+          "general": {
+            "label": "General",
+            "url": "URL Input",
+            "password": "Password",
+            "fileUpload": "File Upload",
+            "signature": "Signature",
+            "table": "Table"
+          },
+          "media": {
+            "label": "Media",
+            "image": "Image",
+            "video": "Video",
+            "pdfViewer": "PDF Viewer"
+          },
+          "layout": {
+            "label": "Layout",
+            "divider": "Divider",
+            "spacing": "Line Spacing"
+          }
+        },
+        "editor": {
+          "clickToEdit": "Click field in your form to edit",
+          "addPage": "Add Page",
+          "page": "Page",
+          "settings": "Settings"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "saveDraft": "Save Draft",
+          "save": "Save"
+        }
+      },
+      "messages": {
+        "editSuccess": "Approval group updated successfully",
+        "fieldRequired": "This field is required"
+      },
+      "fields": {
+        "groupName": "Approval Group Name",
+        "groupNamePlaceholder": "Enter approval name"
+      }
+    },
+    "workspaces": {
+      "label": {
+        "name": "Name",
+        "status": "Status",
+        "email": "Email",
+        "user": "User",
+        "delete": "Delete",
+        "save": "Save",
+        "addUser": "Add User",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "pleaseSelect": "Please select",
+        "role": "Role",
+        "deleteUser": "Delete User"
+      },
+
+      "items": {
+        "accessibility": "Accessible Features"
+      },
+      "addUser": {
+        "success": "User added successfully!",
+        "failed": "Failed to add as a user"
+      },
+      "userDeleted": "User deleted!",
+      "userDeletedFailed": "Failed to delete user",
+      "wantToDelete": "Do you want to delete this user?",
+      "reset": "Reset",
+      "detail": {
+        "workspaceName": "Workspace Name",
+        "user": "User",
+        "color": "Color",
+        "primary": "Primary",
+        "createDateTime": "Create Date Time",
+        "latestUpdateDateTime": "Latest Update Date Time",
+        "note": "Note"
+      },
+      "edit": {
+        "workspaceDetail": "Workspace Detail",
+        "detail": "Detail",
+        "lastUpdate": "Last update",
+        "recommendedResolution": "Recommended resolution is 1:1 with file size 10 MB",
+        "color": "Color"
+      }
+    },
+    "project": {
+      "search": {
+        "items": "Items",
+        "add": "Add",
+        "import": "Import",
+        "export": "Export"
+      },
+      "table": {
+        "project": "Project",
+        "period": "Start-End Date",
+        "status": "Status",
+        "actions": {
+          "title": "Actions",
+          "addSubProject": "Add Sub Project",
+          "view": "View",
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      },
+      "buttons": {
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "copy": "Copy"
+      },
+      "projectDetail": "Project Detail",
+      "projectCode": "Project Code",
+      "projectName": "Project Name",
+      "startDateEndDate": "Start-End Date",
+      "status": "Status",
+      "infoNo": "Info No.",
+      "infoName": "Info Name",
+      "infoType": "Info Type",
+      "selectInfoType": "Select Info Type",
+      "required": "Required",
+      "enter": "Enter",
+      "active": "Active",
+      "inactive": "Inactive",
+      "addInfo": "Add Info",
+      "option": "Option",
+      "fileType": "File Type",
+      "choose": "Choose",
+      "clickToUpload": "Click to Upload"
+    },
+    "reports": {
+      "list": {
+        "name": "Name",
+        "tags": "Tags",
+        "updatedAt": "Updated At"
+      },
+      "show": {
+        "dashboard": "Dashboard",
+        "exitFullScreen": "Exit Full Screen",
+        "fullScreen": "Full Screen"
+      }
+    },
+    "settings": {
+      "workspaces": {
+        "edit": {
+          "workspaceDetail": "Workspace Detail",
+          "lastUpdate": "Last Update",
+          "detail": "Detail",
+          "color": "Color",
+          "recommendedResolution": "Recommended resolution: 1:1 ratio, maximum size 10MB"
+        },
+        "segmentCard": {
+          "label": {
+            "add": "Add User",
+            "name": "Name",
+            "status": "Status",
+            "email": "Email",
+            "user": "User",
+            "delete": "Delete",
+            "save": "Save",
+            "addUser": "Add User",
+            "cancel": "Cancel",
+            "confirm": "Confirm",
+            "pleaseSelect": "Please select",
+            "role": "Role",
+            "deleteUser": "Delete User"
+          },
+          "addUser": {
+            "title": "Add User",
+            "success": "User added successfully!",
+            "failed": "Failed to add as a user"
+          },
+          "userDeleted": "User deleted!",
+          "userDeletedFailed": "Failed to delete user",
+          "wantToDelete": "Do you want to delete this user?",
+          "reset": "Reset",
+          "detail": {
+            "workspaceName": "Workspace Name",
+            "user": "User",
+            "color": "Color",
+            "primary": "Primary",
+            "createDateTime": "Create Date Time",
+            "latestUpdateDateTime": "Latest Update Date Time",
+            "note": "Note"
+          }
+        }
+      }
+    },
+    "userWorkspaces": {
+      "fields": {
+        "email": "Email",
+        "name": "Name",
+        "role": "Role",
+        "updateDate": "Update Date",
+        "user": "User"
+      },
+      "roles": {
+        "select": "Select a Role",
+        "admin": "Admin",
+        "member": "Member",
+        "inactive": "Inactive"
+      }
+    }
+  },
+  "actions": {
+    "list": "List",
+    "create": "Create",
+    "edit": "Edit",
+    "show": "Show"
+  },
+  "buttons": {
+    "create": "Create",
+    "save": "Save",
+    "logout": "Logout",
+    "profile": "Profile",
+    "delete": "Delete",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirm": "Are you sure?",
+    "filter": "Filter",
+    "clear": "Clear",
+    "refresh": "Refresh",
+    "show": "Show",
+    "undo": "Undo",
+    "import": "Import",
+    "clone": "Clone",
+    "notAccessTitle": "You don't have permission to access",
+    "syncOrder": "Sync Orders",
+    "export": "Export",
+    "search": "Search",
+    "reset": "Reset",
+    "advance": "Advance",
+    "hideAdvance": "Hide Advance",
+    "clickToUpload": "Click to Upload",
+    "update": "Update",
+    "next": "Next",
+    "previous": "Previous",
+    "Accept": "Accept",
+    "Reject": "Reject",
+    "add": "Add",
+    "login": "Login",
+    "signup": "Sign Up",
+    "loginWithMicrosoft": "Sign in with Microsoft"
+  },
+  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
+  "notifications": {
+    "success": "Successful",
+    "error": "Error (status code: {{statusCode}})",
+    "undoable": "You have {{seconds}} seconds to undo",
+    "createSuccess": "Successfully created {{resource}}",
+    "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+    "deleteSuccess": "Successfully deleted {{resource}}",
+    "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+    "editSuccess": "Successfully edited {{resource}}",
+    "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+    "importProgress": "Importing: {{processed}}/{{total}}"
+  },
+  "loading": "Loading",
+  "tags": {
+    "clone": "Clone"
+  },
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "seller": {
+    "sellers": "Sellers",
+    "fields": {
+      "id": "Id",
+      "name": "Name"
+    },
+    "titles": {
+      "create": "Create Blog Post",
+      "edit": "Edit Blog Post",
+      "list": "Blog Posts",
+      "show": "Show Blog Post"
+    }
+  },
+  "documentTitle": {
+    "default": "Khaojai AI",
+    "suffix": " | Khaojai AI"
+  },
+  "table": {
+    "actions": "Actions",
+    "projectId": "Project ID",
+    "projectName": "Project Name",
+    "projectDescription": "Project Description",
+    "id": "ID",
+    "name": "Name",
+    "service": "Service",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At"
+  },
+  "sidebar": {
+    "organization": "Organization",
+    "Organization": "Organization",
+    "department": "Department",
+    "Project Management": "Project Management",
+    "project": "Project",
+    "Project": "Project",
+    "workspace-role": "Role",
+    "report-service": "Report Service",
+    "Report": "Report",
+    "reports": "Reports",
+    "Reports": "Reports",
+    "users": "Users",
+    "role-member": "Role-member",
+    "user-department": "User-department",
+    "members": "Members",
+    "Super Admin": "Super Admin",
+    "approval-group": "Approval",
+    "Approval": "Approval",
+    "form": "Form Approval",
+    "Settings": "Settings",
+    "Approval Setting": "Approval Setting",
+    "ApprovalCenter": "Approval Center",
+    "ApprovalRequest": "Approval Request",
+    "Approval List": "Approval List",
+    "workspace": "Workspace",
+    "user-workspaces": "User",
+    "workspaces": "Workspaces",
+    "approval-center": "Approval Center",
+    "approval-request": "Approval Request",
+    "approval-list": "Approval List",
+    "project-boq": "Project BOQ",
+    "business-partner-group": "Business Partner Group",
+    "business-partner": "Business Partner",
+    "business-partner-contact-person": "Contact Person"
+  },
+  "user_status": {
+    "pending": "Pending",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "organization": {
+    "cid": "Citizen ID",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "mobile": "Mobile Phone",
+    "organization": "Organization",
+    "status": "status",
+    "jobTitle": "Job Title",
+    "employeeId": "Employee ID",
+    "email": "Email",
+    "details": "Details"
+  },
+  "fallback": {
+    "loading": "Loading..."
+  },
+  "placeholders": {
+    "email": "example@gmail.com",
+    "password": "Password"
+  }
+}

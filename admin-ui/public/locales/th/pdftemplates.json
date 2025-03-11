@@ -1,0 +1,14 @@
+{
+  "create": {
+    "name": "ชื่อ",
+    "description": "คำอธิบาย",
+    "template": "แม่แบบ"
+  },
+  "list": {
+    "name": "ชื่อ",
+    "updatedAt": "อัปเดตเมื่อ",
+    "table": {
+      "actions": "การกระทำ"
+    }
+  }
+}

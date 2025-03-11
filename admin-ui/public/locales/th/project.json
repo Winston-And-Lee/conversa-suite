@@ -1,0 +1,43 @@
+{
+  "_project": {
+    "fields": {
+      "code": "รหัส",
+      "name": "ชื่อ",
+      "startDate": "วันที่เริ่ม",
+      "status": "สถานะ",
+      "updatedAt": "อัปเดตเมื่อ"
+    },
+    "filter": {
+      "name": "ชื่อ",
+      "code": "รหัส"
+    },
+    "actions": {
+      "export": "ส่งออก"
+    },
+    "tabs": {
+      "all": "ทั้งหมด",
+      "inProgress": "กำลังดำเนินการ",
+      "done": "เสร็จสิ้น",
+      "pending": "รอดำเนินการ",
+      "cancelled": "ยกเลิก"
+    },
+    "title": "รายการโครงการ"
+  },
+  "_project-boq": {
+    "fields": {
+      "code": "รหัส",
+      "name": "ชื่อ",
+      "qty": "จำนวน",
+      "startDate": "วันที่เริ่ม",
+      "updatedAt": "อัปเดตเมื่อ"
+    },
+    "filter": {
+      "name": "ชื่อ",
+      "code": "รหัส"
+    },
+    "actions": {
+      "export": "ส่งออก"
+    },
+    "title": "รายการ BOQ โครงการ"
+  }
+}

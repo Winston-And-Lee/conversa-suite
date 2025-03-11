@@ -1,0 +1,56 @@
+{
+  "workspace": {
+    "detail": {
+      "workspaceName": "ชื่อพื้นที่ทำงาน",
+      "user": "ผู้ใช้งาน",
+      "color": "สี",
+      "primary": "หลัก",
+      "createDateTime": "วันที่สร้าง",
+      "latestUpdateDateTime": "วันที่แก้ไขล่าสุด",
+      "note": "หมายเหตุ"
+    },
+    "edit": {
+      "workspaceDetail": "รายละเอียดพื้นที่ทำงาน",
+      "lastUpdate": "แก้ไขล่าสุด",
+      "detail": "รายละเอียด",
+      "color": "สี",
+      "recommendedResolution": "ความละเอียดที่แนะนำ: อัตราส่วน 1:1 ขนาดสูงสุด 10MB"
+    },
+    "label": {
+      "save": "บันทึก",
+      "user": "ผู้ใช้งาน",
+      "add": "เพิ่มผู้ใช้งาน",
+      "cancel": "ยกเลิก",
+      "confirm": "ยืนยัน",
+      "email": "อีเมล",
+      "role": "บทบาท",
+      "pleaseSelect": "กรุณาเลือก",
+      "deleteUser": "ลบผู้ใช้งาน",
+      "name": "ชื่อ",
+      "status": "สถานะ",
+      "delete": "ลบ"
+    },
+    "addUser": {
+      "title": "เพิ่มผู้ใช้งาน",
+      "success": "เพิ่มผู้ใช้งานสำเร็จ",
+      "failed": "เพิ่มผู้ใช้งานไม่สำเร็จ",
+      "userDeleted": "ลบผู้ใช้งานสำเร็จ"
+    },
+    "items": {
+      "accessibility": "การเข้าถึง"
+    },
+    "reset": "รีเซ็ต"
+  },
+  "user_status": {
+    "pending": "รอดำเนินการ",
+    "active": "ใช้งาน",
+    "inactive": "ไม่ได้ใช้งาน"
+  },
+  "table": {
+    "id": "รหัส",
+    "name": "ชื่อ",
+    "service": "บริการ",
+    "createdAt": "วันที่สร้าง",
+    "actions": "การกระทำ"
+  }
+}

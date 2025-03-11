@@ -1,0 +1,28 @@
+{
+  "title": "ลงชื่อเข้าใช้บัญชีของคุณ",
+  "signin": "เข้าสู่ระบบ",
+  "signup": "ลงชื่อเข้าใช้",
+  "divider": "หรือ",
+  "fields": {
+    "email": "อีเมล",
+    "password": "รหัสผ่าน"
+  },
+  "errors": {
+    "validEmail": "ที่อยู่อีเมลที่ไม่ถูกต้อง",
+    "emailRequired": "กรุณากรอกอีเมล",
+    "passwordRequired": "กรุณากรอกรหัสผ่าน"
+  },
+  "buttons": {
+    "submit": "เข้าสู่ระบบ",
+    "forgotPassword": "ลืมรหัสผ่าน?",
+    "noAccount": "ยังไม่มีบัญชี?",
+    "rememberMe": "จดจำฉัน"
+  },
+  "welcomeBack": "ยินดีต้อนรับกลับ !",
+  "signInToAccount": "เข้าสู่บัญชีของคุณ",
+  "emailVerified": "ยืนยันอีเมลสำเร็จ",
+  "placeholders": {
+    "email": "example@gmail.com",
+    "password": "รหัสผ่าน"
+  }
+}

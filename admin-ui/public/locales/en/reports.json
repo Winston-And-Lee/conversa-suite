@@ -1,0 +1,18 @@
+{
+  "list": {
+    "name": "Name",
+    "tags": "Tags",
+    "updatedAt": "Updated At"
+  },
+  "show": {
+    "dashboard": "Dashboard",
+    "fullScreen": "Full Screen",
+    "exitFullScreen": "Exit Full Screen"
+  },
+  "create": {
+    "title": "Create Report"
+  },
+  "edit": {
+    "title": "Edit Report"
+  }
+}

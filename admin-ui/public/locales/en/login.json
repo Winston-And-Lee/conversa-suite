@@ -1,0 +1,28 @@
+{
+  "title": "Sign in to your account",
+  "signin": "Sign in",
+  "signup": "Sign up",
+  "divider": "or",
+  "fields": {
+    "email": "Email",
+    "password": "Password"
+  },
+  "errors": {
+    "validEmail": "Invalid email address",
+    "emailRequired": "Please input your email",
+    "passwordRequired": "Please input your password"
+  },
+  "buttons": {
+    "submit": "Login",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "rememberMe": "Remember me"
+  },
+  "welcomeBack": "Welcome back !",
+  "signInToAccount": "Sign In to your account",
+  "emailVerified": "Email verified successfully",
+  "placeholders": {
+    "email": "example@gmail.com",
+    "password": "Password"
+  }
+}

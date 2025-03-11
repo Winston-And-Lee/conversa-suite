@@ -1,0 +1,70 @@
+{
+  "_approvalList": {
+    "label": {
+      "approvalList": "รายการการขออนุมัติ",
+      "uploadDocument": "อัปโหลดเอกสาร",
+      "uploadImage": "อัปโหลดรูปภาพ",
+      "title": "การขออนุมัติ: ",
+      "details": "รายละเอียด",
+      "approverComment": "ความคิดเห็นของผู้อนุมัติ",
+      "showComment": "แสดงความคิดเห็น",
+      "enterComment": "ระบุความคิดเห็น",
+      "approvalHistory": "ประวัติการอนุมัติ"
+    },
+    "tabs": {
+      "all": "ทั้งหมด",
+      "inProgress": "กำลังดำเนินการ",
+      "pending": "ที่ต้องดำเนินการ"
+    },
+    "columns": {
+      "approvalName": "ชื่อการอนุมัติ",
+      "requestDate": "วันที่ขออนุมัติ",
+      "approvalStep": "ขั้นตอนการอนุมัติ",
+      "status": "สถานะ",
+      "lastUpdated": "วันที่อัปเดทล่าสุด",
+      "actions": "การกระทำ",
+      "view": "ดู"
+    },
+    "filter": {
+      "approvalName": "ชื่อการอนุมัติ"
+    },
+    "actions": {
+      "upload": "อัปโหลด",
+      "back": "ย้อนกลับ",
+      "unapprove": "ไม่อนุมัติ",
+      "approve": "อนุมัติ"
+    },
+    "status": {
+      "pending": "รอการอนุมัติ"
+    }
+  },
+  "_approvalRequestGroup": {
+    "fields": {
+      "approvalGroupName": "ชื่อกลุ่มการอนุมัติ",
+      "approvalGroup": "กลุ่มการอนุมัติ",
+      "actions": "การกระทำ",
+      "detail": "รายละเอียด"
+    },
+    "actions": {
+      "export": "ส่งออก",
+      "submitRequest": "ส่งคำร้อง"
+    },
+    "label": {
+      "createGroup": "สร้างกลุ่มการอนุมัติ",
+      "editGroup": "แก้ไขกลุ่มการอนุมัติ",
+      "groupName": "ชื่อกลุ่มการอนุมัติ",
+      "groupNamePlaceholder": "ระบุชื่อการอนุมัติ"
+    },
+    "messages": {
+      "createSuccess": "สร้างสำเร็จ!",
+      "createError": "ไม่สามารถสร้างกลุ่มการอนุมัติได้",
+      "updateSuccess": "อัปเดตสำเร็จ!",
+      "updateError": "ไม่สามารถอัปเดตได้",
+      "fieldRequired": "จำเป็นต้องระบุข้อมูลนี้"
+    },
+    "buttons": {
+      "cancel": "ยกเลิก",
+      "confirm": "ยืนยัน"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Approval",
+        "meta": {
+            "icon": "Document",
+            "label": "Approval"
+        }
+    },
+    {
+        "name": "Test Approval",
+        "list": "/approval/67691df91f4ccea308cb3a1c/detail/",
+        "create": "/approval/67691df91f4ccea308cb3a1c/request/submit/",
+        "identifier": "Test Approval",
+        "meta": {
+            "icon": "Checklist",
+            "label": "Test Approval",
+            "parent": "Approval",
+            "nameShowTH": "ทดสอบยื่นอนุมัติ",
+            "nameShowEN": "Test Approval"
+        }
+    }
+]

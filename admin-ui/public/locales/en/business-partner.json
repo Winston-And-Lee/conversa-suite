@@ -1,0 +1,54 @@
+{
+  "_business-partner": {
+    "fields": {
+      "slug": "Slug",
+      "name": "Name",
+      "updatedAt": "Updated At",
+      "code": "Code",
+      "position": "Position",
+      "email": "Email"
+    },
+    "filter": {
+      "name": "Name",
+      "code": "Code"
+    },
+    "actions": {
+      "export": "Export"
+    }
+  },
+  "_business-partner-group": {
+    "fields": {
+      "slug": "Slug",
+      "name": "Name",
+      "updatedAt": "Updated At",
+      "code": "Code"
+    },
+    "filter": {
+      "name": "Name",
+      "code": "Code"
+    },
+    "actions": {
+      "export": "Export"
+    }
+  },
+  "_contact-person": {
+    "fields": {
+      "name": "Name",
+      "firstName": "First Name",
+      "middleName": "Middle Name",
+      "lastName": "Last Name",
+      "position": "Position",
+      "businessPartner": "Business Partner",
+      "email": "Email",
+      "updatedAt": "Updated At"
+    },
+    "filter": {
+      "firstName": "First Name",
+      "position": "Position",
+      "email": "Email"
+    },
+    "actions": {
+      "export": "Export"
+    }
+  }
+}

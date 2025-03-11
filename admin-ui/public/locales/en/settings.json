@@ -1,0 +1,62 @@
+{
+  "userWorkspaces": {
+    "fields": {
+      "email": "Email",
+      "name": "Name",
+      "role": "Role",
+      "updateDate": "Update Date",
+      "user": "User"
+    },
+    "roles": {
+      "select": "Select a Role",
+      "admin": "Admin",
+      "member": "Member",
+      "inactive": "Inactive"
+    }
+  },
+  "workspaces": {
+    "edit": {
+      "workspaceDetail": "Workspace Detail",
+      "lastUpdate": "Last Update",
+      "detail": "Detail",
+      "color": "Color",
+      "recommendedResolution": "Recommended resolution: 1:1 ratio, maximum size 10MB"
+    },
+    "segmentCard": {
+      "label": {
+        "add": "Add User",
+        "name": "Name",
+        "status": "Status",
+        "email": "Email",
+        "user": "User",
+        "delete": "Delete",
+        "save": "Save",
+        "addUser": "Add User",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "pleaseSelect": "Please select",
+        "role": "Role",
+        "deleteUser": "Delete User",
+        "selected": "Selected {{count}} items"
+      },
+      "addUser": {
+        "title": "Add User",
+        "success": "User added successfully!",
+        "failed": "Failed to add as a user"
+      },
+      "userDeleted": "User deleted!",
+      "userDeletedFailed": "Failed to delete user",
+      "wantToDelete": "Do you want to delete this user?",
+      "reset": "Reset",
+      "detail": {
+        "workspaceName": "Workspace Name",
+        "user": "User",
+        "color": "Color",
+        "primary": "Primary",
+        "createDateTime": "Create Date Time",
+        "latestUpdateDateTime": "Latest Update Date Time",
+        "note": "Note"
+      }
+    }
+  }
+}

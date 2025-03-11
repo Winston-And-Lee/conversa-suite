@@ -1,0 +1,57 @@
+{
+  "information": {
+    "title": "สร้างบัญชีผู้ใช้งาน",
+    "fields": {
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "email": "อีเมล",
+      "password": "รหัสผ่าน",
+      "confirmPassword": "ยืนยันรหัสผ่าน"
+    },
+    "placeholders": {
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "email": "example@gmail.com",
+      "password": "รหัสผ่าน",
+      "confirmPassword": "ยืนยันรหัสผ่าน"
+    },
+    "errors": {
+      "firstNameRequired": "กรุณากรอกชื่อ",
+      "lastNameRequired": "กรุณากรอกนามสกุล",
+      "emailRequired": "กรุณากรอกอีเมล",
+      "passwordRequired": "กรุณากรอกรหัสผ่าน",
+      "passwordNotMatch": "รหัสผ่านไม่ตรงกัน"
+    },
+    "buttons": {
+      "signup": "สมัครสมาชิก",
+      "google": "ดำเนินการต่อด้วย Google"
+    },
+    "divider": "หรือ",
+    "haveAccount": "มีบัญชีอยู่แล้ว?",
+    "signin": "เข้าสู่ระบบ"
+  },
+  "otp": {
+    "title": "ยืนยันอีเมล",
+    "subtitle": "กรุณากรอกรหัสยืนยันที่ส่งไปยังอีเมลของคุณ",
+    "reference": "รหัสอ้างอิง",
+    "buttons": {
+      "confirm": "ยืนยัน",
+      "send": "ส่งรหัส OTP",
+      "resend": "ส่งรหัสใหม่"
+    },
+    "errors": {
+      "validateFailed": "ยืนยันรหัส OTP ไม่สำเร็จ",
+      "enterCode": "กรุณากรอกรหัส OTP ให้ถูกต้อง"
+    }
+  },
+  "workspace": {
+    "title": "สร้างพื้นที่ทำงาน",
+    "name": "ชื่อพื้นที่ทำงาน",
+    "button": "สร้างพื้นที่ทำงาน",
+    "errors": {
+      "required": "ต้องระบุชื่อพื้นที่ทำงาน",
+      "nameRequired": "กรุณากรอกชื่อพื้นที่ทำงาน",
+      "createFailed": "สร้างพื้นที่ทำงานไม่สำเร็จ"
+    }
+  }
+}

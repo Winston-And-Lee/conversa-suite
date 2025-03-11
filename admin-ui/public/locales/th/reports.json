@@ -1,0 +1,18 @@
+{
+  "list": {
+    "name": "ชื่อ",
+    "tags": "แท็ก",
+    "updatedAt": "อัปเดตเมื่อ"
+  },
+  "show": {
+    "dashboard": "แดชบอร์ด",
+    "fullScreen": "เต็มจอ",
+    "exitFullScreen": "ออกจากเต็มจอ"
+  },
+  "create": {
+    "title": "สร้างรายงาน"
+  },
+  "edit": {
+    "title": "แก้ไขรายงาน"
+  }
+}

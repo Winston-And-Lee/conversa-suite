@@ -1,0 +1,700 @@
+{
+  "components": {
+    "pagination": {
+      "label": {},
+      "fields": {
+        "paginationTotal": "ทั้งหมด {{total}} รายการ",
+        "approvalGroupName": "ชื่อกลุ่มการอนุมัติ",
+        "approvalGroup": "กลุ่มการอนุมัติ",
+        "actions": "การกระทำ",
+        "approvalNamePlaceholder": "ระบุชื่อการอนุมัติ",
+        "approvalGroupPlaceHolder": "เลือกกลุ่มการอนุมัติ",
+        "startDateEndDate": "วันที่เริ่มต้น-สิ้นสุด",
+        "startDate": "วันที่เริ่มต้น",
+        "endDate": "วันที่สิ้นสุด",
+        "detail": "รายละเอียด",
+        "detailPlaceholder": "ระบุรายละเอียด",
+        "approvalName": "การอนุมัติ",
+        "approvalDescription": "รายละเอียดการอนุมัติ",
+        "copy": "คัดลอก",
+        "view": "ดู",
+        "edit": "แก้ไข",
+        "delete": "ลบ",
+        "noData": "ไม่มีข้อมูล",
+        "id": "รหัส",
+        "name": "ชื่อ",
+        "service": "บริการ",
+        "createdAt": "วันที่สร้าง",
+        "updatedAt": "วันที่แก้ไข",
+        "projectId": "รหัสโครงการ",
+        "projectName": "ชื่อโครงการ",
+        "projectDescription": "คำอธิบายโครงการ"
+      },
+      "actions": {
+        "list": "รายการ",
+        "create": "สร้าง",
+        "edit": "แก้ไข",
+        "show": "แสดง",
+        "view": "ดู",
+        "delete": "ลบ"
+      },
+      "buttons": {
+        "create": "สร้าง",
+        "save": "บันทึก",
+        "logout": "ออกจากระบบ",
+        "profile": "ข้อมูลส่วนตัว",
+        "delete": "ลบ",
+        "edit": "แก้ไข",
+        "cancel": "ยกเลิก",
+        "confirm": "ยืนยัน?",
+        "filter": "ตัวกรอง",
+        "clear": "เคลียร์",
+        "refresh": "รีเฟรช",
+        "show": "แสดง",
+        "undo": "ย้อนกลับ",
+        "import": "นำเข้า",
+        "clone": "โคลน",
+        "notAccessTitle": "คุณไม่ได้รับอนุญาตให้เข้าถึง",
+        "syncOrder": "ซิงค์คำสั่งซื้อ",
+        "export": "นำออก",
+        "search": "ค้นหา",
+        "reset": "รีเซ็ท",
+        "advance": "ขั้นสูง",
+        "hideAdvance": "ซ่อนขั้นสูง",
+        "clickToUpload": "Click to Upload",
+        "update": "แก้ไข",
+        "next": "ถัดไป",
+        "previous": "ก่อนหน้า",
+        "Accept": "อนุมัติ",
+        "Reject": "ปฏิเสธ",
+        "add": "เพิ่ม",
+        "loginWithMicrosoft": "ลงชื่อเข้าใช้ด้วย Microsoft"
+      },
+      "warnWhenUnsavedChanges": "คุณแน่ใจหรือไม่ว่าต้องการออก? คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก",
+      "notifications": {
+        "success": "สำเร็จ",
+        "error": "ข้อผิดพลาด (status code: {{statusCode}})",
+        "undoable": "คุณมีเวลา {{seconds}} สำหรับย้อนกลับ",
+        "createSuccess": "{{resource}} ที่สร้างสำเร็จ",
+        "createError": "ข้อผิดพลาดในการสร้าง {{resource}} (status code: {{statusCode}})",
+        "deleteSuccess": "{{resource}} ถูกลบแล้ว",
+        "deleteError": "ข้อผิดพลาดในการลบ {{resource}} (status code: {{statusCode}})",
+        "editSuccess": "{{resource}} แก้ไขสำเร็จ",
+        "editError": "ข้อผิดพลาดในการแก้ไข {{resource}} (status code: {{statusCode}})",
+        "importProgress": "{{processed}}/{{total}} ถูกนำเข้า"
+      },
+      "loading": "กำลังโหลด",
+      "tags": {
+        "clone": "โคลน"
+      },
+      "dashboard": {
+        "title": "แผงควบคุม"
+      },
+      "blog_posts": {
+        "blog_posts": "บทความบล็อก",
+        "fields": {
+          "id": "รหัส",
+          "title": "หัวข้อ",
+          "content": "เนื้อหา",
+          "status": "สถานะ",
+          "createdAt": "สร้างเมื่อ",
+          "category": "หมวดหมู่"
+        },
+        "titles": {
+          "create": "สร้าง",
+          "edit": "แก้ไข",
+          "list": "รายการ",
+          "show": "แสดง"
+        }
+      },
+      "categories": {
+        "categories": "หมวดหมู่",
+        "fields": {
+          "id": "รหัส",
+          "title": "หัวข้อ",
+          "createdAt": "สร้างเมื่อ"
+        },
+        "titles": {
+          "create": "สร้าง",
+          "edit": "แก้ไข",
+          "list": "รายการ",
+          "show": "แสดง"
+        }
+      },
+      "documentTitle": {
+        "default": "Khaojai AI",
+        "suffix": " | Khaojai AI"
+      },
+      "user_status": {
+        "pending": "รอยืนยัน",
+        "active": "ใช้งาน",
+        "inactive": "ไม่ใช้งาน"
+      },
+      "approval": {
+        "createApproval": "สร้างรูปแบบการอนุมัติ",
+        "details": "รายละเอียด"
+      },
+      "fallback": {
+        "loading": "กำลังโหลด..."
+      }
+    },
+    "approveBoxFlow": {
+      "label": {},
+      "fields": {
+        "submit": "ยื่นขออนุมัติ",
+        "approver": "ผู้อนุมัติ",
+        "cc_to": "สำเนาถึง",
+        "processing": "ดำเนินการ",
+        "condition": "เงื่อนไข",
+        "next_approval": "การอนุมัติถัดไป",
+        "end": "สิ้นสุด"
+      },
+      "actions": {
+        "addData": "เพิ่มข้อมูล"
+      }
+    },
+    "approvalRequestStatus": {
+      "label": {},
+      "fields": {
+        "inProgress": "กำลังดำเนินการ",
+        "pending": "ที่ต้องดำเนินการ",
+        "approved": "อนุมัติ",
+        "rejected": "ถูกปฏิเสธ"
+      }
+    },
+    "approvalSetting": {
+      "form": {
+        "components": {
+          "title": "องค์ประกอบ",
+          "text": {
+            "label": "แสดงข้อความ",
+            "heading": "หัวข้อ",
+            "paragraph": "ย่อหน้า"
+          },
+          "textInput": {
+            "label": "ระบุข้อความ",
+            "shortAnswer": "คำตอบสั้นๆ",
+            "longAnswer": "คำตอบยาว"
+          },
+          "options": {
+            "label": "ตัวเลือก",
+            "dropdown": "ดร็อปดาวน์",
+            "multiSelect": "เลือกหลายรายการ",
+            "imageSelect": "การเลือกภาพ",
+            "multipleChoice": "ตัวเลือกหลายตัว",
+            "switch": "สวิตซ์",
+            "checkbox": "1 ช่องทำเครื่องหมาย",
+            "multiCheckbox": "หลายช่องทำเครื่องหมาย",
+            "optionMatrix": "เมทริกซ์ตัวเลือก"
+          },
+          "dateTime": {
+            "label": "วันที่และเวลา",
+            "date": "ตัวเลือกวันที่",
+            "dateTime": "ตัวเลือกวันที่และเวลา",
+            "timer": "ตัวนับเวลา",
+            "dateRange": "ช่วงวันที่"
+          },
+          "contact": {
+            "label": "ข้อมูลติดต่อ",
+            "fullName": "ชื่อ-นามสกุล",
+            "phone": "โทรศัพท์",
+            "email": "อีเมล",
+            "address": "ที่อยู่"
+          },
+          "number": {
+            "label": "ตัวเลข",
+            "number": "ตัวเลข",
+            "currency": "สกุลเงิน"
+          },
+          "general": {
+            "label": "ทั่วไป",
+            "url": "การใส่ URL",
+            "password": "รหัสผ่าน",
+            "fileUpload": "อัพโหลดไฟล์",
+            "signature": "ลายเซ็น",
+            "table": "ตาราง"
+          },
+          "media": {
+            "label": "สื่อ",
+            "image": "ภาพ",
+            "video": "วิดีโอ",
+            "pdfViewer": "โปรแกรมดู PDF"
+          },
+          "layout": {
+            "label": "เค้าโครง",
+            "divider": "ตัวคั่น",
+            "spacing": "ระยะห่างบรรทัด"
+          }
+        },
+        "editor": {
+          "clickToEdit": "คลิกฟิลด์ในแบบฟอร์มของคุณ เพื่อแก้ไข",
+          "addPage": "เพิ่มหน้า",
+          "page": "หน้าที่",
+          "settings": "ตั้งค่า"
+        },
+        "buttons": {
+          "cancel": "ยกเลิก",
+          "saveDraft": "บันทึกร่าง",
+          "save": "บันทึก"
+        }
+      },
+      "messages": {
+        "editSuccess": "แก้ไขกลุ่มการอนุมัติสำเร็จแล้ว",
+        "fieldRequired": "กรุณากรอกข้อมูล"
+      },
+      "fields": {
+        "groupName": "ชื่อกลุ่มการอนุมัติ",
+        "groupNamePlaceholder": "ระบุชื่อการอนุมัติ"
+      }
+    },
+    "approvalListDetailDrawer": {
+      "label": {
+        "showComment": "แสดงความคิดเห็น",
+        "enterComment": "ระบุความคิดเห็น",
+        "shouldApprove": "สมควรได้รับการอนุมัติ",
+        "document": "เอกสาร",
+        "image": "รูปภาพ"
+      },
+      "buttons": {
+        "close": "ปิด"
+      }
+    },
+    "addUserWorkSpace": {
+      "title": "เพิ่มสมาชิกหน่วย: {{departmentName}}",
+      "labels": {
+        "all": "รายชื่อทั้งหมด",
+        "selected": "เลือกแล้ว ({{total}})",
+        "member": "สมาชิก",
+        "department": "หน่วยงาน",
+        "status": "สถานะ",
+        "active": "ใช้งาน",
+        "inactive": "ไม่ใช้งาน"
+      },
+      "actions": {
+        "cancel": "ยกเลิก",
+        "submit": "ยืนยัน"
+      }
+    }
+  },
+  "pages": {
+    "forgotPassword": {
+      "title": "ลืมรหัสผ่านหรือไม่?",
+      "fields": {
+        "email": "อีเมล"
+      },
+      "errors": {
+        "validEmail": "ที่อยู่อีเมลที่ไม่ถูกต้อง"
+      },
+      "buttons": {
+        "submit": "ส่งคำแนะนำในการรีเซ็ต"
+      }
+    },
+    "register": {
+      "title": "ลงทะเบียนสำหรับบัญชีของคุณ",
+      "fields": {
+        "email": "อีเมล",
+        "password": "รหัสผ่าน"
+      },
+      "errors": {
+        "validEmail": "ที่อยู่อีเมลที่ไม่ถูกต้อง"
+      },
+      "buttons": {
+        "submit": "ลงทะเบียน",
+        "haveAccount": "มีบัญชีอยู่แล้ว?"
+      },
+      "workspace": {
+        "title": "สร้างเวิร์กสเปซของคุณ",
+        "name": "ชื่อเวิร์กสเปซ",
+        "button": "สร้างเวิร์กสเปซ",
+        "errors": {
+          "required": "ข้อมูลที่จำเป็น",
+          "nameRequired": "กรุณากรอกชื่อเวิร์กสเปซ",
+          "createFailed": "ไม่สามารถสร้างเวิร์กสเปซได้"
+        }
+      },
+      "information": {
+        "errors": {
+          "passwordNotMatch": "รหัสผ่านไม่ตรงกัน",
+          "firstNameRequired": "กรุณากรอกชื่อ",
+          "lastNameRequired": "กรุณากรอกนามสกุล",
+          "emailRequired": "กรุณากรอกอีเมล",
+          "passwordRequired": "กรุณากรอกรหัสผ่าน"
+        }
+      },
+      "otp": {
+        "title": "ยืนยันบัญชีของคุณ",
+        "subtitle": "กรอกรหัส 6 หลัก",
+        "reference": "รหัสอ้างอิง OTP",
+        "errors": {
+          "resendFailed": "ไม่สามารถส่งรหัส OTP ใหม่ได้",
+          "validateFailed": "การยืนยันรหัส OTP ล้มเหลว",
+          "enterCorrectly": "กรุณากรอกรหัส OTP ให้ถูกต้อง"
+        },
+        "buttons": {
+          "confirm": "ยืนยัน",
+          "send": "ส่งรหัส OTP"
+        }
+      }
+    },
+    "updatePassword": {
+      "title": "อัปเดตรหัสผ่าน",
+      "fields": {
+        "password": "รหัสผ่านใหม่",
+        "confirmPassword": "ยืนยันรหัสผ่านใหม่"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "รหัสผ่านไม่ตรงกัน"
+      },
+      "buttons": {
+        "submit": "อัปเดต"
+      }
+    },
+    "error": {
+      "info": "คุณอาจลืมเพิ่ม {{action}} ส่วนประกอบเพื่อ {{resource}} ทรัพยากร.",
+      "404": "ขออภัย หน้าที่คุณเยี่ยมชมไม่มีอยู่",
+      "resource404": "คุณแน่ใจหรือว่าคุณได้สร้าง {{resource}} ทรัพยากร?",
+      "backHome": "ย้อนกลับ"
+    },
+    "project": {
+      "search": {
+        "items": "รายการ",
+        "add": "เพิ่ม",
+        "import": "นำเข้า",
+        "export": "ส่งออก"
+      },
+      "table": {
+        "project": "โครงการ",
+        "period": "วันที่เริ่มต้น-สิ้นสุด",
+        "status": "สถานะ",
+        "actions": {
+          "title": "การกระทำ",
+          "addSubProject": "เพิ่มโครงการย่อย",
+          "view": "ดู",
+          "edit": "แก้ไข",
+          "delete": "ลบ"
+        }
+      },
+      "buttons": {
+        "confirm": "ยืนยัน",
+        "cancel": "ยกเลิก",
+        "delete": "ลบ",
+        "edit": "แก้ไข",
+        "copy": "คัดลอก"
+      },
+      "projectDetail": "รายละเอียดโครงการ",
+      "projectCode": "รหัสโครงการ",
+      "projectName": "ชื่อโครงการ",
+      "startDateEndDate": "วันที่เริ่มต้น-สิ้นสุด",
+      "status": "สถานะ",
+      "infoNo": "ข้อมูลที่",
+      "infoName": "ชื่อข้อมูล",
+      "infoType": "ประเภทข้อมูล",
+      "selectInfoType": "เลือกประเภทข้อมูล",
+      "required": "จำเป็นต้องระบุ",
+      "enter": "ระบุ",
+      "active": "ใช้งาน",
+      "inactive": "ไม่ใช้งาน",
+      "addInfo": "เพิ่มข้อมูล",
+      "option": "ตัวเลือกที่",
+      "fileType": "ประเภทไฟล์",
+      "choose": "เลือก",
+      "clickToUpload": "คลิกเพื่ออัพโหลด"
+    },
+    "organization": {
+      "_user_department": {
+        "label": {
+          "createUser": "เพิ่มสมาชิก",
+          "selectDepartment": "เลือกหน่วยงาน",
+          "deleteUser": "ลบสมาชิก",
+          "userDepartmentMember": "สมาชิกและหน่วยงาน",
+          "addUserFailed": "ไม่สามารถเพิ่มข้อมูลสมาชิกได้",
+          "deleteUserSuccess": "ลบสมาชิก {{user}} ออกจากหน่วยงาน {{department}} สำเร็จแล้ว",
+          "deleteUserFailed": "ไม่สามารถลบสมาชิกออกจากหน่วยงานได้"
+        },
+        "fields": {
+          "organization": "หน่วยงาน",
+          "status": "สถานะ",
+          "jobTitle": "ตำแหน่ง",
+          "employeeId": "รหัสพนักงาน",
+          "email": "อีเมล",
+          "recordName": "record",
+          "details": "รายละเอียด",
+          "firstName": "ชื่อ (โดยไม่ระบุคำนำหน้า)",
+          "firstNamePlaceholder": "ระบุชื่อ (โดยไม่ระบุคำนำหน้า)",
+          "lastName": "นามสกุล",
+          "lastNamePlaceholder": "ระบุนามสกุล",
+          "cid": "เลขบัตรประจำตัวประชาชน 13 หลัก",
+          "cidPlaceholder": "ระบุเลขบัตรประจำตัวประชาชน 13 หลัก",
+          "mobile": "เบอร์โทรศัพท์",
+          "mobilePlaceholder": "ระบุเบอร์โทรศัพท์",
+          "department": "หน่วยงาน (เลือกได้มากกว่า 1)",
+
+          "deleteText": "คุณต้องการลบ '{{user}}' ใช่หรือไม่"
+        },
+        "actions": {
+          "deleteUser": "ลบสมาชิก",
+          "select": "เลือก",
+          "cancel": "ยกเลิก",
+          "save": "ยืนยัน",
+          "edit": "แก้ไข",
+          "delete": "ลบ"
+        }
+      },
+      "_role": {
+        "label": {
+          "role": "บทบาท"
+        },
+        "fields": {
+          "searchPlaceholder": "ค้นหา",
+          "item": "รายการ",
+          "paginationTotal": "ทั้งหมด {{total}} รายการ",
+          "searchRoleName": "ค้นหาตามชื่อบทบาท"
+        },
+        "search": {
+          "member": "สมาชิก"
+        },
+        "actions": {
+          "search": "ค้นหา",
+          "add": "เพิ่ม",
+          "import": "นำเข้า",
+          "export": "ส่งออก",
+          "edit": "แก้ไข",
+          "delete": "ลบ",
+          "view": "ดู",
+          "savePermission": "บันทึกสิทธิ์"
+        },
+        "table": {
+          "member": "สมาชิก",
+          "email": "อีเมล",
+          "phone": "เบอร์โทรศัพท์",
+          "action": "การกระทำ",
+          "view": "ดู",
+          "delete": "ลบ"
+        },
+        "showMemberDrawer": {
+          "title": "ดูรายละเอียดสมาชิก",
+          "fields": {
+            "member": "สมาชิก",
+            "phone": "เบอร์โทรศัพท์",
+            "department": "หน่วยงาน",
+            "role": "บทบาท"
+          },
+          "buttons": {
+            "close": "ปิด"
+          }
+        },
+        "deleteMemberModal": {
+          "title": "ลบสมาชิกในบทบาท",
+          "deleteDescription": "คุณต้องการลบ '{{user}}' ออกจากบทบาท '{{role}}' ใช่หรือไม่ ?",
+          "deleteUserSuccess": "ลบสมาชิก {{user}} ออกจากบทบาท {{role}} สำเร็จแล้ว",
+          "deleteUserError": "ไม่สามารถลบสมาชิกออกจากบทบาทได้",
+          "buttons": {
+            "delete": "ลบสมาชิก",
+            "cancel": "ยกเลิก"
+          }
+        },
+        "addRoleDrawer": {
+          "title": "เพิ่มบทบาท",
+          "fields": {
+            "roleName": "ชื่อบทบาท",
+            "requiredRoleName": "กรุณาระบุชื่อบทบาท",
+            "roleNamePlaceholder": "ระบุบทบาท",
+            "memberInRole": "สมาชิกในบทบาท  (เลือกได้มากกว่า 1 รายการ)"
+          },
+          "actions": {
+            "add": "เพิ่ม",
+            "cancel": "ยกเลิก",
+            "submit": "ยืนยัน"
+          },
+          "tabs": {
+            "roleDetails": "รายละเอียดบทบาท",
+            "permissions": "สิทธิ์การใช้งาน",
+            "members": "สมาชิก"
+          }
+        },
+        "editRoleDrawer": {
+          "title": "แก้ไขบทบาท",
+          "fields": {
+            "roleName": "ชื่อบทบาท",
+            "requiredRoleName": "กรุณาระบุชื่อบทบาท",
+            "roleNamePlaceholder": "ระบุบทบาท",
+            "memberInRole": "สมาชิกในบทบาท  (เลือกได้มากกว่า 1 รายการ)"
+          },
+          "actions": {
+            "add": "เพิ่ม",
+            "cancel": "ยกเลิก",
+            "submit": "ยืนยัน"
+          },
+          "tabs": {
+            "roleDetails": "รายละเอียดบทบาท",
+            "permissions": "สิทธิ์การใช้งาน",
+            "members": "สมาชิก"
+          }
+        }
+      },
+      "workspaces": {
+        "label": {
+          "name": "ชื่อ",
+          "status": "สถานะ",
+          "email": "อีเมล",
+          "user": "ผู้ใช้",
+          "delete": "ลบ",
+          "save": "บันทึก",
+          "addUser": "เพิ่มผู้ใช้",
+          "cancel": "ยกเลิก",
+          "confirm": "ยืนยัน",
+          "pleaseSelect": "กรุณาเลือก",
+          "role": "บทบาท",
+          "deleteUser": "ลบผู้ใช้"
+        },
+        "items": {
+          "accessibility": "สิทธิ์การเข้าถึง"
+        },
+        "addUser": {
+          "success": "เพิ่มผู้ใช้สำเร็จ!",
+          "failed": "ไม่สามารถเพิ่มผู้ใช้ได้"
+        },
+        "userDeleted": "ลบผู้ใช้แล้ว!",
+        "userDeletedFailed": "ไม่สามารถลบผู้ใช้ได้",
+        "wantToDelete": "คุณต้องการลบผู้ใช้นี้หรือไม่?",
+        "reset": "รีเซ็ต",
+        "detail": {
+          "workspaceName": "ชื่อเวิร์กสเปซ",
+          "user": "ผู้ใช้",
+          "color": "สี",
+          "primary": "หลัก",
+          "createDateTime": "วันที่สร้าง",
+          "latestUpdateDateTime": "วันที่แก้ไขล่าสุด",
+          "note": "บันทึก"
+        },
+        "edit": {
+          "workspaceDetail": "รายละเอียดเวิร์กสเปซ",
+          "detail": "รายละเอียด",
+          "lastUpdate": "แก้ไขล่าสุด",
+          "recommendedResolution": "ความละเอียดที่แนะนำคือ 1:1 ขนาดไฟล์ 10 MB",
+          "color": "สี"
+        }
+      },
+      "approvalCenter": {
+        "_approvalRequestGroup": {
+          "label": {
+            "createGroup": "สร้างกลุ่มการอนุมัติ",
+            "editGroup": "แก้ไขกลุ่มการอนุมัติ",
+            "groupName": "ชื่อกลุ่มการอนุมัติ",
+            "groupNamePlaceholder": "ระบุชื่อการอนุมัติ"
+          },
+          "messages": {
+            "createSuccess": "สร้างสำเร็จ!",
+            "createError": "ไม่สามารถสร้างกลุ่มการอนุมัติได้",
+            "updateSuccess": "อัปเดตสำเร็จ!",
+            "updateError": "ไม่สามารถอัปเดตได้",
+            "fieldRequired": "จำเป็นต้องระบุข้อมูลนี้"
+          },
+          "buttons": {
+            "cancel": "ยกเลิก",
+            "confirm": "ยืนยัน"
+          }
+        },
+        "_approvalList": {
+          "label": {
+            "approvalList": "รายการการขออนุมัติ"
+          },
+          "tabs": {
+            "all": "ทั้งหมด",
+            "inProgress": "กำลังดำเนินการ",
+            "pending": "ที่ต้องดำเนินการ"
+          },
+          "table": {
+            "member": "สมาชิก",
+            "email": "อีเมล",
+            "phone": "เบอร์โทรศัพท์",
+            "action": "การกระทำ",
+            "view": "ดู",
+            "delete": "ลบ"
+          },
+          "columns": {
+            "approvalName": "ชื่อการอนุมัติ",
+            "requestDate": "วันที่ขออนุมัติ",
+            "approvalStep": "ขั้นตอนการอนุมัติ",
+            "status": "สถานะ",
+            "lastUpdated": "วันที่อัปเดทล่าสุด",
+            "actions": "การกระทำ",
+            "view": "ดู"
+          },
+          "filter": {
+            "approvalName": "ชื่อการอนุมัติ"
+          }
+        }
+      },
+      "Reports": "รายงาน",
+      "ApprovalCenter": "ศูนย์การอนุมัติ",
+      "ApprovalRequest": "การขออนุมัติ",
+      "home": {
+        "welcome": "ยินดีต้อนรับ, "
+      },
+      "reports": {
+        "list": {
+          "name": "ชื่อ",
+          "tags": "แท็ก",
+          "updatedAt": "อัปเดตเมื่อ"
+        },
+        "show": {
+          "dashboard": "แดชบอร์ด",
+          "exitFullScreen": "ออกจากเต็มหน้าจอ",
+          "fullScreen": "เต็มหน้าจอ"
+        }
+      },
+      "userWorkspaces": {
+        "fields": {
+          "email": "อีเมล",
+          "name": "ชื่อ",
+          "role": "บทบาท",
+          "updateDate": "วันที่อัปเดต",
+          "user": "ผู้ใช้"
+        },
+        "roles": {
+          "select": "เลือกบทบาท",
+          "admin": "ผู้ดูแลระบบ",
+          "member": "สมาชิก",
+          "inactive": "ไม่ใช้งาน"
+        }
+      }
+    }
+  },
+  "sidebar": {
+    "organization": "องค์กร",
+    "Organization": "องค์กร",
+    "department": "แผนก",
+    "Project Management": "การจัดการโครงการ",
+    "project": "โครงการ",
+    "Project": "โครงการ",
+    "workspace-role": "บทบาท",
+    "report-service": "บริการรายงาน",
+    "Report": "รายงาน",
+    "reports": "รายงาน",
+    "Reports": "รายงาน",
+    "users": "ผู้ใช้",
+    "role-member": "สมาชิกบทบาท",
+    "user-department": "ผู้ใช้-แผนก",
+    "members": "สมาชิก",
+    "Super Admin": "ผู้ดูแลระบบสูงสุด",
+    "approval-group": "การอนุมัติ",
+    "Approval": "การอนุมัติ",
+    "form": "แบบฟอร์มการอนุมัติ",
+    "Settings": "การตั้งค่า",
+    "Approval Setting": "การตั้งค่าการอนุมัติ",
+    "ApprovalCenter": "ศูนย์การอนุมัติ",
+    "ApprovalRequest": "คำขออนุมัติ",
+    "Approval List": "รายการการอนุมัติ",
+    "workspace": "เวิร์กสเปซ",
+    "user-workspaces": "ผู้ใช้",
+    "workspaces": "เวิร์กสเปซ",
+    "approval-center": "ศูนย์การอนุมัติ",
+    "approval-request": "คำขออนุมัติ",
+    "approval-list": "รายการการอนุมัติ",
+    "project-boq": "BOQ โครงการ",
+    "business-partner-group": "กลุ่มพันธมิตรธุรกิจ",
+    "business-partner": "พันธมิตรธุรกิจ",
+    "business-partner-contact-person": "ผู้ติดต่อพันธมิตรธุรกิจ"
+  }
+}
