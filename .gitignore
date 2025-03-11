@@ -18,6 +18,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+!conversa-ui/lib/
 lib64/
 parts/
 sdist/
