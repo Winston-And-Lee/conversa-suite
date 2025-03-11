@@ -2,20 +2,23 @@ export type ColorMode = 'default' | 'secondary' | 'green' | 'blue' | 'pink' | 'r
 
 export const COLORS = {
   default: {
-    primary_01: '#001F3D', // Main dark blue
-    primary_02: '#00335E', // Slightly lighter blue
-    primary_03: '#00497E', // Mid-tone blue
-    primary_04: '#F4AE75', // Main accent peach
-    primary_05: '#FAD7B2', // Lighter accent peach
-    secondary_01: '#7FB3D5', // Soft blue complement
-    secondary_02: '#EDEEF2', // Light background
-    accent_01: '#FFC07F', // Vibrant accent for highlights
-    accent_02: '#FFC493', // Light peach for accents
-    neutral_07: '#98A2B3',
-    neutral_08: '#D0D5DD',
-    neutral_10: '#e4e7ec',
-    neutral_12: '#FCFCFD',
-    neutral_13: '#FFFFFF'
+    primary_01: '#1D443E',  // Deep dark green (formerly --e-global-color-ec25634)
+    primary_02: '#21645A',  // Dark teal (formerly --e-global-color-4ade329)
+    primary_03: '#319B88',  // Rich green-blue (formerly --e-global-color-b41e63e)
+    primary_04: '#B3D581',  // Soft lime green (formerly --e-global-color-a047deb)
+    primary_05: '#E8F2D5',  // Pale green tint (formerly --e-global-color-8fa36e4)
+    
+    secondary_01: '#D4F3EA', // Light cyan-green (formerly --e-global-color-d3ae19d)
+    secondary_02: '#E4E4E7', // Soft grayish tone (formerly --e-global-color-accent)
+    
+    accent_01: '#FFC107', // Vibrant yellow accent (formerly --e-global-color-93537c9)
+    accent_02: '#0DCAF0', // Bright cyan-blue (formerly --e-global-color-d84c2a8)
+    
+    neutral_07: '#A1A1AA', // Medium gray (formerly --e-global-color-secondary)
+    neutral_08: '#71717A', // Muted gray tone (formerly --e-global-color-a4d0a47)
+    neutral_10: '#D4D4D8', // Soft neutral gray (formerly --e-global-color-127dc2f)
+    neutral_12: '#F4F4F5', // Light gray-white (formerly --e-global-color-8437f0c)
+    neutral_13: '#FFFFFF'  // Pure white (formerly --e-global-color-e052ba3)
   },
   secondary: {
     primary_01: '#0FF',

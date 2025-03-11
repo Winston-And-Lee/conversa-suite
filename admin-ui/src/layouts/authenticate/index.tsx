@@ -28,11 +28,10 @@ export const AuthenticateTemplate = ({ children, decoratedImage }: AuthenticateT
       <ContentContainer>
         <Flex gap={16} vertical={true} flex={1} style={{ paddingLeft: '5%', maxWidth: 500 }}>
           <Typography.Title level={2} style={{ color: 'var(--neutral_13)' }}>
-            Empowering Insight-Driven Decisions
+          A modern AI assistant platform
           </Typography.Title>
           <Typography.Title level={5} style={{ color: 'var(--neutral_13)' }}>
-            A comprehensive solution for business intelligence, streamlined workflows, and enhanced organizational
-            management—all in one package.
+          A powerful AI solution that connects corporate intelligence, streamlines collaboration, and enhances decision-making with automation and smart retrieval.
           </Typography.Title>
         </Flex>
         <MainFormBox>{children}</MainFormBox>
