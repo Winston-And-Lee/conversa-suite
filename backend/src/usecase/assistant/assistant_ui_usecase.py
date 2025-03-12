@@ -16,9 +16,12 @@ from assistant_stream.serialization.data_stream import DataStreamResponse
 
 from src.domain.entity.assistant import (
     ChatRequest,
-    ChatMessage
+    ChatMessage,
+    ThreadModel,
+    ThreadListResponse
 )
 from src.infrastructure.ai.langgraph.assistant_service import assistant_service
+from src.interface.repository.mongodb.thread_repository import MongoDBThreadRepository
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +29,12 @@ class AssistantUIUsecase:
     """Usecase class for assistant-ui related operations."""
     
     @staticmethod
-    def process_chat_request(chat_request: ChatRequest) -> Dict[str, Any]:
+    def _get_thread_repository():
+        """Get the thread repository."""
+        return MongoDBThreadRepository()
+    
+    @staticmethod
+    async def process_chat_request(chat_request: ChatRequest, user_id: Optional[str] = None) -> Dict[str, Any]:
         """Process a chat request from assistant-ui."""
         # Extract the last user message
         last_message = chat_request.messages[-1] if chat_request.messages else None
@@ -36,6 +44,7 @@ class AssistantUIUsecase:
         
         # Check if we have a thread ID
         thread_id = chat_request.thread_id
+        is_new_thread = not thread_id
         
         if not thread_id:
             # Create a new thread
@@ -58,13 +67,78 @@ class AssistantUIUsecase:
         last_message_content = last_message.get_content_text()
         logger.info(f"Processing message for thread {thread_id}: {last_message_content[:50]}...")
         
+        # If user_id is provided, save the thread to MongoDB
+        if user_id:
+            # Get the thread repository
+            thread_repository = AssistantUIUsecase._get_thread_repository()
+            
+            # Check if the thread exists in MongoDB
+            thread = await thread_repository.get_thread(thread_id)
+            
+            if not thread and is_new_thread:
+                # Create a new thread in MongoDB
+                thread_data = {
+                    "thread_id": thread_id,
+                    "user_id": user_id,
+                    "title": f"Chat {int(time.time())}",  # Default title
+                    "summary": last_message_content[:100] + "...",  # Initial summary
+                    "messages": [],
+                    "system_message": chat_request.system,
+                    "is_archived": False
+                }
+                
+                # Add messages to the thread data
+                for msg in chat_request.messages:
+                    thread_data["messages"].append({
+                        "role": msg.role,
+                        "content": msg.get_content_text(),
+                        "timestamp": int(time.time() * 1000)
+                    })
+                
+                # Create the thread in MongoDB
+                await thread_repository.create_thread(thread_data)
+            elif thread:
+                # Add the message to the existing thread
+                message_data = {
+                    "role": last_message.role,
+                    "content": last_message_content,
+                    "timestamp": int(time.time() * 1000)
+                }
+                
+                # Add the message to the thread
+                await thread_repository.add_message_to_thread(thread_id, message_data)
+                
+                # Update the summary
+                await thread_repository.update_thread_summary(thread_id, last_message_content[:100] + "...")
+        
         return {
             "thread_id": thread_id,
             "content": last_message_content
         }
     
     @staticmethod
-    def stream_message_generator(thread_id: str, content: str):
+    async def list_threads(user_id: str, limit: int = 20, skip: int = 0) -> ThreadListResponse:
+        """
+        List threads for a user.
+        
+        Args:
+            user_id: The ID of the user
+            limit: The maximum number of threads to return
+            skip: The number of threads to skip
+            
+        Returns:
+            A list of threads
+        """
+        # Get the thread repository
+        thread_repository = AssistantUIUsecase._get_thread_repository()
+        
+        # List threads for the user
+        threads = await thread_repository.list_threads_by_user(user_id, limit, skip)
+        
+        return ThreadListResponse(threads=threads)
+    
+    @staticmethod
+    def stream_message_generator(thread_id: str, content: str, user_id: Optional[str] = None):
         """Generate streaming response for assistant-ui messages."""
         async def event_generator():
             # Get the cancelled exception class inside the function scope
@@ -122,6 +196,25 @@ class AssistantUIUsecase:
                 done_chunk = DataChunk(data={})
                 done_chunk.type = "finish-message"
                 yield done_chunk
+                
+                # If user_id is provided, save the assistant message to MongoDB
+                if user_id and current_content:
+                    # Get the thread repository
+                    thread_repository = AssistantUIUsecase._get_thread_repository()
+                    
+                    # Add the assistant message to the thread
+                    message_data = {
+                        "role": "assistant",
+                        "content": current_content,
+                        "timestamp": timestamp
+                    }
+                    
+                    # Add the message to the thread
+                    asyncio.create_task(thread_repository.add_message_to_thread(thread_id, message_data))
+                    
+                    # Generate a summary from the conversation
+                    summary = current_content[:100] + "..."
+                    asyncio.create_task(thread_repository.update_thread_summary(thread_id, summary))
                 
                 logger.info(f"Completed streaming response for thread {thread_id}")
             except (CancelledExc, asyncio.CancelledError) as e:

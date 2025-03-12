@@ -662,12 +662,6 @@
     }
   },
   "sidebar": {
-    "organization": "องค์กร",
-    "Organization": "องค์กร",
-    "department": "แผนก",
-    "Project Management": "การจัดการโครงการ",
-    "project": "โครงการ",
-    "Project": "โครงการ",
     "workspace-role": "บทบาท",
     "report-service": "บริการรายงาน",
     "Report": "รายงาน",
@@ -675,26 +669,11 @@
     "Reports": "รายงาน",
     "users": "ผู้ใช้",
     "role-member": "สมาชิกบทบาท",
-    "user-department": "ผู้ใช้-แผนก",
     "members": "สมาชิก",
     "Super Admin": "ผู้ดูแลระบบสูงสุด",
-    "approval-group": "การอนุมัติ",
-    "Approval": "การอนุมัติ",
-    "form": "แบบฟอร์มการอนุมัติ",
     "Settings": "การตั้งค่า",
-    "Approval Setting": "การตั้งค่าการอนุมัติ",
-    "ApprovalCenter": "ศูนย์การอนุมัติ",
-    "ApprovalRequest": "คำขออนุมัติ",
-    "Approval List": "รายการการอนุมัติ",
     "workspace": "เวิร์กสเปซ",
     "user-workspaces": "ผู้ใช้",
-    "workspaces": "เวิร์กสเปซ",
-    "approval-center": "ศูนย์การอนุมัติ",
-    "approval-request": "คำขออนุมัติ",
-    "approval-list": "รายการการอนุมัติ",
-    "project-boq": "BOQ โครงการ",
-    "business-partner-group": "กลุ่มพันธมิตรธุรกิจ",
-    "business-partner": "พันธมิตรธุรกิจ",
-    "business-partner-contact-person": "ผู้ติดต่อพันธมิตรธุรกิจ"
+    "workspaces": "เวิร์กสเปซ"
   }
 }

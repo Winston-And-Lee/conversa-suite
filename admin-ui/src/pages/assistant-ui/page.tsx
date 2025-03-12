@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import { Layout, Typography, Row, Col, Alert, Spin } from 'antd';
@@ -7,6 +7,7 @@ import { CustomLayout } from '@/components/customLayout';
 import { Thread } from '../../components/assistant-ui/thread';
 import { ThreadList } from '../../components/assistant-ui/thread-list';
 import { COLORS } from '../../constant/color';
+import { useAuth } from '@/hooks/useAuth';
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -16,21 +17,41 @@ const themeColors = COLORS.default;
 
 export const AssistantUIPage = () => {
   const [error, setError] = useState(null);
+  const { getAccessToken } = useAuth();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   
   // Get the backend URL from environment variables
   const backendUrl = import.meta.env.VITE_APP_API_ENDPOINT || 'http://localhost:8000';
   
-  // Initialize the chat runtime with API endpoint
+  // Fetch the access token when the component mounts
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const token = await getAccessToken();
+        setAccessToken(token);
+      } catch (error) {
+        console.error('Error fetching access token:', error);
+        setError('Authentication error. Please log in again.');
+      }
+    };
+    
+    fetchToken();
+  }, []);
+  
+  // Initialize the chat runtime with API endpoint and access token
   const runtime = useChatRuntime({
     api: `${backendUrl}/api/assistant-ui/chat`,
+    headers: accessToken ? {
+      Authorization: `Bearer ${accessToken}`
+    } : undefined,
     onError: (error: any) => {
       console.error('Assistant UI runtime error:', error);
       setError(`Error: ${error.message || 'Something went wrong'}`);
     }
   });
 
-  // Show loading state if runtime is not available yet
-  if (!runtime) {
+  // Show loading state if runtime is not available yet or we're fetching the token
+  if (!runtime || !accessToken) {
     return (
       <CustomLayout>
         <Content style={{ padding: '0' }}>

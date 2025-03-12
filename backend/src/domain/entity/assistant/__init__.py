@@ -12,6 +12,9 @@ from src.domain.entity.assistant.models import (
     ChatRequest
 )
 
+# Import thread models from the models directory
+from src.domain.models.thread import ThreadModel, ThreadListResponse
+
 __all__ = [
     # Assistant models
     "CreateThreadRequest",
@@ -23,5 +26,9 @@ __all__ = [
     # Assistant UI models
     "ContentPart",
     "ChatMessage",
-    "ChatRequest"
+    "ChatRequest",
+    
+    # Thread models
+    "ThreadModel",
+    "ThreadListResponse"
 ] 

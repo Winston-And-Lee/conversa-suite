@@ -5,7 +5,9 @@ import {
   useAssistantRuntime,
 } from "@assistant-ui/react";
 import { PlusOutlined, DeleteOutlined, LoadingOutlined, MessageOutlined } from '@ant-design/icons';
-import { Button, Typography, Spin, Divider } from 'antd';
+import { Button, Typography, Spin, Divider, message } from 'antd';
+import axios from 'axios';
+import { useAuth } from '@/hooks/useAuth';
 
 const { Text, Paragraph } = Typography;
 
@@ -13,19 +15,49 @@ interface ThreadListProps {
   themeColors: Record<string, string>;
 }
 
+interface ThreadData {
+  thread_id: string;
+  title: string;
+  summary: string;
+  updated_at: string;
+}
+
 export const ThreadList = ({ themeColors }: ThreadListProps) => {
   const runtime = useAssistantRuntime();
   const [isLoading, setIsLoading] = useState(true);
+  const [threads, setThreads] = useState<ThreadData[]>([]);
+  const { getAccessToken } = useAuth();
+  
+  const fetchThreads = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      
+      // Get the backend URL from environment variables
+      const backendUrl = import.meta.env.VITE_APP_API_ENDPOINT || 'http://localhost:8000';
+      
+      const response = await axios.get(`${backendUrl}/api/assistant-ui/threads`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      
+      if (response.data && response.data.threads) {
+        setThreads(response.data.threads);
+      }
+    } catch (error) {
+      console.error('Error fetching threads:', error);
+      message.error('Failed to load conversation history');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   useEffect(() => {
     // Check if runtime is ready
     if (runtime) {
-      // Give a small delay to ensure runtime is fully initialized
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-      
-      return () => clearTimeout(timer);
+      // Fetch threads when component mounts
+      fetchThreads();
     }
   }, [runtime]);
   
@@ -50,20 +82,29 @@ export const ThreadList = ({ themeColors }: ThreadListProps) => {
       gap: '8px',
       padding: '0 16px',
     }}>
-      <ThreadListNew themeColors={themeColors} />
+      <ThreadListNew themeColors={themeColors} onNewChat={() => fetchThreads()} />
       {/* <Divider style={{ margin: '8px 0', borderColor: themeColors.neutral_08 }} /> */}
-      <ThreadListItems themeColors={themeColors} />
+      <ThreadListItems themeColors={themeColors} threads={threads} />
     </ThreadListPrimitive.Root>
   );
 };
 
 interface ThreadComponentProps {
   themeColors: Record<string, string>;
+  onNewChat?: () => void;
 }
 
-const ThreadListNew = ({ themeColors }: ThreadComponentProps) => {
+const ThreadListNew = ({ themeColors, onNewChat }: ThreadComponentProps) => {
   return (
-    <ThreadListPrimitive.New asChild>
+    <ThreadListPrimitive.New 
+      asChild
+      onSelect={() => {
+        // Call the onNewChat callback when a new chat is created
+        if (onNewChat) {
+          setTimeout(onNewChat, 1000); // Give it a second to create the thread
+        }
+      }}
+    >
       <Button 
         style={{
           display: 'flex',
@@ -87,7 +128,11 @@ const ThreadListNew = ({ themeColors }: ThreadComponentProps) => {
   );
 };
 
-const ThreadListItems = ({ themeColors }: ThreadComponentProps) => {
+interface ThreadListItemsProps extends ThreadComponentProps {
+  threads: ThreadData[];
+}
+
+const ThreadListItems = ({ themeColors, threads }: ThreadListItemsProps) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <Text style={{ 
@@ -97,21 +142,34 @@ const ThreadListItems = ({ themeColors }: ThreadComponentProps) => {
       }}>
         Recent Conversations
       </Text>
-      <ThreadListPrimitive.Items components={{ 
-        ThreadListItem: (props: any) => <ThreadListItem {...props} themeColors={themeColors} /> 
-      }} />
+      {threads.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {threads.map((thread) => (
+            <CustomThreadListItem 
+              key={thread.thread_id} 
+              thread={thread} 
+              themeColors={themeColors} 
+            />
+          ))}
+        </div>
+      ) : (
+        <Text style={{ color: themeColors.neutral_07, padding: '16px 0', textAlign: 'center' }}>
+          No conversations yet. Start a new chat!
+        </Text>
+      )}
     </div>
   );
 };
 
-interface ThreadListItemProps extends ThreadComponentProps {
-  [key: string]: any;
+interface CustomThreadListItemProps {
+  thread: ThreadData;
+  themeColors: Record<string, string>;
 }
 
-const ThreadListItem = ({ themeColors, ...props }: ThreadListItemProps) => {
+const CustomThreadListItem = ({ thread, themeColors }: CustomThreadListItemProps) => {
   return (
     <ThreadListItemPrimitive.Root 
-      {...props}
+      id={thread.thread_id}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -129,7 +187,18 @@ const ThreadListItem = ({ themeColors, ...props }: ThreadListItemProps) => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <MessageOutlined style={{ color: themeColors.primary_01 }} />
-          <ThreadListItemTitle themeColors={themeColors} />
+          <Text
+            style={{
+              fontSize: '14px',
+              fontWeight: 500,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              color: themeColors.primary_01,
+            }}
+          >
+            {thread.title}
+          </Text>
         </div>
         <ThreadListItemArchive themeColors={themeColors} />
       </div>
@@ -141,29 +210,9 @@ const ThreadListItem = ({ themeColors, ...props }: ThreadListItemProps) => {
           margin: '4px 0 0 24px',
         }}
       >
-        Recent conversation messages will appear here...
+        {thread.summary}
       </Paragraph>
     </ThreadListItemPrimitive.Root>
-  );
-};
-
-const ThreadListItemTitle = ({ themeColors }: ThreadComponentProps) => {
-  return (
-    <ThreadListItemPrimitive.Title asChild>
-      <Text
-        style={{
-          fontSize: '14px',
-          fontWeight: 500,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          color: themeColors.primary_01,
-        }}
-      >
-        {/* Default text will be replaced by the actual title */}
-        Chat Topic
-      </Text>
-    </ThreadListItemPrimitive.Title>
   );
 };
 
