@@ -78,22 +78,22 @@ export const ThreadList = ({ themeColors, selectedThreadId, onThreadSelect, onNe
   }, [selectedThreadId, runtime]);
 
   // Set up polling to refresh the thread list periodically
-  useEffect(() => {
-    if (!runtime) return;
+  // useEffect(() => {
+  //   if (!runtime) return;
     
-    console.log("Setting up thread list polling");
-    // Refresh the thread list every 10 seconds
-    const intervalId = setInterval(() => {
-      console.log("Polling for threads");
-      fetchThreads();
-    }, 10000);
+  //   console.log("Setting up thread list polling");
+  //   // Refresh the thread list every 10 seconds
+  //   const intervalId = setInterval(() => {
+  //     console.log("Polling for threads");
+  //     fetchThreads();
+  //   }, 10000);
     
-    // Clean up the interval when the component unmounts
-    return () => {
-      console.log("Cleaning up thread list polling");
-      clearInterval(intervalId);
-    };
-  }, [runtime]);
+  //   // Clean up the interval when the component unmounts
+  //   return () => {
+  //     console.log("Cleaning up thread list polling");
+  //     clearInterval(intervalId);
+  //   };
+  // }, [runtime]);
   
   // Handle thread selection with debounce
   const handleThreadClick = (threadId: string) => {

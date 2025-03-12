@@ -583,7 +583,7 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
         ) : messages && messages.length > 0 ? (
           <div style={{ padding: '16px' }}>
             {/* Add debug output in development */}
-            {process.env.NODE_ENV !== 'production' && debugMessages()}
+            {/* {process.env.NODE_ENV !== 'production' && debugMessages()} */}
             
             {console.log("Rendering message list with length:", messages.length)}
             {messages.map((msg, index) => {
