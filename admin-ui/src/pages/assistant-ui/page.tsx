@@ -32,7 +32,6 @@ export const AssistantUIPage = () => {
         const token = await getAccessToken();
         setAccessToken(token);
       } catch (error) {
-        console.error('Error fetching access token:', error);
         setError('Authentication error. Please log in again.');
       }
     };
@@ -47,7 +46,6 @@ export const AssistantUIPage = () => {
       Authorization: `Bearer ${accessToken}`
     } : undefined,
     onError: (error: any) => {
-      console.error('Assistant UI runtime error:', error);
       setError(`Error: ${error.message || 'Something went wrong'}`);
     }
   });
@@ -74,11 +72,8 @@ export const AssistantUIPage = () => {
 
   // Handle thread selection
   const handleThreadSelect = (threadId: string) => {
-    console.log("Parent: Thread selected:", threadId);
-    
     // Skip if it's the same thread ID to prevent unnecessary re-renders
     if (threadId === lastSelectedThreadIdRef.current) {
-      console.log("Parent: Skipping thread selection - same thread ID");
       return;
     }
     
@@ -91,11 +86,8 @@ export const AssistantUIPage = () => {
 
   // Handle new chat creation
   const handleNewChat = () => {
-    console.log("Parent: New chat requested");
-    
     // Skip if already on a new chat
     if (selectedThreadId === null) {
-      console.log("Parent: Already on a new chat");
       return;
     }
     
@@ -108,11 +100,8 @@ export const AssistantUIPage = () => {
 
   // Handle thread creation (when a new thread is created from the Thread component)
   const handleThreadCreated = (threadId: string) => {
-    console.log("Parent: Thread created:", threadId);
-    
     // Skip if it's the same thread ID to prevent unnecessary re-renders
     if (threadId === lastSelectedThreadIdRef.current) {
-      console.log("Parent: Skipping thread creation - same thread ID");
       return;
     }
     
@@ -124,16 +113,13 @@ export const AssistantUIPage = () => {
     
     // Force a re-render after a short delay to ensure the state is properly reflected
     setTimeout(() => {
-      console.log("Parent: Verifying thread ID sync, current value:", selectedThreadId);
       if (selectedThreadId !== threadId) {
-        console.log("Parent: Thread ID out of sync, forcing update");
         setSelectedThreadId(threadId);
       }
       
       // Refresh the thread list to show the new thread
       const threadListElement = document.querySelector('.thread-list-refresh-trigger');
       if (threadListElement) {
-        console.log("Parent: Triggering thread list refresh");
         threadListElement.dispatchEvent(new Event('refresh'));
       }
     }, 100);

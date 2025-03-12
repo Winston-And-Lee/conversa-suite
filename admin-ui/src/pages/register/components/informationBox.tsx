@@ -48,8 +48,6 @@ export const InformationBox = ({ onFinish }: Props) => {
             JSON.stringify({ email: values.email, userKey: values.password, domain: domain })
           );
           onFinish(userInfo, reference_token);
-        } else {
-          console.log(data.error);
         }
       }
     });

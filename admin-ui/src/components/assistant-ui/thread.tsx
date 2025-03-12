@@ -42,18 +42,10 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
   const [isLoading, setIsLoading] = useState(false);
   const apiCallInProgressRef = useRef(false);
   
-  // Debug messages state changes
-  useEffect(() => {
-    console.log("Messages state changed:", messages);
-  }, [messages]);
-  
   // Load thread when threadId changes
   useEffect(() => {
-    console.log("Thread ID changed:", threadId);
-    
     // Reset state if no threadId
     if (!threadId) {
-      console.log("No thread ID, resetting state");
       setThreadTitle("Current Conversation");
       setMessages([]);
       return;
@@ -61,12 +53,10 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
     
     // Prevent duplicate API calls
     if (apiCallInProgressRef.current) {
-      console.log("API call already in progress, skipping");
       return;
     }
     
     // Always fetch thread details when threadId changes
-    console.log("Fetching thread details for:", threadId);
     setIsLoading(true);
     apiCallInProgressRef.current = true;
     
@@ -75,7 +65,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
         const accessToken = await getAccessToken();
         const backendUrl = import.meta.env.VITE_APP_API_ENDPOINT || 'http://localhost:8000';
         
-        console.log("Making API call to fetch thread:", threadId);
         // Fetch thread details
         const threadResponse = await axios.get(`${backendUrl}/api/assistant-ui/threads/${threadId}`, {
           headers: {
@@ -83,30 +72,23 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
           }
         });
         
-        console.log("Thread response:", threadResponse.data);
-        
         if (threadResponse.data) {
           setThreadTitle(threadResponse.data.title || "Current Conversation");
           // Set messages from the thread
           if (threadResponse.data.messages && Array.isArray(threadResponse.data.messages)) {
-            console.log("Setting messages:", threadResponse.data.messages);
             // Ensure each message has the required properties
             const validMessages = threadResponse.data.messages.filter((msg: any) => 
               msg && typeof msg === 'object' && msg.role && msg.content
             );
-            console.log("Valid messages to set:", validMessages);
             setMessages(validMessages);
           } else {
-            console.log("No messages in response or invalid format");
             setMessages([]);
           }
         } else {
-          console.log("Empty thread response");
           setThreadTitle("Current Conversation");
           setMessages([]);
         }
       } catch (error) {
-        console.error('Error fetching thread details:', error);
         message.error('Failed to load conversation');
         setThreadTitle("Current Conversation");
         setMessages([]);
@@ -129,7 +111,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
     if (!runtime) return;
     
     try {
-      console.log("Submitting message:", content);
       // Create a custom API call to send the message and create a thread if needed
       const accessToken = await getAccessToken();
       const backendUrl = import.meta.env.VITE_APP_API_ENDPOINT || 'http://localhost:8000';
@@ -141,7 +122,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
         timestamp: Date.now()
       };
       
-      console.log("User message added to state:", userMessage);
       setMessages((prevMessages: ThreadMessage[]) => [...prevMessages, userMessage]);
       
       // Create a temporary AI message for immediate visual feedback
@@ -161,14 +141,10 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
         ? `${backendUrl}/api/assistant-ui/threads/${currentThreadId}/messages` 
         : `${backendUrl}/api/assistant-ui/threads`;
       
-      console.log("Sending message to endpoint:", endpoint, "Current thread ID:", currentThreadId);
-      
       // Handle streaming responses differently
       if (!currentThreadId) {
         // Creating a new thread with streaming response handling
         try {
-          console.log("Creating new thread with message:", content);
-          
           // First, add the user message to the display
           const userMessageObject = {
             role: 'user',
@@ -202,17 +178,14 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
           
           // Try to extract thread ID from URL
           const responseUrl = response.url;
-          console.log("Response URL:", responseUrl);
           
           let newThreadId: string | null = null;
           const urlMatch = responseUrl.match(/\/threads\/([^/]+)/);
           if (urlMatch && urlMatch[1]) {
             newThreadId = urlMatch[1];
-            console.log("Extracted thread ID from URL:", newThreadId);
             
             // Notify parent about the new thread
             if (onThreadCreated && newThreadId) {
-              console.log("Notifying parent of new thread:", newThreadId);
               onThreadCreated(newThreadId);
             }
           }
@@ -230,13 +203,11 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
           while (true) {
             const { done, value } = await reader.read();
             if (done) {
-              console.log("Stream reading complete. Final AI response:", aiResponse);
               break;
             }
             
             // Decode the chunk
             const chunk = decoder.decode(value, { stream: true });
-            console.log("Raw chunk received:", chunk);
             
             // Process each line (DataStreamEncoder format)
             const lines = chunk.split('\n');
@@ -250,13 +221,11 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                 
                 const type = line.substring(0, colonIndex);
                 const dataStr = line.substring(colonIndex + 1);
-                console.log(`Stream chunk type: ${type}, data: ${dataStr}`);
                 
                 if (type === '0') {
                   // Text delta (incremental update)
                   // Format: 0:"text delta"
                   const textDelta = JSON.parse(dataStr);
-                  console.log("Text delta received:", textDelta);
                   
                   aiResponse += textDelta;
                   
@@ -279,25 +248,20 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                   const dataArray = JSON.parse(dataStr);
                   if (dataArray && dataArray.length > 0) {
                     const data = dataArray[0];
-                    console.log("Data message received:", data);
                     
                     // If this data contains content, update our AI response
                     if (data && data.content !== undefined) {
                       aiResponse = data.content;
-                      console.log("Setting AI response content to:", aiResponse);
                       
                       // Update the AI message with complete content
                       setMessages((prevMessages: ThreadMessage[]) => {
                         const newMessages = [...prevMessages];
                         const assistantIdx = newMessages.findIndex(m => m.role === 'assistant');
                         if (assistantIdx >= 0) {
-                          console.log("Updating assistant message at index", assistantIdx, "with content:", aiResponse);
                           newMessages[assistantIdx] = {
                             ...newMessages[assistantIdx],
                             content: aiResponse
                           };
-                        } else {
-                          console.log("Assistant message not found in messages array");
                         }
                         return newMessages;
                       });
@@ -306,14 +270,9 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                     // Check if we found a thread_id in the data
                     if (!newThreadId && data && data.thread_id) {
                       newThreadId = data.thread_id;
-                      console.log("Extracted thread ID from response data:", newThreadId);
                       
                       if (onThreadCreated && newThreadId) {
-                        console.log("Notifying parent of thread creation with thread_id:", newThreadId);
                         onThreadCreated(newThreadId);
-                        
-                        // Force immediate visual update to show we're using the thread ID
-                        console.log("Thread ID updated, subsequent messages will use:", newThreadId);
                       }
                     }
                   }
@@ -322,7 +281,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                   // Error message
                   // Format: 3:"error message"
                   const errorMessage = JSON.parse(dataStr);
-                  console.error("Error from stream:", errorMessage);
                   
                   // Update the AI message with the error
                   setMessages((prevMessages: ThreadMessage[]) => {
@@ -339,14 +297,12 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                 }
               } catch (e) {
                 // Ignore parsing errors, might be incomplete chunks
-                console.log("Error parsing stream data:", e);
               }
             }
           }
           
           // If we didn't get any AI response after processing the stream
           if (!aiResponse || aiResponse === 'Thinking...') {
-            console.log("No AI response found in stream, using fallback");
             setMessages((prevMessages: ThreadMessage[]) => {
               const newMessages = [...prevMessages];
               const assistantIdx = newMessages.findIndex(m => m.role === 'assistant');
@@ -360,7 +316,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
             });
           } else {
             // Ensure the final message is properly set with the complete response
-            console.log("Stream complete. Setting final AI response:", aiResponse);
             setMessages((prevMessages: ThreadMessage[]) => {
               const newMessages = [...prevMessages];
               const assistantIdx = newMessages.findIndex(m => m.role === 'assistant');
@@ -369,7 +324,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                   ...newMessages[assistantIdx],
                   content: aiResponse
                 };
-                console.log("Final message set to:", newMessages[assistantIdx].content);
               }
               return newMessages;
             });
@@ -377,22 +331,18 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
           
           // CRITICAL FIX: Update the local threadId state variable so subsequent messages use the existing thread
           if (newThreadId) {
-            console.log("New thread created and processed. Thread ID:", newThreadId);
             // We've already notified the parent through onThreadCreated, but let's verify it
             if (!currentThreadId) {
               // If our component hasn't been updated with the thread ID yet (which can happen due to React's async nature)
-              console.log("Component thread ID is still null, double-checking that parent was notified of new thread");
               
               // Call onThreadCreated again just to be sure - this is safe because the parent has logic to avoid duplicate updates
               if (onThreadCreated) {
-                console.log("Re-notifying parent of thread creation:", newThreadId);
                 onThreadCreated(newThreadId);
               }
               
               // Fetch the complete thread details to ensure we have all messages
               setTimeout(async () => {
                 try {
-                  console.log("Fetching complete thread details for new thread:", newThreadId);
                   const accessToken = await getAccessToken();
                   const threadResponse = await axios.get(`${backendUrl}/api/assistant-ui/threads/${newThreadId}`, {
                     headers: {
@@ -400,31 +350,24 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                     }
                   });
                   
-                  console.log("Complete thread details:", threadResponse.data);
-                  
                   if (threadResponse.data && threadResponse.data.messages && Array.isArray(threadResponse.data.messages)) {
-                    console.log("Setting messages from complete thread:", threadResponse.data.messages);
-                    
                     // Make sure to replace all messages with those from the server
                     const validMessages = threadResponse.data.messages.filter((msg: any) => 
                       msg && typeof msg === 'object' && msg.role && msg.content
                     );
                     
                     if (validMessages.length > 0) {
-                      console.log("Setting valid messages from server:", validMessages);
                       setMessages(validMessages);
                     }
                   }
                 } catch (error) {
-                  console.error("Error fetching complete thread details:", error);
+                  // Error handling is already in place
                 }
               }, 500);
             }
           }
           
         } catch (error: any) {
-          console.error('Error creating thread or processing stream:', error);
-          console.error('Error details:', error.response ? error.response.data : 'No response');
           message.error('Failed to create conversation');
           
           // On error, update the thinking message with an error message
@@ -450,34 +393,25 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
           }
         });
         
-        console.log("Message sent, response:", response.data);
-        
         // For existing threads, fetch the updated messages
         setTimeout(async () => {
           try {
-            console.log("Fetching updated thread messages for:", currentThreadId);
             const threadResponse = await axios.get(`${backendUrl}/api/assistant-ui/threads/${currentThreadId}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`
               }
             });
             
-            console.log("Updated thread details:", threadResponse.data);
-            
             if (threadResponse.data && threadResponse.data.messages && Array.isArray(threadResponse.data.messages)) {
-              console.log("Setting messages from updated thread:", threadResponse.data.messages);
-              
               // Make sure to replace all messages with those from the server, but filter out any 'Thinking...' messages
               const realMessages = threadResponse.data.messages.filter(
                 (msg: ThreadMessage) => msg.content !== 'Thinking...'
               );
               
               if (realMessages.length > 0) {
-                console.log("Setting real messages:", realMessages);
                 setMessages(realMessages);
               } else {
                 // If the server didn't return any valid messages, create a default response
-                console.log("No valid messages from server, adding fallback message");
                 const aiMessage = {
                   role: 'assistant',
                   content: 'I received your message. How can I help you further?',
@@ -489,7 +423,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                 });
               }
             } else {
-              console.error("Invalid thread response format:", threadResponse.data);
               // If we don't get a valid response, replace the temporary message with a real one
               const aiMessage = {
                 role: 'assistant',
@@ -502,7 +435,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
               });
             }
           } catch (error) {
-            console.error('Error fetching updated thread messages:', error);
             message.error('Failed to load conversation');
             // If there's an error, replace the temporary message with a real one
             const aiMessage = {
@@ -518,7 +450,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
         }, 1000); // Reduced wait time for better UX
       }
     } catch (error) {
-      console.error('Error sending message:', error);
       message.error('Failed to send message');
       // If there's an error, add a fallback AI message
       const aiMessage = {
@@ -532,9 +463,6 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
       });
     }
   };
-  
-  // Add a console log to verify component re-rendering
-  console.log("Rendering messages in UI:", messages);
   
   // Debug render of messages - this will help us verify if messages are being processed
   const debugMessages = () => {
@@ -585,9 +513,7 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
             {/* Add debug output in development */}
             {/* {process.env.NODE_ENV !== 'production' && debugMessages()} */}
             
-            {console.log("Rendering message list with length:", messages.length)}
             {messages.map((msg, index) => {
-              console.log("Rendering message at index:", index, msg);
               return (
                 <div key={`message-${index}-${msg.timestamp || index}`} style={{ marginBottom: '16px', display: 'block' }}>
                   {msg.role === 'user' ? (
@@ -724,7 +650,6 @@ const Composer = ({ themeColors, onSubmit }: ThreadComponentProps) => {
   
   const handleAttachImage = () => {
     // This would be implemented to handle file uploads
-    console.log('Attach image clicked');
     // Here you would trigger a file input
     const input = document.createElement('input');
     input.type = 'file';
@@ -732,7 +657,6 @@ const Composer = ({ themeColors, onSubmit }: ThreadComponentProps) => {
     input.onchange = (e: Event) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        console.log('File selected:', file);
         // Here you would handle the file upload
       }
     };
@@ -836,7 +760,6 @@ interface MessageComponentProps extends ThreadComponentProps {
 }
 
 const UserMessage = ({ themeColors, message }: MessageComponentProps) => {
-  console.log("Rendering UserMessage:", message);
   return (
     <div style={{ 
       display: 'flex', 
@@ -864,7 +787,6 @@ const UserMessage = ({ themeColors, message }: MessageComponentProps) => {
 };
 
 const AssistantMessage = ({ themeColors, message }: MessageComponentProps) => {
-  console.log("Rendering AssistantMessage:", message);
   return (
     <div style={{ 
       display: 'flex', 

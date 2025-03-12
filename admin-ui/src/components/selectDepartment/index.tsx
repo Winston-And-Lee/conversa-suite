@@ -11,6 +11,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ISelectDepartment } from './interface';
+import axios from 'axios';
+import { message } from 'antd';
 
 const CustomPagination = styled(Pagination)`
   z-index: 1;
@@ -81,7 +83,7 @@ export const SelectDepartmentComponent: React.FC<ISelectDepartment> = ({ onChang
           generateData(data);
         }
       } catch (error) {
-        console.error('Error fetching department data:', error);
+        message.error('Failed to fetch department data');
       } finally {
         setIsLoading(false);
       }
@@ -124,7 +126,7 @@ export const SelectDepartmentComponent: React.FC<ISelectDepartment> = ({ onChang
 
         setTreeData(origin => updateTreeData(origin, key, childList));
       } catch (error) {
-        console.error('Error loading child departments:', error);
+        message.error('Failed to load child departments');
       }
     },
     [updateTreeData]

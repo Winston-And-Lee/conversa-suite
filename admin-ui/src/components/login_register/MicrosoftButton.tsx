@@ -21,8 +21,7 @@ export const MicrosoftButton = (): JSX.Element => {
         login({ credentials: res.accessToken, source: SOURCE_AUTH.MICROSOFT });
       }
     } catch (error) {
-      // Consider showing user-friendly error message
-      console.error(error);
+      // Error handling for Microsoft login
     } finally {
       setLoading(false);
     }

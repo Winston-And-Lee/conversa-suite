@@ -50,7 +50,7 @@ export const GoogleButton = (): JSX.Element => {
 
       window.google.accounts.id.prompt();
     } catch (error) {
-      console.log(error);
+      // Error initializing Google Sign-In
     }
 
     return () => {

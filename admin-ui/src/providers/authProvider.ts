@@ -73,7 +73,6 @@ export const authProvider: AuthBindings = {
       
       return { success: true, data };
     } catch (error) {
-      console.error('Registration error:', error);
       return createErrorResponse('RegisterError', 'Registration failed. Please try again.');
     }
   },
@@ -99,7 +98,6 @@ export const authProvider: AuthBindings = {
       
       return createErrorResponse('LoginError', 'Invalid login credentials');
     } catch (error) {
-      console.error('Login error:', error);
       return createErrorResponse('LoginError', 'Login failed. Please try again.');
     }
   },
@@ -118,7 +116,6 @@ export const authProvider: AuthBindings = {
       
       return { success: true, redirectTo: `/${ROUTES.WELCOME_LOGIN_REGISTER}` };
     } catch (error) {
-      console.error('Logout error:', error);
       // Still clear localStorage and redirect even if API call fails
       clearLocalStorage();
       return { success: true, redirectTo: `/${ROUTES.WELCOME_LOGIN_REGISTER}` };
@@ -157,7 +154,6 @@ export const authProvider: AuthBindings = {
     try {
       // return await getUserPermission();
     } catch (error) {
-      console.error('Error getting permissions:', error);
       return [];
     }
   },
@@ -179,14 +175,12 @@ export const authProvider: AuthBindings = {
         return null;
       }
     } catch (error) {
-      console.error('Error getting user identity:', error);
       clearLocalStorage();
       return null;
     }
   },
   
   onError: async (error: any) => {
-    console.error('Auth error:', error);
     return { error };
   }
 };
@@ -217,7 +211,6 @@ const handleEmailLogin = async (email: string, password: string) => {
 
     return { success: true, redirectTo: '/' };
   } catch (error) {
-    console.error('Email login error:', error);
     return createErrorResponse('Login Error', 'Login failed. Please try again.');
   }
 };
@@ -248,8 +241,7 @@ const handleOAuthLogin = async (credentials: string, loginFunction: Function, er
 
     return { success: true, redirectTo: '/' };
   } catch (error) {
-    console.error('OAuth login error:', error);
-    return createErrorResponse('Login Error', errorMessage);
+    return createErrorResponse('OAuth Login Error', 'Login failed. Please try again.');
   }
 };
 

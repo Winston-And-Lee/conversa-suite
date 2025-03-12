@@ -11,8 +11,6 @@ interface MarkdownTextProps {
 
 // Simple implementation to render markdown-like content
 export const MarkdownText = memo(({ children, fontSize = 16, style = {} }: MarkdownTextProps) => {
-  console.log('Rendering MarkdownText with children:', children);
-  
   // If children is null or undefined, return a placeholder
   if (children === null || children === undefined) {
     return <Text type="secondary" style={{ fontSize, ...style }}>No content available</Text>;
@@ -96,7 +94,6 @@ export const MarkdownText = memo(({ children, fontSize = 16, style = {} }: Markd
       </Paragraph>
     );
   } catch (error) {
-    console.error('Error stringifying content', error);
     return <Text type="danger" style={{ fontSize, padding: 0, margin: 0, ...style }}>Error rendering content</Text>;
   }
 }); 

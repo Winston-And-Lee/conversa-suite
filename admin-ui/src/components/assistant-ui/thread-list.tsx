@@ -51,49 +51,32 @@ export const ThreadList = ({ themeColors, selectedThreadId, onThreadSelect, onNe
         setThreads(response.data.threads);
       }
     } catch (error) {
-      console.error('Error fetching threads:', error);
       message.error('Failed to load conversation history');
     } finally {
       setIsLoading(false);
     }
   };
   
-  // Initial fetch when component mounts
+  // Fetch threads when the component mounts
   useEffect(() => {
-    if (runtime) {
-      console.log("Initial fetch of threads");
-      fetchThreads();
-    }
-  }, [runtime]);
-
-  // Refresh threads when selectedThreadId changes
+    fetchThreads();
+  }, []);
+  
+  // Fetch threads when the selected thread ID changes
   useEffect(() => {
-    if (runtime && selectedThreadId) {
-      console.log("Selected thread ID changed, refreshing thread list");
-      // Small delay to ensure the backend has completed processing
-      setTimeout(() => {
-        fetchThreads();
-      }, 500);
-    }
-  }, [selectedThreadId, runtime]);
-
-  // Set up polling to refresh the thread list periodically
+    fetchThreads();
+  }, [selectedThreadId]);
+  
+  // Optional: Set up polling to refresh the thread list periodically
   // useEffect(() => {
-  //   if (!runtime) return;
-    
-  //   console.log("Setting up thread list polling");
-  //   // Refresh the thread list every 10 seconds
   //   const intervalId = setInterval(() => {
-  //     console.log("Polling for threads");
   //     fetchThreads();
-  //   }, 10000);
-    
-  //   // Clean up the interval when the component unmounts
+  //   }, 30000); // Poll every 30 seconds
+  //
   //   return () => {
-  //     console.log("Cleaning up thread list polling");
   //     clearInterval(intervalId);
   //   };
-  // }, [runtime]);
+  // }, []);
   
   // Handle thread selection with debounce
   const handleThreadClick = (threadId: string) => {
@@ -120,13 +103,11 @@ export const ThreadList = ({ themeColors, selectedThreadId, onThreadSelect, onNe
     }, 300); // 300ms debounce
   };
   
-  // Handle new chat creation
+  // Handle new chat button click
   const handleNewChat = () => {
     if (onNewChat) {
       onNewChat();
     }
-    // Refresh the thread list after a short delay to allow the new thread to be created
-    setTimeout(fetchThreads, 1000);
   };
   
   // Clean up timeouts when component unmounts
@@ -178,7 +159,6 @@ interface ThreadComponentProps {
 
 const ThreadListNew = ({ themeColors, onNewChat }: ThreadComponentProps) => {
   const handleClick = () => {
-    console.log("New Chat button clicked");
     if (onNewChat) {
       onNewChat();
     }
