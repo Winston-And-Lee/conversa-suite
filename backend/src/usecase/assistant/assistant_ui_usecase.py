@@ -34,7 +34,7 @@ class AssistantUIUsecase:
         return MongoDBThreadRepository()
     
     @staticmethod
-    async def process_chat_request(chat_request: ChatRequest, user_id: Optional[str] = None) -> Dict[str, Any]:
+    async def process_chat_request(chat_request: ChatRequest, user_id: Optional[str] = None, skip_message_add: bool = False) -> Dict[str, Any]:
         """Process a chat request from assistant-ui."""
         # Extract the last user message
         last_message = chat_request.messages[-1] if chat_request.messages else None
@@ -89,6 +89,11 @@ class AssistantUIUsecase:
                 
                 # Add messages to the thread data
                 for msg in chat_request.messages:
+                    # Skip adding messages if specified (to avoid duplicates when thread was already created)
+                    if skip_message_add and msg == last_message:
+                        logger.info(f"Skipping addition of message that was already added to thread {thread_id}")
+                        continue
+                    
                     thread_data["messages"].append({
                         "role": msg.role,
                         "content": msg.get_content_text(),
@@ -98,17 +103,19 @@ class AssistantUIUsecase:
                 # Create the thread in MongoDB
                 await thread_repository.create_thread(thread_data)
             elif thread:
-                # Add the message to the existing thread
-                message_data = {
-                    "role": last_message.role,
-                    "content": last_message_content,
-                    "timestamp": int(time.time() * 1000)
-                }
+                # Only add the message to the existing thread if not skipping
+                if not skip_message_add:
+                    # Add the message to the existing thread
+                    message_data = {
+                        "role": last_message.role,
+                        "content": last_message_content,
+                        "timestamp": int(time.time() * 1000)
+                    }
+                    
+                    # Add the message to the thread
+                    await thread_repository.add_message_to_thread(thread_id, message_data)
                 
-                # Add the message to the thread
-                await thread_repository.add_message_to_thread(thread_id, message_data)
-                
-                # Update the summary
+                # Always update the summary
                 await thread_repository.update_thread_summary(thread_id, last_message_content[:100] + "...")
         
         return {
@@ -138,7 +145,7 @@ class AssistantUIUsecase:
         return ThreadListResponse(threads=threads)
     
     @staticmethod
-    def stream_message_generator(thread_id: str, content: str, user_id: Optional[str] = None):
+    def stream_message_generator(thread_id: str, content: str, user_id: Optional[str] = None, include_thread_id: bool = False):
         """Generate streaming response for assistant-ui messages."""
         async def event_generator():
             # Get the cancelled exception class inside the function scope
@@ -156,6 +163,10 @@ class AssistantUIUsecase:
                     "content": "",
                     "createdAt": timestamp
                 }
+                
+                # Add thread_id to initial message if requested
+                if include_thread_id:
+                    initial_message["thread_id"] = thread_id
                 
                 # Use DataChunk with data in constructor
                 yield DataChunk(data=initial_message)
@@ -189,11 +200,17 @@ class AssistantUIUsecase:
                             "createdAt": timestamp
                         }
                         
+                        # Add thread_id to formatted chunk if requested
+                        if include_thread_id:
+                            formatted_chunk["thread_id"] = thread_id
+                        
                         # Use DataChunk directly with data in constructor
                         yield DataChunk(data=formatted_chunk)
                 
                 # Signal the end of the stream with a special data chunk for "done"
                 done_chunk = DataChunk(data={})
+                if include_thread_id:
+                    done_chunk.data = {"thread_id": thread_id}
                 done_chunk.type = "finish-message"
                 yield done_chunk
                 
@@ -232,6 +249,8 @@ class AssistantUIUsecase:
                 
                 # Still need to end the stream
                 done_chunk = DataChunk(data={})
+                if include_thread_id:
+                    done_chunk.data = {"thread_id": thread_id}
                 done_chunk.type = "finish-message"
                 yield done_chunk
         
