@@ -229,7 +229,10 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
           // Process the stream
           while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+              console.log("Stream reading complete. Final AI response:", aiResponse);
+              break;
+            }
             
             // Decode the chunk
             const chunk = decoder.decode(value, { stream: true });
@@ -281,16 +284,20 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                     // If this data contains content, update our AI response
                     if (data && data.content !== undefined) {
                       aiResponse = data.content;
+                      console.log("Setting AI response content to:", aiResponse);
                       
                       // Update the AI message with complete content
                       setMessages((prevMessages: ThreadMessage[]) => {
                         const newMessages = [...prevMessages];
                         const assistantIdx = newMessages.findIndex(m => m.role === 'assistant');
                         if (assistantIdx >= 0) {
+                          console.log("Updating assistant message at index", assistantIdx, "with content:", aiResponse);
                           newMessages[assistantIdx] = {
                             ...newMessages[assistantIdx],
                             content: aiResponse
                           };
+                        } else {
+                          console.log("Assistant message not found in messages array");
                         }
                         return newMessages;
                       });
@@ -351,6 +358,21 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
               }
               return newMessages;
             });
+          } else {
+            // Ensure the final message is properly set with the complete response
+            console.log("Stream complete. Setting final AI response:", aiResponse);
+            setMessages((prevMessages: ThreadMessage[]) => {
+              const newMessages = [...prevMessages];
+              const assistantIdx = newMessages.findIndex(m => m.role === 'assistant');
+              if (assistantIdx >= 0) {
+                newMessages[assistantIdx] = {
+                  ...newMessages[assistantIdx],
+                  content: aiResponse
+                };
+                console.log("Final message set to:", newMessages[assistantIdx].content);
+              }
+              return newMessages;
+            });
           }
           
           // CRITICAL FIX: Update the local threadId state variable so subsequent messages use the existing thread
@@ -366,6 +388,37 @@ export const Thread = ({ themeColors, threadId, onThreadCreated }: ThreadProps) 
                 console.log("Re-notifying parent of thread creation:", newThreadId);
                 onThreadCreated(newThreadId);
               }
+              
+              // Fetch the complete thread details to ensure we have all messages
+              setTimeout(async () => {
+                try {
+                  console.log("Fetching complete thread details for new thread:", newThreadId);
+                  const accessToken = await getAccessToken();
+                  const threadResponse = await axios.get(`${backendUrl}/api/assistant-ui/threads/${newThreadId}`, {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`
+                    }
+                  });
+                  
+                  console.log("Complete thread details:", threadResponse.data);
+                  
+                  if (threadResponse.data && threadResponse.data.messages && Array.isArray(threadResponse.data.messages)) {
+                    console.log("Setting messages from complete thread:", threadResponse.data.messages);
+                    
+                    // Make sure to replace all messages with those from the server
+                    const validMessages = threadResponse.data.messages.filter((msg: any) => 
+                      msg && typeof msg === 'object' && msg.role && msg.content
+                    );
+                    
+                    if (validMessages.length > 0) {
+                      console.log("Setting valid messages from server:", validMessages);
+                      setMessages(validMessages);
+                    }
+                  }
+                } catch (error) {
+                  console.error("Error fetching complete thread details:", error);
+                }
+              }, 500);
             }
           }
           

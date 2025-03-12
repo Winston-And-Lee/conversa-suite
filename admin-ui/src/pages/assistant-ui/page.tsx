@@ -129,6 +129,13 @@ export const AssistantUIPage = () => {
         console.log("Parent: Thread ID out of sync, forcing update");
         setSelectedThreadId(threadId);
       }
+      
+      // Refresh the thread list to show the new thread
+      const threadListElement = document.querySelector('.thread-list-refresh-trigger');
+      if (threadListElement) {
+        console.log("Parent: Triggering thread list refresh");
+        threadListElement.dispatchEvent(new Event('refresh'));
+      }
     }, 100);
   };
 

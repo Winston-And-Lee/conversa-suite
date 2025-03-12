@@ -179,7 +179,8 @@ async def add_message_to_thread(
         return AssistantUIUsecase.stream_message_generator(
             thread_id,
             request.content,
-            user_id=current_user.id
+            user_id=current_user.id,
+            include_thread_id=True  # Also include thread_id in add_message responses
         )
         
     except HTTPException:
