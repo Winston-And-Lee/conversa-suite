@@ -20,7 +20,6 @@ from src.domain.entity.assistant import (
     CreateThreadRequest,
     CreateThreadResponse,
     SendMessageRequest,
-    AssistantMessage,
     SendMessageResponse,
     
     # Assistant UI models
@@ -49,7 +48,6 @@ __all__ = [
     "CreateThreadRequest",
     "CreateThreadResponse",
     "SendMessageRequest",
-    "AssistantMessage",
     "SendMessageResponse",
     
     # Assistant UI entities

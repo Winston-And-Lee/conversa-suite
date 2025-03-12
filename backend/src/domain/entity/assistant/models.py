@@ -25,12 +25,6 @@ class SendMessageRequest(BaseModel):
     stream: bool = False
 
 
-class AssistantMessage(BaseModel):
-    """Model for assistant message."""
-    role: str
-    content: str
-
-
 class SendMessageResponse(BaseModel):
     """Response model for message sending."""
     thread_id: str

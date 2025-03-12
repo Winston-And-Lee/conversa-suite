@@ -4,6 +4,7 @@ Assistant UI usecase for handling assistant-ui related business logic.
 import logging
 import asyncio
 import time
+import uuid
 from typing import Dict, List, Optional, Any, AsyncIterator
 from anyio import get_cancelled_exc_class
 
@@ -20,8 +21,9 @@ from src.domain.entity.assistant import (
     ThreadModel,
     ThreadListResponse
 )
-from src.infrastructure.ai.langgraph.assistant_service import assistant_service
+from src.infrastructure.ai.langgraph.assistant_service import assistant_service, assistant_sessions
 from src.interface.repository.mongodb.thread_repository import MongoDBThreadRepository
+from src.infrastructure.ai.langgraph.assistant import create_initial_state
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,201 @@ class AssistantUIUsecase:
     def _get_thread_repository():
         """Get the thread repository."""
         return MongoDBThreadRepository()
+    
+    @staticmethod
+    async def create_thread(content: str, user_id: str) -> str:
+        """
+        Create a new thread with an initial message.
+        
+        Args:
+            content: The initial message content
+            user_id: The ID of the user creating the thread
+            
+        Returns:
+            The ID of the created thread
+        """
+        try:
+            # Get the thread repository
+            thread_repository = AssistantUIUsecase._get_thread_repository()
+            
+            # Create a new thread with UUID
+            thread_id = str(uuid.uuid4())
+            
+            # Create the thread data
+            thread_data = {
+                "thread_id": thread_id,
+                "user_id": user_id,
+                "title": f"Chat {int(time.time())}",  # Default title
+                "summary": content[:100] + "..." if len(content) > 100 else content,
+                "messages": [{
+                    "role": "user",
+                    "content": content,
+                    "timestamp": int(time.time() * 1000)
+                }],
+                "system_message": None,
+                "is_archived": False
+            }
+            
+            # Create the thread in MongoDB
+            await thread_repository.create_thread(thread_data)
+            
+            # Initialize state in assistant_service
+            initial_state = create_initial_state("default", thread_data.get("system_message"))
+            
+            # Add the user message to the assistant_service's session
+            initial_state["messages"].append({
+                "role": "user",
+                "content": content
+            })
+            
+            # Store the state in the assistant_service's sessions
+            assistant_sessions[thread_id] = initial_state
+            
+            logger.info(f"Created new thread {thread_id} for user {user_id}")
+            
+            return thread_id
+            
+        except Exception as e:
+            logger.error(f"Error creating thread: {str(e)}")
+            raise e
+    
+    @staticmethod
+    async def add_message_to_thread(thread_id: str, content: str, user_id: str) -> None:
+        """
+        Add a message to an existing thread.
+        
+        Args:
+            thread_id: The ID of the thread
+            content: The message content
+            user_id: The ID of the user adding the message
+            
+        Raises:
+            ValueError: If the thread is not found or the user doesn't have permission
+        """
+        try:
+            # Get the thread repository
+            thread_repository = AssistantUIUsecase._get_thread_repository()
+            
+            # Get the thread
+            thread = await thread_repository.get_thread(thread_id)
+            
+            if not thread:
+                raise ValueError(f"Thread {thread_id} not found")
+            
+            # Check if the thread belongs to the current user
+            if thread.user_id != user_id:
+                raise ValueError("You don't have permission to access this thread")
+            
+            # Add the message to the thread
+            message_data = {
+                "role": "user",
+                "content": content,
+                "timestamp": int(time.time() * 1000)
+            }
+            
+            # Add the message to the thread in MongoDB
+            await thread_repository.add_message_to_thread(thread_id, message_data)
+            
+            # Update the summary
+            await thread_repository.update_thread_summary(thread_id, content[:100] + "..." if len(content) > 100 else content)
+            
+            # Ensure assistant_service has the thread initialized with all messages from MongoDB
+            # Check if the thread exists in the assistant_service
+            if thread_id not in assistant_sessions:
+                # Thread doesn't exist in assistant_service's memory, create it and populate with messages from MongoDB
+                # Initialize state in assistant_service
+                initial_state = create_initial_state("default", thread.system_message)
+                
+                # Add all messages from MongoDB
+                for msg in thread.messages:
+                    initial_state["messages"].append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
+                
+                # Store in assistant_sessions
+                assistant_sessions[thread_id] = initial_state
+                logger.info(f"Loaded thread {thread_id} from MongoDB into assistant_service with {len(thread.messages)} messages")
+            else:
+                # Thread exists, but ensure the message we just added is in the assistant_service
+                assistant_sessions[thread_id]["messages"].append({
+                    "role": "user",
+                    "content": content
+                })
+            
+            logger.info(f"Added message to thread {thread_id} for user {user_id}")
+            
+        except ValueError as e:
+            # Re-raise ValueError for HTTP-specific handling in the route
+            raise e
+        except Exception as e:
+            logger.error(f"Error adding message to thread {thread_id}: {str(e)}")
+            raise e
+    
+    @staticmethod
+    async def get_thread(thread_id: str, user_id: str) -> ThreadModel:
+        """
+        Get a specific thread with its messages.
+        
+        Args:
+            thread_id: The ID of the thread to get
+            user_id: The ID of the user requesting the thread
+            
+        Returns:
+            The thread with its messages
+            
+        Raises:
+            ValueError: If the thread is not found or the user doesn't have permission
+        """
+        try:
+            # Get the thread repository
+            thread_repository = AssistantUIUsecase._get_thread_repository()
+            
+            # Get the thread
+            thread = await thread_repository.get_thread(thread_id)
+            
+            if not thread:
+                raise ValueError(f"Thread {thread_id} not found")
+            
+            # Check if the thread belongs to the current user
+            if thread.user_id != user_id:
+                raise ValueError("You don't have permission to access this thread")
+            
+            return thread
+        except ValueError as e:
+            # Re-raise ValueError for HTTP-specific handling in the route
+            raise e
+        except Exception as e:
+            logger.error(f"Error getting thread {thread_id}: {str(e)}")
+            raise e
+    
+    @staticmethod
+    async def get_thread_messages(thread_id: str, user_id: str) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Get messages for a specific thread.
+        
+        Args:
+            thread_id: The ID of the thread to get messages for
+            user_id: The ID of the user requesting the messages
+            
+        Returns:
+            A dictionary containing the messages for the thread
+            
+        Raises:
+            ValueError: If the thread is not found or the user doesn't have permission
+        """
+        try:
+            # Get the thread
+            thread = await AssistantUIUsecase.get_thread(thread_id, user_id)
+            
+            # Return the messages
+            return {"messages": thread.messages}
+        except ValueError as e:
+            # Re-raise ValueError for HTTP-specific handling in the route
+            raise e
+        except Exception as e:
+            logger.error(f"Error getting messages for thread {thread_id}: {str(e)}")
+            raise e
     
     @staticmethod
     async def process_chat_request(chat_request: ChatRequest, user_id: Optional[str] = None, skip_message_add: bool = False) -> Dict[str, Any]:

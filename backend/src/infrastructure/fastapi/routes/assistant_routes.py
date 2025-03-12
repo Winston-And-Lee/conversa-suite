@@ -21,7 +21,6 @@ from src.domain.entity.assistant import (
     CreateThreadRequest,
     CreateThreadResponse,
     SendMessageRequest,
-    AssistantMessage,
     SendMessageResponse
 )
 from src.usecase import AssistantUsecase
