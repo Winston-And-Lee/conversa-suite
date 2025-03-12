@@ -22,7 +22,7 @@ export const AssistantUIPage = () => {
   
   // Initialize the chat runtime with API endpoint
   const runtime = useChatRuntime({
-    api: `${backendUrl}/assistant-ui/chat`,
+    api: `${backendUrl}/api/assistant-ui/chat`,
     onError: (error: any) => {
       console.error('Assistant UI runtime error:', error);
       setError(`Error: ${error.message || 'Something went wrong'}`);

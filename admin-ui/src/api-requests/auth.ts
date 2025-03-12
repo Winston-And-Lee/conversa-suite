@@ -47,14 +47,14 @@ export interface IVerificationRequest {
 
 // Register a new user
 export const registerRequest = async (payload: IUserRegisterRequest): Promise<IUserLoginResponse> => {
-  const url = '/users/register';
+  const url = '/api/users/register';
   const { data } = await post({ url, body: payload });
   return data;
 };
 
 // Login with email and password
 export const loginRequest = async (email: string, password: string): Promise<IUserLoginResponse> => {
-  const url = `/users/login`;
+  const url = `/api/users/login`;
   const payload = {
     email,
     password
@@ -66,7 +66,7 @@ export const loginRequest = async (email: string, password: string): Promise<IUs
 
 // Request email verification code
 export const requestVerification = async (email: string): Promise<IVerifyResponse> => {
-  const url = `/users/request-verification`;
+  const url = `/api/users/request-verification`;
   const payload = {
     email
   };
@@ -77,7 +77,7 @@ export const requestVerification = async (email: string): Promise<IVerifyRespons
 
 // Verify user with code
 export const verifyUser = async (email: string, code: string): Promise<IVerifyResponse> => {
-  const url = `/users/verify`;
+  const url = `/api/users/verify`;
   const payload = {
     email,
     code
@@ -89,7 +89,7 @@ export const verifyUser = async (email: string, code: string): Promise<IVerifyRe
 
 // Logout user
 export const logoutUser = async (refreshToken: string): Promise<{ success: boolean }> => {
-  const url = `/users/logout`;
+  const url = `/api/users/logout`;
   const headers = {
     'x-refresh-token': refreshToken
   };
@@ -100,14 +100,14 @@ export const logoutUser = async (refreshToken: string): Promise<{ success: boole
 
 // Get current user profile
 export const getUserProfile = async () => {
-  const url = `/users/me`;
+  const url = `/api/users/me`;
   const { data } = await get({ url });
   return data;
 };
 
 // Refresh token
 export const refreshToken = async (refreshToken: string): Promise<IUserLoginResponse> => {
-  const url = `/users/refresh`;
+  const url = `/api/users/refresh`;
   const payload = {
     refresh_token: refreshToken
   };
@@ -117,7 +117,7 @@ export const refreshToken = async (refreshToken: string): Promise<IUserLoginResp
 };
 
 export const loginViaGoogle = async (token: string, profile: any): Promise<IUserLoginResponse> => {
-  const url = `/users/login/google`;
+  const url = `/api/users/login/google`;
   const payload = { 
     token,
     profile
@@ -127,7 +127,7 @@ export const loginViaGoogle = async (token: string, profile: any): Promise<IUser
 };
 
 export const loginViaMicrosoft = async (token: string, profile: any): Promise<IUserLoginResponse> => {
-  const url = `/users/login/microsoft`;
+  const url = `/api/users/login/microsoft`;
   const payload = { 
     token,
     profile
@@ -140,7 +140,7 @@ export const loginViaMicrosoft = async (token: string, profile: any): Promise<IU
 // They're kept but may need to be updated to match the new API structure
 
 export const loginReqRequest = async (cid: string) => {
-  const url = `/v1/users/login-request`;
+  const url = `/api/users/login-request`;
   const payload = {
     cid: cid
   };
@@ -150,7 +150,7 @@ export const loginReqRequest = async (cid: string) => {
 };
 
 export const getUserInformationRequest = async () => {
-  const url = `/users/me`;
+  const url = `/api/users/me`;
 
   const { data } = await get({ url });
   if (data.trace_id === 'middlware-002') {
