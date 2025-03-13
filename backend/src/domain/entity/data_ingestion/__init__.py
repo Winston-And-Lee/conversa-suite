@@ -1,17 +1,13 @@
 from src.domain.entity.data_ingestion.data_ingestion_schema import (
     DataTypeEnum,
-    DataIngestionRequest,
-    DataIngestionResponse,
     SearchRequest,
-    SearchResultItem,
     SearchResponse
 )
+from src.domain.models.data_ingestion import DataIngestion
 
 __all__ = [
     "DataTypeEnum",
-    "DataIngestionRequest",
-    "DataIngestionResponse",
+    "DataIngestion",
     "SearchRequest",
-    "SearchResultItem",
     "SearchResponse"
 ] 

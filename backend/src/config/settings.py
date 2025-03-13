@@ -55,8 +55,9 @@ class Settings(BaseSettings):
     
     # Pinecone settings
     PINECONE_API_KEY: str = ""
-    PINECONE_ENVIRONMENT: str = ""
+    PINECONE_ENVIRONMENT: str = "us-west-2"
     PINECONE_INDEX_NAME: str = ""
+    PINECONE_CLOUD: str = "aws"
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
@@ -86,6 +87,20 @@ def get_settings():
     # Log the MongoDB connection settings to help with debugging
     logger.info(f"MongoDB URI: {settings.MONGO_URI}")
     logger.info(f"MongoDB Database: {settings.MONGO_DB}")
+    
+    # Log Pinecone settings
+    if settings.PINECONE_API_KEY:
+        logger.info(f"Pinecone cloud: {settings.PINECONE_CLOUD}")
+        logger.info(f"Pinecone region: {settings.PINECONE_ENVIRONMENT}")
+        logger.info(f"Pinecone index: {settings.PINECONE_INDEX_NAME}")
+    else:
+        logger.warning("Pinecone API key not set - vector search functionality will not work")
+    
+    # Log OpenAI settings
+    if settings.OPENAI_API_KEY:
+        logger.info(f"OpenAI model: {settings.OPENAI_MODEL}")
+    else:
+        logger.warning("OpenAI API key not set - AI functionality will not work")
     
     # Log LangChain tracing settings
     if settings.LANGCHAIN_API_KEY:

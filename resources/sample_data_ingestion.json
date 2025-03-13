@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Snow White and the Seven Dwarfs",
+    "specified_text": "Mirror, mirror on the wall, who is the fairest of them all?",
+    "data_type": "FICTION",
+    "content": "Snow White and the Seven Dwarfs is a classic fairy tale about a young princess named Snow White who is forced to flee into the forest after her jealous stepmother, the Evil Queen, orders her execution. She finds refuge with seven dwarfs, but the Queen tricks her into eating a poisoned apple. Snow White falls into a deep sleep and is eventually awakened by a prince's kiss.",
+    "reference": "The Brothers Grimm, 1812",
+    "keywords": ["fairy tale", "princess", "magic mirror", "dwarfs", "poisoned apple"],
+    "file_url": "https://www.gutenberg.org/files/2591/2591-h/2591-h.htm"
+},
+{
+    "title": "Beauty and the Beast",
+    "specified_text": "She had seen it often in her dreams, and yet its strangeness made her shudder.",
+    "data_type": "FAIRY_TALE",
+    "content": "Beauty and the Beast is a classic fairy tale about a young woman named Beauty who selflessly takes her father's place as a prisoner in the castle of a fearsome Beast. Over time, she learns that the Beast is not as monstrous as he appears and comes to love him, breaking the curse that had transformed him into a beast and restoring him to his true form as a prince.",
+    "reference": "Gabrielle-Suzanne de Villeneuve, 1740",
+    "keywords": ["fairy tale", "love", "transformation", "curse", "castle"],
+    "file_url": "https://www.gutenberg.org/files/7074/7074-h/7074-h.htm"
+}
+] 

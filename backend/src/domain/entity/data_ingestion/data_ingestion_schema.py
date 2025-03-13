@@ -1,53 +1,33 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field
+from src.domain.models.data_ingestion import DataIngestion, DataType
 
 # Enum for data types
 class DataTypeEnum(str, Enum):
     LEGAL_TEXT = "ตัวบทกฎหมาย"  # Legal Text/Article
     FAQ = "FAQ"                  # FAQ
     RECOMMENDATION = "คำแนะนำ"   # Recommendation/Advice
+    FICTION = "FICTION"          # Fiction/Stories
     
-# Data ingestion request schema (without file)
-class DataIngestionRequest(BaseModel):
-    title: str = Field(..., description="หัวข้อ (Heading/Title)")
-    specified_text: str = Field(..., description="ระบุ (Specify)")
-    data_type: DataTypeEnum = Field(..., description="ประเภทข้อมูล (Data Type)")
-    law: str = Field(..., description="กฎหมาย (Law/Regulation)")
-    reference: str = Field(..., description="อ้างอิง (Reference)")
-    keywords: List[str] = Field(default=[], description="คีย์เวิร์ด (Keywords)")
-
-# Data ingestion response schema
-class DataIngestionResponse(BaseModel):
-    id: str
-    title: str
-    specified_text: str
-    data_type: str
-    law: str
-    reference: str
-    keywords: List[str]
-    file_url: Optional[str] = None
-    file_name: Optional[str] = None
-    file_type: Optional[str] = None
-    file_size: Optional[int] = None
-    created_at: datetime
-    updated_at: datetime
-
 # Search request schema
 class SearchRequest(BaseModel):
-    query: str = Field(..., description="Text query to search for")
-    limit: int = Field(default=10, description="Maximum number of results to return")
-
-# Search result item schema
-class SearchResultItem(BaseModel):
-    id: str
-    title: str
-    specified_text: str
-    data_type: str
-    similarity_score: float
+    query: Optional[str] = Field(default="", description="Text query to search for")
+    page: int = Field(default=1, description="Page number")
+    page_size: int = Field(default=10, description="Number of items per page")
+    
+# Standard API response format
+class StandardResponse(BaseModel):
+    code: int = 0
+    message: str = ""
+    data: Any
+    page: Optional[int] = None
+    page_size: Optional[int] = None
+    total_page: Optional[int] = None
+    total_data: Optional[int] = None
+    data_schema: Optional[Any] = None
     
 # Search response schema
-class SearchResponse(BaseModel):
-    results: List[SearchResultItem]
-    total: int 
+class SearchResponse(StandardResponse):
+    data: List[DataIngestion] 

@@ -282,18 +282,22 @@ Authorization: Bearer {token}
 ```typescript
 interface DataIngestion {
   id: string;
-  title: string;              // หัวข้อ (Heading/Title)
-  specified_text: string;     // ระบุ (Specify)
-  data_type: string;          // ประเภทข้อมูล (Data Type)
-  law: string;                // กฎหมาย (Law/Regulation)
-  reference: string;          // อ้างอิง (Reference)
-  keywords: string[];         // คีย์เวิร์ด (Keywords)
-  file_url?: string;          // S3 URL for uploaded file
-  file_name?: string;         // Original filename
-  file_type?: string;         // File type (PDF or DOC)
-  file_size?: number;         // File size in bytes
-  created_at: string;         // ISO 8601 datetime
-  updated_at: string;         // ISO 8601 datetime
+  title: string;
+  specified_text: string;
+  data_type: string;
+  content?: string;
+  reference: string;
+  keywords: string[];
+  file_url?: string;
+  file_name?: string;
+  file_type?: string;
+  file_size?: number;
+  webpage_url?: string;
+  pinecone_id?: string;
+  user_id?: string;
+  created_at: string;
+  updated_at: string;
+  similarity_score?: number;   // Only present in search results
 }
 ```
 
@@ -306,23 +310,11 @@ interface SearchRequest {
 }
 ```
 
-### SearchResultItem
-
-```typescript
-interface SearchResultItem {
-  id: string;
-  title: string;
-  specified_text: string;
-  data_type: string;
-  similarity_score: number;   // Similarity score (0-1)
-}
-```
-
 ### SearchResponse
 
 ```typescript
 interface SearchResponse {
-  results: SearchResultItem[];
+  results: DataIngestion[];
   total: number;
 }
 ```
