@@ -6,6 +6,7 @@ from fastapi import UploadFile, HTTPException
 
 from src.domain.models.data_ingestion import DataIngestion, DataType
 from src.domain.models.user import User
+from src.domain.entity.data_ingestion import ListDataIngestionResponse
 from src.infrastructure.services.text_extraction_service import TextExtractionService
 from src.interface.repository.database.db_repository import data_ingestion_repository, s3_repository, pinecone_repository
 
@@ -489,7 +490,7 @@ class DataIngestionUseCase:
         _sort: Optional[str] = None,
         _order: Optional[str] = None,
         user: Optional[User] = None
-    ) -> Dict[str, Any]:
+    ) -> ListDataIngestionResponse:
         """
         Process list data ingestion request with all parameters and return standardized response.
         
@@ -509,7 +510,7 @@ class DataIngestionUseCase:
             user: User performing the request
             
         Returns:
-            Dict[str, Any]: Standardized response with data, pagination info, and schema
+            ListDataIngestionResponse: Standardized response with data, pagination info
         """
         try:
             # Use refine parameters if provided
@@ -548,14 +549,14 @@ class DataIngestionUseCase:
                 user=user
             )
             
-            # Return standardized response format
-            return {
-                "data": result_items,
-                "page": actual_page,
-                "page_size": actual_page_size,
-                "total_page": total_pages,
-                "total_data": total_count
-            }
+            # Return standardized response using the ListDataIngestionResponse class
+            return ListDataIngestionResponse(
+                data=result_items,
+                page=actual_page,
+                page_size=actual_page_size,
+                total_page=total_pages,
+                total_data=total_count
+            )
         except Exception as e:
             self.logger.error(f"Error processing list data ingestion: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error processing list data: {str(e)}") 

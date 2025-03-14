@@ -10,6 +10,7 @@ from src.domain.entity.data_ingestion import (
     SearchRequest,
     SearchResponse,
     DataTypeEnum,
+    ListDataIngestionResponse,
     get_data_ingestion_schema
 )
 from src.usecase.data_ingestion import DataIngestionUseCase
@@ -276,11 +277,11 @@ async def list_data_ingestion(
         return SearchResponse(
             code=0,
             message="",
-            data=result["data"],
-            page=result["page"],
-            page_size=result["page_size"],
-            total_page=result["total_page"],
-            total_data=result["total_data"],
+            data=result.data,
+            page=result.page,
+            page_size=result.page_size,
+            total_page=result.total_page,
+            total_data=result.total_data,
             data_schema=data_schema
         )
     except Exception as e:

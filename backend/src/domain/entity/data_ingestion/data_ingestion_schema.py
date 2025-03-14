@@ -32,6 +32,18 @@ class StandardResponse(BaseModel):
 class SearchResponse(StandardResponse):
     data: List[DataIngestion]
 
+# List data ingestion response class
+class ListDataIngestionResponse(BaseModel):
+    """Response class for process_list_data_ingestion method."""
+    data: List[DataIngestion]
+    page: int
+    page_size: int
+    total_page: int
+    total_data: int
+    
+    class Config:
+        arbitrary_types_allowed = True
+
 # Schema definition for AutoRenderFilterV2 component
 def get_data_ingestion_schema() -> Dict[str, Any]:
     """
