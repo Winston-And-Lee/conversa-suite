@@ -1,0 +1,373 @@
+---
+title: File Upload API
+description: API specifications for the File Upload service
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+# File Upload API
+
+The File Upload API allows users to upload, download, list, and delete files. This API enables storing and managing various file types including images, documents, audio, and video files.
+
+## Base URL
+
+```
+https://api.example.com/api/files
+```
+
+## Authentication
+
+All endpoints require Bearer token authentication.
+
+```
+Authorization: Bearer {token}
+```
+
+## Endpoints
+
+### Upload File
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  POST /api/files/upload
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Upload a file to the server. The file will be stored in a folder structure based on the current date.
+  </TabItem>
+
+  <TabItem label="Request">
+  **Content-Type**: `multipart/form-data`
+
+  **Form Fields**:
+  ```
+  file:        File      // The file to upload (required)
+  description: string    // Optional description of the file
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `201 Created`
+
+  **Content-Type**: `application/json`
+
+  **Body**:
+  ```json
+  {
+    "id": "string",
+    "file_name": "string",
+    "file_url": "string",
+    "file_type": "string",
+    "description": "string",
+    "user_create": "string",
+    "created_at": "2023-03-15T10:30:45.123Z",
+    "updated_at": "2023-03-15T10:30:45.123Z"
+  }
+  ```
+
+  **Notes**:
+  - `created_at` and `updated_at` are ISO 8601 formatted datetime strings
+  - `file_type` is one of: "image", "document", "audio", "video", "other"
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X POST https://api.example.com/api/files/upload \
+    -H "Authorization: Bearer {token}" \
+    -F "file=@/path/to/document.pdf" \
+    -F "description=Important document"
+  ```
+
+  **Response**:
+  ```json
+  {
+    "id": "6407e98a5c2b3a1234567890",
+    "file_name": "files/2023/03/15/document_a1b2c3d4.pdf",
+    "file_url": "https://bucket-name.s3.region.amazonaws.com/files/2023/03/15/document_a1b2c3d4.pdf",
+    "file_type": "document",
+    "description": "Important document",
+    "user_create": "user@example.com",
+    "created_at": "2023-03-15T10:30:45.123Z",
+    "updated_at": "2023-03-15T10:30:45.123Z"
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Error Responses">
+  **Status Code**: `400 Bad Request`
+  ```json
+  {
+    "detail": "No file provided"
+  }
+  ```
+
+  **Status Code**: `401 Unauthorized`
+  ```json
+  {
+    "detail": "Not authenticated"
+  }
+  ```
+
+  **Status Code**: `500 Internal Server Error`
+  ```json
+  {
+    "detail": "Failed to upload file: {error message}"
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+### List Files
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  GET /api/files/list
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  List files for the current user with pagination support.
+  </TabItem>
+
+  <TabItem label="Request">
+  **Query Parameters**:
+  ```
+  limit:  integer    // Maximum number of files to return (default: 10, max: 100)
+  offset: integer    // Number of files to skip (default: 0)
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `200 OK`
+
+  **Content-Type**: `application/json`
+
+  **Body**:
+  ```json
+  {
+    "items": [
+      {
+        "id": "string",
+        "file_name": "string",
+        "file_url": "string",
+        "file_type": "string",
+        "description": "string",
+        "user_create": "string",
+        "created_at": "2023-03-15T10:30:45.123Z",
+        "updated_at": "2023-03-15T10:30:45.123Z"
+      }
+    ],
+    "total": 0,
+    "limit": 10,
+    "offset": 0
+  }
+  ```
+
+  **Notes**:
+  - `created_at` and `updated_at` are ISO 8601 formatted datetime strings
+  - `file_type` is one of: "image", "document", "audio", "video", "other"
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X GET "https://api.example.com/api/files/list?limit=5&offset=0" \
+    -H "Authorization: Bearer {token}"
+  ```
+
+  **Response**:
+  ```json
+  {
+    "items": [
+      {
+        "id": "6407e98a5c2b3a1234567890",
+        "file_name": "files/2023/03/15/document_a1b2c3d4.pdf",
+        "file_url": "https://bucket-name.s3.region.amazonaws.com/files/2023/03/15/document_a1b2c3d4.pdf",
+        "file_type": "document",
+        "description": "Important document",
+        "user_create": "user@example.com",
+        "created_at": "2023-03-15T10:30:45.123Z",
+        "updated_at": "2023-03-15T10:30:45.123Z"
+      }
+    ],
+    "total": 1,
+    "limit": 5,
+    "offset": 0
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Error Responses">
+  **Status Code**: `401 Unauthorized`
+  ```json
+  {
+    "detail": "Not authenticated"
+  }
+  ```
+
+  **Status Code**: `500 Internal Server Error`
+  ```json
+  {
+    "detail": "Failed to list files: {error message}"
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+### Download File
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  GET /api/files/download/{file_name}
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Download a file by its file name. The file name should be the full path as returned in the file_name field from the upload or list endpoints.
+  </TabItem>
+
+  <TabItem label="Request">
+  **Path Parameters**:
+  ```
+  file_name: string    // Full path of the file to download
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `200 OK`
+
+  **Content-Type**: Depends on the file type
+
+  **Headers**:
+  ```
+  Content-Disposition: attachment; filename={original_filename}
+  ```
+
+  **Body**: Binary file data
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X GET "https://api.example.com/api/files/download/files/2023/03/15/document_a1b2c3d4.pdf" \
+    -H "Authorization: Bearer {token}" \
+    --output downloaded_document.pdf
+  ```
+  </TabItem>
+
+  <TabItem label="Error Responses">
+  **Status Code**: `401 Unauthorized`
+  ```json
+  {
+    "detail": "Not authenticated"
+  }
+  ```
+
+  **Status Code**: `404 Not Found`
+  ```json
+  {
+    "detail": "File not found: {error message}"
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+### Delete File
+
+<Tabs>
+  <TabItem label="Endpoint">
+  ```
+  DELETE /api/files/{file_name}
+  ```
+  </TabItem>
+
+  <TabItem label="Description">
+  Delete a file by its file name. The file name should be the full path as returned in the file_name field from the upload or list endpoints.
+  </TabItem>
+
+  <TabItem label="Request">
+  **Path Parameters**:
+  ```
+  file_name: string    // Full path of the file to delete
+  ```
+  </TabItem>
+
+  <TabItem label="Response">
+  **Status Code**: `200 OK`
+
+  **Content-Type**: `application/json`
+
+  **Body**:
+  ```json
+  {
+    "message": "File deleted successfully"
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Example">
+  ```bash
+  curl -X DELETE "https://api.example.com/api/files/files/2023/03/15/document_a1b2c3d4.pdf" \
+    -H "Authorization: Bearer {token}"
+  ```
+
+  **Response**:
+  ```json
+  {
+    "message": "File deleted successfully"
+  }
+  ```
+  </TabItem>
+
+  <TabItem label="Error Responses">
+  **Status Code**: `401 Unauthorized`
+  ```json
+  {
+    "detail": "Not authenticated"
+  }
+  ```
+
+  **Status Code**: `404 Not Found`
+  ```json
+  {
+    "detail": "File not found or could not be deleted"
+  }
+  ```
+
+  **Status Code**: `500 Internal Server Error`
+  ```json
+  {
+    "detail": "Failed to delete file: {error message}"
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+## File Type Support
+
+The API supports various file types, categorized as follows:
+
+### Image Files
+- jpg, jpeg, png, gif, bmp, tiff, tif, webp, svg, ico
+
+### Document Files
+- pdf, doc, docx, txt, rtf, odt, xls, xlsx, ppt, pptx, csv
+
+### Audio Files
+- mp3, wav, ogg, flac, aac, m4a
+
+### Video Files
+- mp4, avi, mov, wmv, flv, webm, mkv
+
+### Other Files
+- Any file type not listed above will be categorized as "other"
+
+## Security Considerations
+
+- All file uploads are stored in a secure S3 bucket
+- Files are organized by date to maintain organization
+- File names are made unique by appending a UUID to prevent collisions
+- Authentication is required for all operations
+- Users can only access files they have uploaded 

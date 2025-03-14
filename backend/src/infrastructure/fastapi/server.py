@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.config.settings import get_settings
 from src.infrastructure.database.mongodb import MongoDB
 from src.infrastructure.ai.tracing import setup_langchain_tracing
-from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes, data_ingestion_routes
+from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes, data_ingestion_routes, file_routes
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -95,6 +95,7 @@ def create_app() -> FastAPI:
     app.include_router(assistant_routes.router, prefix="/api/assistant", tags=["Assistant"])
     app.include_router(assistant_ui_routes.router, prefix="/api/assistant-ui", tags=["Assistant UI"])
     app.include_router(data_ingestion_routes.router)  # Data ingestion routes already have prefix
+    app.include_router(file_routes.router, prefix="/api/files", tags=["Files"])
 
     # Add root and debug endpoints
     @app.get("/")

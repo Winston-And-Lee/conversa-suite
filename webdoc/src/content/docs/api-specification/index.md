@@ -13,3 +13,4 @@ This section contains detailed API specifications for the Conversa-Suite service
 - [Chatbot API](./chatbot) - Chat session management, message sending, and history retrieval 
 - [Assistant UI API](./assistant-ui) - Integration with the Assistant UI framework for modern chat interfaces 
 - [Data Ingestion API](./data-ingestion) - Thai legal content ingestion, file handling, and semantic search
+- [File Upload API](./file-upload) - File upload, download, listing, and deletion operations

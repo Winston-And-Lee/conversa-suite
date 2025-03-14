@@ -26,6 +26,9 @@ export default defineConfig({
 						{ label: 'Overview', slug: 'api-specification' },
 						{ label: 'User API', slug: 'api-specification/user' },
 						{ label: 'Chatbot API', slug: 'api-specification/chatbot' },
+						{ label: 'Assistant UI API', slug: 'api-specification/assistant-ui' },
+						{ label: 'Data Ingestion API', slug: 'api-specification/data-ingestion' },
+						{ label: 'File API', slug: 'api-specification/file-upload' },
 					],
 				},
 				{
