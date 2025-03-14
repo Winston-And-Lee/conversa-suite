@@ -72,11 +72,28 @@ class AssistantUIService:
             # Update session state
             assistant_sessions[thread_id] = result
             
-            # Return formatted response
-            return {
+            # Return formatted response with fiction detection info
+            response = {
                 "thread_id": thread_id,
                 "messages": result["messages"]
             }
+            
+            # Add fiction detection info if available
+            if "is_fiction_topic" in result:
+                response["is_fiction_topic"] = result["is_fiction_topic"]
+                
+                # Include pinecone results summary if it's a fiction topic
+                if result["is_fiction_topic"] and result.get("pinecone_results"):
+                    response["fiction_sources"] = [
+                        {
+                            "title": item.get("title", "Untitled"),
+                            "reference": item.get("reference", ""),
+                            "similarity_score": item.get("similarity_score", 0.0)
+                        }
+                        for item in result.get("pinecone_results", [])
+                    ]
+            
+            return response
             
         except (CancelledExc, asyncio.CancelledError) as e:
             logger.info(f"Operation cancelled for thread {thread_id}: {str(e)}")
@@ -132,6 +149,10 @@ class AssistantUIService:
                 current_state["metadata"] = {}
             current_state["metadata"].update(metadata)
             
+            # Initialize fiction detection fields
+            current_state["is_fiction_topic"] = False
+            current_state["pinecone_results"] = []
+            
             # Convert messages to LangChain format for the LLM
             from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
             lc_messages = []
@@ -151,6 +172,79 @@ class AssistantUIService:
                 streaming=True
             )
             
+            # First, check if the message is about fiction
+            try:
+                # Use a separate LLM call to classify the topic
+                classification_prompt = [
+                    SystemMessage(content="You are a topic classifier. Determine if the user's message is about fiction (novels, stories, fairy tales, etc.). Respond with only 'YES' if it's about fiction or 'NO' if it's not."),
+                    HumanMessage(content=content)
+                ]
+                
+                classification_llm = create_llm(
+                    run_name="Fiction Topic Classification - Streaming",
+                    metadata={"task": "fiction_classification"}
+                )
+                
+                classification_result = classification_llm.invoke(classification_prompt)
+                is_fiction = "YES" in classification_result.content.upper()
+                
+                # Update state with classification result
+                current_state["is_fiction_topic"] = is_fiction
+                
+                # If it's about fiction, query Pinecone
+                if is_fiction:
+                    logger.info(f"Detected fiction topic in streaming message: {content[:50]}...")
+                    
+                    # Import and initialize Pinecone repository
+                    from src.interface.repository.database.db_repository import pinecone_repository
+                    pinecone_repo = pinecone_repository()
+                    
+                    # Query Pinecone
+                    search_results = await pinecone_repo.search(content, limit=5)
+                    
+                    # Filter results to only include fiction
+                    fiction_results = [
+                        result for result in search_results 
+                        if result.get("data_type") == "FICTION" or 
+                           result.get("source_type") == "fiction"
+                    ]
+                    
+                    # Ensure each result has a similarity_score field
+                    for result in fiction_results:
+                        if "similarity_score" not in result:
+                            # Use a default score if missing
+                            result["similarity_score"] = 0.0
+                    
+                    # Update state with Pinecone results
+                    current_state["pinecone_results"] = fiction_results
+                    logger.info(f"Found {len(fiction_results)} fiction results in Pinecone for streaming")
+                    
+                    # Add context from Pinecone results
+                    if fiction_results:
+                        context = "I found the following fiction-related information that might be helpful:\n\n"
+                        for i, result in enumerate(fiction_results, 1):
+                            title = result.get("title", "Untitled")
+                            content_text = result.get("content", "")
+                            specified_text = result.get("specified_text", "")
+                            reference = result.get("reference", "")
+                            
+                            context += f"{i}. {title}\n"
+                            if specified_text:
+                                context += f"   Quote: \"{specified_text}\"\n"
+                            if content_text:
+                                context += f"   Summary: {content_text}\n"
+                            if reference:
+                                context += f"   Reference: {reference}\n"
+                            context += "\n"
+                        
+                        # Add context as a system message
+                        lc_messages.insert(0, SystemMessage(content=context))
+            except Exception as e:
+                logger.error(f"Error in fiction detection during streaming: {str(e)}")
+                import traceback
+                logger.error(traceback.format_exc())
+                # Continue without fiction detection
+            
             # Stream the response
             assistant_response = ""
             try:
@@ -161,11 +255,29 @@ class AssistantUIService:
                     # Update the last message with the accumulated response
                     current_state["messages"][-1]["content"] = assistant_response
                     
-                    # Yield the updated messages as a dictionary
-                    yield {
+                    # Prepare response with fiction detection info
+                    response = {
                         "thread_id": thread_id,
                         "messages": current_state["messages"]
                     }
+                    
+                    # Add fiction detection info if available
+                    if current_state.get("is_fiction_topic"):
+                        response["is_fiction_topic"] = current_state["is_fiction_topic"]
+                        
+                        # Include pinecone results summary if it's a fiction topic
+                        if current_state["is_fiction_topic"] and current_state.get("pinecone_results"):
+                            response["fiction_sources"] = [
+                                {
+                                    "title": item.get("title", "Untitled"),
+                                    "reference": item.get("reference", ""),
+                                    "similarity_score": item.get("similarity_score", 0.0)
+                                }
+                                for item in current_state.get("pinecone_results", [])
+                            ]
+                    
+                    # Yield the updated response
+                    yield response
                 
                 # Update session state with the final response
                 assistant_sessions[thread_id] = current_state
