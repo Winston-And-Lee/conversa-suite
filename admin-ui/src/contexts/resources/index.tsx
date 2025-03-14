@@ -38,6 +38,7 @@ export const resources = [
     list: '/data-ingestion/',
     identifier: 'DataIngestion',
     show: '/data-ingestion/:id',
+    create: '/data-ingestion/create',
     meta: {
       icon: <SolarIconSet.Document color='#1C274C' size={24} iconStyle='Outline' />,
       label: 'ข้อมูลสำหรับ AI',
@@ -71,18 +72,18 @@ export const resources = [
   //     parent: 'Super Admin'
   //   }
   // },
-  {
-    name: 'users',
-    list: '/admin/users/',
-    identifier: 'users',
-    show: '/admin/users/:id',
-    meta: {
-      canDelete: false,
-      icon: <UsergroupAddOutlined />,
-      label: 'Users',
-      parent: 'Super Admin'
-    }
-  },
+  // {
+  //   name: 'users',
+  //   list: '/admin/users/',
+  //   identifier: 'users',
+  //   show: '/admin/users/:id',
+  //   meta: {
+  //     canDelete: false,
+  //     icon: <UsergroupAddOutlined />,
+  //     label: 'Users',
+  //     parent: 'Super Admin'
+  //   }
+  // },
   {
     name: 'files',
     list: '/admin/files/',

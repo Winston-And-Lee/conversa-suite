@@ -26,6 +26,7 @@ import { SignupPage, VerifyPage } from './pages/register';
 import { AssistantUIPage } from './pages/assistant-ui/page';
 import { DataIngestionList } from './pages/data-ingestion/list';
 import { DataIngestionShow } from './pages/data-ingestion/show';
+import { DataIngestionCreate } from './pages/data-ingestion/create';
 import { FileList } from './pages/super-admin/files';
 
 import { Avatar } from 'antd';
@@ -159,6 +160,7 @@ function App() {
                   <Route path={ROUTES.DATA_INGESTION}>
                     <Route index={true} element={<DataIngestionList />} />
                     <Route path=':id' element={<DataIngestionShow />} />
+                    <Route path='create' element={<DataIngestionCreate />} />
                   </Route>
 
                   <Route path='' element={<HomePage />} />

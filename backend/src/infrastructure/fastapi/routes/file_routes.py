@@ -115,11 +115,13 @@ async def list_files(
     _order: Optional[str] = None,
     file_name: Optional[str] = None,
     file_type: Optional[str] = None,
+    file_name_like: Optional[str] = None,
+    file_type_like: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     file_usecase: IFileUseCase = Depends(get_file_usecase_dependency)
 ):
     """
-    List files for the current user
+    List files for the current user with filtering options
     
     Args:
         limit: Maximum number of files to return
@@ -128,13 +130,15 @@ async def list_files(
         _pageSize: Alternative page size parameter (used by refine)
         _sort: Field to sort by (used by refine)
         _order: Sort order (asc or desc, used by refine)
-        file_name: Optional filter for file name
-        file_type: Optional filter for file type
+        file_name: Exact match for file name
+        file_type: Exact match for file type
+        file_name_like: Partial match for file name (contains)
+        file_type_like: Partial match for file type (contains)
         current_user: Current authenticated user
         file_usecase: File usecase dependency
         
     Returns:
-        StandardizedResponse object
+        StandardizedResponse object with file resources and schema information
     """
     try:
         # Handle refine pagination parameters
@@ -150,10 +154,16 @@ async def list_files(
         
         # Add additional filters if provided
         if file_name:
-            filter_params["file_name"] = {"$regex": file_name, "$options": "i"}
+            filter_params["file_name"] = file_name
+            
+        if file_name_like:
+            filter_params["file_name"] = {"$regex": file_name_like, "$options": "i"}
         
         if file_type:
             filter_params["file_type"] = file_type
+            
+        if file_type_like:
+            filter_params["file_type"] = {"$regex": file_type_like, "$options": "i"}
         
         # Determine sort parameters
         sort_params = []

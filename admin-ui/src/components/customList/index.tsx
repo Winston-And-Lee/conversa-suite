@@ -1,18 +1,25 @@
-import { Breadcrumb, List, ListProps } from '@refinedev/antd';
-import { ReactNode } from 'react';
+import { Breadcrumb, List } from '@refinedev/antd';
+import { ListProps } from '@refinedev/antd/dist/components/pages/list';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
-interface Props extends ListProps {
+interface Props extends Omit<ListProps, 'headerButtons'> {
   title?: string;
   children?: ReactNode;
   isShowBreadcrumb?: boolean;
+  headerButtons?: React.ReactNode[];
 }
 
-export const CustomList: React.FC<Props> = ({ isShowBreadcrumb = true, ...props }) => {
+export const CustomList: React.FC<Props> = ({ isShowBreadcrumb = true, headerButtons, ...props }) => {
   const { title, children } = props;
   return (
     <StyledDiv>
-      <List breadcrumb={isShowBreadcrumb ? <Breadcrumb hideIcons /> : false} title={title} {...props}>
+      <List 
+        breadcrumb={isShowBreadcrumb ? <Breadcrumb hideIcons /> : false} 
+        title={title} 
+        headerButtons={headerButtons}
+        {...props}
+      >
         {children}
       </List>
     </StyledDiv>

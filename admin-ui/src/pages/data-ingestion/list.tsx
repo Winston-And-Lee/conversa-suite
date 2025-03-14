@@ -2,6 +2,7 @@ import { DeleteButton, EditButton, ShowButton } from '@refinedev/antd';
 import { useDelete, useNotification } from '@refinedev/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import { AutoRenderFilterV2 } from '@/components/autoRender/filterv2';
 import { CustomList } from '@/components/customList';
@@ -10,7 +11,8 @@ import { CustomTable } from '@/components/tableComponent';
 import { ROUTES } from '@/constant';
 import { useFilterTableV2 } from '@/hooks/useFilterTablev2';
 import { convertDate } from '@/utils';
-import { Space, Table, Tag, Typography } from 'antd';
+import { Space, Table, Tag, Typography, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 const { Link } = Typography;
 
@@ -18,6 +20,7 @@ export const DataIngestionList = () => {
   const { t } = useTranslation();
   const { open } = useNotification();
   const { mutate: deleteData } = useDelete();
+  const navigate = useNavigate();
 
   const { filterProps, tableProps, setCurrent, setPageSize, tableQueryResult, setFilters } = useFilterTableV2({
     resource: 'data-ingestion',
@@ -90,7 +93,9 @@ export const DataIngestionList = () => {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <CustomList>
+      <CustomList
+        title='ข้อมูลสำหรับ AI'
+      >
         <AutoRenderFilterV2 {...filterProps} {...tableQueryResult} />
         <CustomTable size='small' {...(tableProps as any)} rowKey='id' pagination={false}>
           <Table.Column
