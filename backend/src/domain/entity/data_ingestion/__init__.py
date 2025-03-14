@@ -1,7 +1,6 @@
 from src.domain.entity.data_ingestion.data_ingestion_schema import (
     DataTypeEnum,
     SearchRequest,
-    SearchResponse,
     ListDataIngestionResponse,
     get_data_ingestion_schema
 )
@@ -11,7 +10,6 @@ __all__ = [
     "DataTypeEnum",
     "DataIngestion",
     "SearchRequest",
-    "SearchResponse",
     "ListDataIngestionResponse",
     "get_data_ingestion_schema"
-] 
+]

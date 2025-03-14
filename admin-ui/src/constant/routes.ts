@@ -3,6 +3,7 @@ export enum ROUTES {
   ADMIN_USERS = 'admin/users',
   ADMIN_WORKSPACE = 'admin/workspace',
   ADMIN_REPORT_SERVICE = 'admin/report-service',
+  ADMIN_FILES = 'admin/files',
   ASSISTANT_UI = 'assistant-ui',
   DATA_INGESTION = 'data-ingestion',
   LOGIN_WITH_OTP = 'login',

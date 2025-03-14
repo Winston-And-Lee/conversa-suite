@@ -26,6 +26,7 @@ import { SignupPage, VerifyPage } from './pages/register';
 import { AssistantUIPage } from './pages/assistant-ui/page';
 import { DataIngestionList } from './pages/data-ingestion/list';
 import { DataIngestionShow } from './pages/data-ingestion/show';
+import { FileList } from './pages/super-admin/files';
 
 import { Avatar } from 'antd';
 import 'reactflow/dist/style.css';
@@ -138,6 +139,10 @@ function App() {
                   <Route path={ROUTES.ADMIN_USERS}>
                     <Route index={true} element={<UserList />} />
                     <Route path=':id' element={<UserShow />} />
+                  </Route>
+
+                  <Route path={ROUTES.ADMIN_FILES}>
+                    <Route index={true} element={<FileList />} />
                   </Route>
 
                   <Route path={ROUTES.ADMIN_REPORT_SERVICE}>

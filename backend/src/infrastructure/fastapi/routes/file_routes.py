@@ -8,6 +8,7 @@ import io
 
 from src.domain.models.user import User
 from src.domain.models.file import FileResource, FileType
+from src.domain.entity.common import StandardizedResponse, get_schema_field
 from src.infrastructure.fastapi.routes.user_routes import get_current_user
 from src.usecase.file import get_file_usecase, IFileUseCase
 
@@ -52,6 +53,22 @@ class FileListResponse(BaseModel):
             datetime: lambda dt: dt.isoformat()
         }
 
+def get_file_schema() -> Dict[str, Any]:
+    """Get schema for file resources for frontend filtering"""
+    return {
+        "file_name": get_schema_field("file_name", "string", "File Name"),
+        "file_type": get_schema_field("file_type", "enum", "File Type", [
+            {"value": "image", "label": "Image"},
+            {"value": "document", "label": "Document"},
+            {"value": "audio", "label": "Audio"},
+            {"value": "video", "label": "Video"},
+            {"value": "other", "label": "Other"}
+        ]),
+        "description": get_schema_field("description", "string", "Description"),
+        "created_at": get_schema_field("created_at", "datetime", "Created At"),
+        "updated_at": get_schema_field("updated_at", "datetime", "Updated At")
+    }
+
 @router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=FileResponseModel)
 async def upload_file(
     file: UploadFile = File(...),
@@ -88,10 +105,16 @@ async def upload_file(
         logger.error(f"Error uploading file: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
 
-@router.get("/list", response_model=FileListResponse)
+@router.get("", response_model=StandardizedResponse[FileResource])
 async def list_files(
     limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
+    _page: Optional[int] = None,
+    _pageSize: Optional[int] = None,
+    _sort: Optional[str] = None,
+    _order: Optional[str] = None,
+    file_name: Optional[str] = None,
+    file_type: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     file_usecase: IFileUseCase = Depends(get_file_usecase_dependency)
 ):
@@ -101,20 +124,72 @@ async def list_files(
     Args:
         limit: Maximum number of files to return
         offset: Offset for pagination
+        _page: Alternative page parameter (used by refine)
+        _pageSize: Alternative page size parameter (used by refine)
+        _sort: Field to sort by (used by refine)
+        _order: Sort order (asc or desc, used by refine)
+        file_name: Optional filter for file name
+        file_type: Optional filter for file type
         current_user: Current authenticated user
         file_usecase: File usecase dependency
         
     Returns:
-        FileListResponse object
+        StandardizedResponse object
     """
     try:
-        resources, total = await file_usecase.get_file_resources(current_user, limit, offset)
-        return {
-            "items": resources,
-            "total": total,
-            "limit": limit,
-            "offset": offset
-        }
+        # Handle refine pagination parameters
+        page = _page if _page is not None else (offset // limit) + 1
+        page_size = _pageSize if _pageSize is not None else limit
+        
+        # Calculate offset from page if provided
+        if _page is not None:
+            offset = (page - 1) * page_size
+        
+        # Create filter parameters
+        filter_params = {"user_create": current_user.email}
+        
+        # Add additional filters if provided
+        if file_name:
+            filter_params["file_name"] = {"$regex": file_name, "$options": "i"}
+        
+        if file_type:
+            filter_params["file_type"] = file_type
+        
+        # Determine sort parameters
+        sort_params = []
+        if _sort and _order:
+            direction = -1 if _order.lower() == 'desc' else 1
+            sort_params = [(_sort, direction)]
+        else:
+            # Default sort by created_at descending
+            sort_params = [("created_at", -1)]
+        
+        # Get resources and count
+        resources, total = await file_usecase.get_file_resources(
+            current_user, 
+            limit=page_size, 
+            offset=offset,
+            filter_params=filter_params,
+            sort_params=sort_params
+        )
+        
+        # Calculate total pages
+        total_pages = (total + page_size - 1) // page_size if page_size > 0 else 0
+        
+        # Get schema for frontend filtering
+        data_schema = get_file_schema()
+        
+        # Return standardized response
+        return StandardizedResponse[FileResource](
+            code=0,
+            message="",
+            data=resources,
+            page=page,
+            page_size=page_size,
+            total_page=total_pages,
+            total_data=total,
+            data_schema=data_schema
+        )
     except Exception as e:
         logger.error(f"Error listing files: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to list files: {str(e)}")

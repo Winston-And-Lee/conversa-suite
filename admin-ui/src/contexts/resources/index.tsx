@@ -82,5 +82,15 @@ export const resources = [
       label: 'Users',
       parent: 'Super Admin'
     }
+  },
+  {
+    name: 'files',
+    list: '/admin/files/',
+    identifier: 'files',
+    meta: {
+      icon: <SolarIconSet.Document color='#1C274C' size={24} iconStyle='Outline' />,
+      label: 'Files',
+      parent: 'Super Admin'
+    }
   }
 ];

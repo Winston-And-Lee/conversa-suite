@@ -28,7 +28,9 @@ class IFileUseCase:
         """Delete a file by name"""
         pass
     
-    async def get_file_resources(self, user: User, limit: int = 10, offset: int = 0) -> Tuple[List[FileResource], int]:
+    async def get_file_resources(self, user: User, limit: int = 10, offset: int = 0, 
+                                filter_params: Dict[str, Any] = None, 
+                                sort_params: List[Tuple[str, int]] = None) -> Tuple[List[FileResource], int]:
         """Get file resources for a user"""
         pass
 
@@ -137,7 +139,9 @@ class FileUseCase(IFileUseCase):
             logger.error(f"Error deleting file: {str(e)}")
             return False
     
-    async def get_file_resources(self, user: User, limit: int = 10, offset: int = 0) -> Tuple[List[FileResource], int]:
+    async def get_file_resources(self, user: User, limit: int = 10, offset: int = 0,
+                                filter_params: Dict[str, Any] = None, 
+                                sort_params: List[Tuple[str, int]] = None) -> Tuple[List[FileResource], int]:
         """
         Get file resources for a user
         
@@ -145,19 +149,36 @@ class FileUseCase(IFileUseCase):
             user: Current user
             limit: Maximum number of resources to return
             offset: Offset for pagination
+            filter_params: Optional filter parameters
+            sort_params: Optional sort parameters [(field, direction)]
             
         Returns:
             Tuple of (list of FileResource objects, total count)
         """
         try:
-            filter_params = {"user_create": user.email}
+            # Initialize filter parameters if not provided
+            if filter_params is None:
+                filter_params = {"user_create": user.email}
+            else:
+                # Ensure user_create filter is applied if not already present
+                if "user_create" not in filter_params:
+                    filter_params["user_create"] = user.email
+            
+            # Use provided sort parameters or default to created_at descending
+            if sort_params is None:
+                sort_params = [("created_at", -1)]
+            
+            # Get resources with filters and sorting
             resources = await self.file_resource_repo.find(
                 filter_params, 
                 limit=limit, 
                 offset=offset, 
-                sort=[("created_at", -1)]
+                sort=sort_params
             )
+            
+            # Count total matching resources
             count = await self.file_resource_repo.count(filter_params)
+            
             return resources, count
         except Exception as e:
             logger.error(f"Error getting file resources: {str(e)}")

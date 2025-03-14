@@ -60,6 +60,9 @@ class FileResourceRepository:
             if result:
                 # Convert MongoDB document to FileResource
                 result["id"] = str(result["_id"])
+                # Convert ObjectId to string
+                if "_id" in result and isinstance(result["_id"], ObjectId):
+                    result["_id"] = str(result["_id"])
                 return FileResource.model_validate(result)
             return None
         except Exception as e:
@@ -92,8 +95,15 @@ class FileResourceRepository:
             # Convert results to FileResource objects
             results = []
             async for doc in cursor:
+                # Convert ObjectId to string for both id and _id fields
                 doc["id"] = str(doc["_id"])
-                results.append(FileResource.model_validate(doc))
+                doc["_id"] = str(doc["_id"])
+                try:
+                    file_resource = FileResource.model_validate(doc)
+                    results.append(file_resource)
+                except Exception as e:
+                    logger.error(f"Error validating file resource: {str(e)}, doc: {doc}")
+                    continue
             
             return results
         except Exception as e:
@@ -141,6 +151,9 @@ class FileResourceRepository:
             if result:
                 # Convert MongoDB document to FileResource
                 result["id"] = str(result["_id"])
+                # Convert ObjectId to string
+                if "_id" in result and isinstance(result["_id"], ObjectId):
+                    result["_id"] = str(result["_id"])
                 return FileResource.model_validate(result)
             return None
         except Exception as e:

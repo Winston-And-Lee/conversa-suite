@@ -3,6 +3,7 @@ from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field
 from src.domain.models.data_ingestion import DataIngestion, DataType
+from src.domain.entity.common import StandardizedResponse, get_schema_field
 
 # Enum for data types
 class DataTypeEnum(str, Enum):
@@ -17,21 +18,6 @@ class SearchRequest(BaseModel):
     page: int = Field(default=1, description="Page number")
     page_size: int = Field(default=10, description="Number of items per page")
     
-# Standard API response format
-class StandardResponse(BaseModel):
-    code: int = 0
-    message: str = ""
-    data: Any
-    page: Optional[int] = None
-    page_size: Optional[int] = None
-    total_page: Optional[int] = None
-    total_data: Optional[int] = None
-    data_schema: Optional[Any] = None
-    
-# Search response schema
-class SearchResponse(StandardResponse):
-    data: List[DataIngestion]
-
 # List data ingestion response class
 class ListDataIngestionResponse(BaseModel):
     """Response class for process_list_data_ingestion method."""
@@ -54,34 +40,14 @@ def get_data_ingestion_schema() -> Dict[str, Any]:
         Dict[str, Any]: Schema definition
     """
     return {
-        "main": {
-            "fields": [
-                {
-                    "name": "title",
-                    "type": "string",
-                    "label": "หัวข้อ"
-                },
-                {
-                    "name": "data_type",
-                    "type": "enum",
-                    "label": "ประเภทข้อมูล",
-                    "enum_values": ["ตัวบทกฎหมาย", "FAQ", "FICTION", "คำแนะนำ"]
-                },
-                {
-                    "name": "keywords",
-                    "type": "array",
-                    "label": "คีย์เวิร์ด"
-                },
-                {
-                    "name": "created_at",
-                    "type": "datetime",
-                    "label": "วันที่สร้าง"
-                },
-                {
-                    "name": "updated_at",
-                    "type": "datetime",
-                    "label": "วันที่แก้ไข"
-                }
-            ]
-        }
+        "title": get_schema_field("title", "string", "หัวข้อ"),
+        "data_type": get_schema_field("data_type", "enum", "ประเภทข้อมูล", [
+            {"value": DataTypeEnum.LEGAL_TEXT, "label": "ตัวบทกฎหมาย"},
+            {"value": DataTypeEnum.FAQ, "label": "FAQ"},
+            {"value": DataTypeEnum.RECOMMENDATION, "label": "คำแนะนำ"},
+            {"value": DataTypeEnum.FICTION, "label": "FICTION"}
+        ]),
+        "keywords": get_schema_field("keywords", "array", "คีย์เวิร์ด"),
+        "created_at": get_schema_field("created_at", "datetime", "วันที่สร้าง"),
+        "updated_at": get_schema_field("updated_at", "datetime", "วันที่แก้ไข")
     } 

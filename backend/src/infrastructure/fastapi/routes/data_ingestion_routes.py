@@ -8,11 +8,11 @@ from src.domain.models.data_ingestion import DataType, DataIngestion
 from src.domain.models.user import User
 from src.domain.entity.data_ingestion import (
     SearchRequest,
-    SearchResponse,
     DataTypeEnum,
     ListDataIngestionResponse,
     get_data_ingestion_schema
 )
+from src.domain.entity.common import StandardizedResponse
 from src.usecase.data_ingestion import DataIngestionUseCase
 from src.infrastructure.services.s3_service import S3Service
 from src.infrastructure.fastapi.routes.user_routes import get_current_user
@@ -108,7 +108,7 @@ async def get_data_ingestion(
 
 @router.post(
     "/search",
-    response_model=SearchResponse,
+    response_model=StandardizedResponse[DataIngestion],
     summary="Search data ingestion"
 )
 async def search_data_ingestion(
@@ -169,7 +169,7 @@ async def search_data_ingestion(
         data_schema = get_data_ingestion_schema()
         
         # Return standardized response format
-        return SearchResponse(
+        return StandardizedResponse[DataIngestion](
             code=0,
             message="",
             data=result_items,
@@ -217,7 +217,7 @@ async def delete_data_ingestion(
 
 @router.get(
     "/",
-    response_model=SearchResponse,
+    response_model=StandardizedResponse[DataIngestion],
     summary="List all data ingestion with pagination"
 )
 async def list_data_ingestion(
@@ -274,7 +274,7 @@ async def list_data_ingestion(
         data_schema = get_data_ingestion_schema()
         
         # Return standardized response format
-        return SearchResponse(
+        return StandardizedResponse[DataIngestion](
             code=0,
             message="",
             data=result.data,

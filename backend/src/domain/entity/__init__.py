@@ -1,3 +1,9 @@
+"""
+Entity module for domain entities.
+
+This module contains entity classes that represent domain concepts.
+"""
+
 from src.domain.entity.user import (
     UserCreate,
     AuthResponse,
@@ -28,6 +34,8 @@ from src.domain.entity.assistant import (
     ChatRequest
 )
 
+from src.domain.entity.common import StandardizedResponse, get_schema_field
+
 __all__ = [
     # User entities
     "UserCreate",
@@ -53,5 +61,7 @@ __all__ = [
     # Assistant UI entities
     "ContentPart",
     "ChatMessage",
-    "ChatRequest"
+    "ChatRequest",
+    "StandardizedResponse",
+    "get_schema_field"
 ]
