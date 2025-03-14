@@ -263,6 +263,8 @@ class DataIngestionUseCase:
         self, 
         query: str = "", 
         data_type: Optional[str] = None,
+        keywords: Optional[str] = None,
+        title: Optional[str] = None,
         skip: int = 0,
         limit: int = 10,
         sort_field: Optional[str] = None,
@@ -275,6 +277,8 @@ class DataIngestionUseCase:
         Args:
             query: Optional text query to filter by
             data_type: Optional data type to filter by
+            keywords: Optional keywords to filter by
+            title: Optional title to filter by
             skip: Number of items to skip (for pagination)
             limit: Maximum number of results to return
             sort_field: Field to sort by
@@ -292,25 +296,34 @@ class DataIngestionUseCase:
                 sort_direction = -1 if sort_order and sort_order.lower() == 'desc' else 1
                 sort_params = {sort_field: sort_direction}
             
-            if not query and not data_type:
-                # If no filters provided, return all data with pagination and sorting
-                data_items = await self.data_ingestion_repository.find_all(
-                    skip=skip, 
-                    limit=limit,
-                    sort=sort_params
-                )
-                return data_items
-            
             # Build filter criteria
             filter_criteria = {}
             if data_type:
                 filter_criteria["data_type"] = data_type
             
-            if not query:
-                # If only data_type filter is provided
+            # Add keywords filter if provided
+            if keywords:
+                # Use regex to search for keywords that contain the provided string
+                filter_criteria["keywords"] = {"$regex": keywords, "$options": "i"}
+            
+            # Add title filter if provided
+            if title:
+                # Use regex to search for title containing the provided string
+                filter_criteria["title"] = {"$regex": title, "$options": "i"}
+            
+            if not query and (data_type or keywords or title):
+                # If only filter criteria are provided (no full-text search)
                 data_items = await self.data_ingestion_repository.find_by_criteria(
                     criteria=filter_criteria,
                     skip=skip,
+                    limit=limit,
+                    sort=sort_params
+                )
+                return data_items
+            elif not query:
+                # If no filters provided, return all data with pagination and sorting
+                data_items = await self.data_ingestion_repository.find_all(
+                    skip=skip, 
                     limit=limit,
                     sort=sort_params
                 )
@@ -329,8 +342,17 @@ class DataIngestionUseCase:
                     mongodb_id = result["id"]
                     data_item = await self.data_ingestion_repository.find_by_id(mongodb_id)
                     
-                    # Apply data_type filter if provided
-                    if data_item and (not data_type or data_item.data_type == data_type):
+                    # Apply filters if provided
+                    if data_item:
+                        if data_type and data_item.data_type != data_type:
+                            continue
+                        
+                        if keywords and not any(keywords.lower() in keyword.lower() for keyword in data_item.keywords):
+                            continue
+                        
+                        if title and title.lower() not in data_item.title.lower():
+                            continue
+                        
                         results.append(data_item)
                 
                 # For Pinecone results, we can't easily apply MongoDB sorting
@@ -341,31 +363,49 @@ class DataIngestionUseCase:
             self.logger.error(f"Error listing data ingestion: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error listing data: {str(e)}")
     
-    async def count_data_ingestion(self, query: str = "", data_type: Optional[str] = None, user: Optional[User] = None) -> int:
+    async def count_data_ingestion(
+        self, 
+        query: str = "", 
+        data_type: Optional[str] = None, 
+        keywords: Optional[str] = None,
+        title: Optional[str] = None,
+        user: Optional[User] = None
+    ) -> int:
         """
-        Count total data ingestion items, optionally filtered by query and data_type.
+        Count total data ingestion items, optionally filtered by query, data_type, keywords, and title.
         
         Args:
             query: Optional text query to filter by
             data_type: Optional data type to filter by
+            keywords: Optional keywords to filter by
+            title: Optional title to filter by
             user: User performing the count
             
         Returns:
             int: Total count of matching items
         """
         try:
-            if not query and not data_type:
-                # If no filters, count all items
-                return await self.data_ingestion_repository.count()
-            
             # Build filter criteria
             filter_criteria = {}
             if data_type:
                 filter_criteria["data_type"] = data_type
             
-            if not query:
-                # If only data_type filter is provided
+            # Add keywords filter if provided
+            if keywords:
+                # Use regex to search for keywords that contain the provided string
+                filter_criteria["keywords"] = {"$regex": keywords, "$options": "i"}
+            
+            # Add title filter if provided
+            if title:
+                # Use regex to search for title containing the provided string
+                filter_criteria["title"] = {"$regex": title, "$options": "i"}
+            
+            if not query and (data_type or keywords or title):
+                # If only filter criteria are provided (no full-text search)
                 return await self.data_ingestion_repository.count_by_criteria(filter_criteria)
+            elif not query:
+                # If no filters, count all items
+                return await self.data_ingestion_repository.count()
             else:
                 # For query-based search, we need to get IDs from Pinecone
                 search_results = await self.pinecone_repository.search(
@@ -373,16 +413,31 @@ class DataIngestionUseCase:
                     limit=1000  # Use a large limit to get most matches for counting
                 )
                 
-                if not data_type:
+                if not data_type and not keywords and not title:
                     return len(search_results)
                 
-                # Apply data_type filter
+                # Apply filters
                 filtered_count = 0
                 for result in search_results:
                     mongodb_id = result["id"]
                     data_item = await self.data_ingestion_repository.find_by_id(mongodb_id)
-                    if data_item and data_item.data_type == data_type:
-                        filtered_count += 1
+                    
+                    if not data_item:
+                        continue
+                    
+                    # Apply data_type filter
+                    if data_type and data_item.data_type != data_type:
+                        continue
+                    
+                    # Apply keywords filter
+                    if keywords and not any(keywords.lower() in keyword.lower() for keyword in data_item.keywords):
+                        continue
+                    
+                    # Apply title filter
+                    if title and title.lower() not in data_item.title.lower():
+                        continue
+                    
+                    filtered_count += 1
                 
                 return filtered_count
         except Exception as e:
@@ -417,4 +472,90 @@ class DataIngestionUseCase:
         # Delete from MongoDB
         deleted = await self.data_ingestion_repository.delete(data_id)
         
-        return deleted 
+        return deleted
+    
+    async def process_list_data_ingestion(
+        self,
+        page: int = 1,
+        page_size: int = 10,
+        query: str = "",
+        data_type: Optional[str] = None,
+        keywords: Optional[str] = None,
+        title_like: Optional[str] = None,
+        data_type_like: Optional[str] = None,
+        keywords_like: Optional[str] = None,
+        _page: Optional[int] = None,
+        _pageSize: Optional[int] = None,
+        _sort: Optional[str] = None,
+        _order: Optional[str] = None,
+        user: Optional[User] = None
+    ) -> Dict[str, Any]:
+        """
+        Process list data ingestion request with all parameters and return standardized response.
+        
+        Args:
+            page: Page number (default: 1)
+            page_size: Number of items per page (default: 10)
+            query: Optional search query to filter results
+            data_type: Optional data type filter
+            keywords: Optional keywords filter
+            title_like: Filter title containing this string
+            data_type_like: Filter data_type containing this string
+            keywords_like: Filter keywords containing this string
+            _page: Alternative page parameter (used by refine)
+            _pageSize: Alternative page size parameter (used by refine)
+            _sort: Field to sort by (used by refine)
+            _order: Sort order (asc or desc, used by refine)
+            user: User performing the request
+            
+        Returns:
+            Dict[str, Any]: Standardized response with data, pagination info, and schema
+        """
+        try:
+            # Use refine parameters if provided
+            actual_page = _page if _page is not None else page
+            actual_page_size = _pageSize if _pageSize is not None else page_size
+            
+            # Handle filter parameters
+            # Priority: *_like parameters > direct parameters
+            actual_title = title_like if title_like is not None else None
+            actual_data_type = data_type_like if data_type_like is not None else data_type
+            actual_keywords = keywords_like if keywords_like is not None else keywords
+            
+            # Get total count for pagination
+            total_count = await self.count_data_ingestion(
+                query=query, 
+                data_type=actual_data_type, 
+                keywords=actual_keywords,
+                title=actual_title,
+                user=user
+            )
+            
+            # Calculate pagination values
+            total_pages = (total_count + actual_page_size - 1) // actual_page_size
+            skip = (actual_page - 1) * actual_page_size
+            
+            # Get search results with pagination and sorting
+            result_items = await self.list_data_ingestion(
+                query=query,
+                data_type=actual_data_type,
+                keywords=actual_keywords,
+                title=actual_title,
+                skip=skip,
+                limit=actual_page_size,
+                sort_field=_sort,
+                sort_order=_order,
+                user=user
+            )
+            
+            # Return standardized response format
+            return {
+                "data": result_items,
+                "page": actual_page,
+                "page_size": actual_page_size,
+                "total_page": total_pages,
+                "total_data": total_count
+            }
+        except Exception as e:
+            self.logger.error(f"Error processing list data ingestion: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error processing list data: {str(e)}") 

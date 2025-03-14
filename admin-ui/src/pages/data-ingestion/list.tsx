@@ -1,4 +1,5 @@
 import { DeleteButton, EditButton, ShowButton } from '@refinedev/antd';
+import { useDelete, useNotification } from '@refinedev/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,8 +16,10 @@ const { Link } = Typography;
 
 export const DataIngestionList = () => {
   const { t } = useTranslation();
+  const { open } = useNotification();
+  const { mutate: deleteData } = useDelete();
 
-  const { filterProps, tableProps, setCurrent, setPageSize, tableQueryResult } = useFilterTableV2({
+  const { filterProps, tableProps, setCurrent, setPageSize, tableQueryResult, setFilters } = useFilterTableV2({
     resource: 'data-ingestion',
     dataProviderName: 'custom',
     initialPageSize: 10,
@@ -29,24 +32,61 @@ export const DataIngestionList = () => {
       ]
     },
     filters: {
-      permanent: []
+      permanent: [],
+      mode: 'server'
     },
     simples: [
       {
         fields: 'title',
         operator: 'contains',
-        multipleInput: false
+        multipleInput: false,
+        nameShow: 'หัวข้อ'
       },
       {
         fields: 'data_type',
         operator: 'eq',
         multipleInput: true,
+        nameShow: 'ประเภทข้อมูล',
         optionSelect: {
           values: ['ตัวบทกฎหมาย', 'FAQ', 'FICTION']
         }
+      },
+      {
+        fields: 'keywords',
+        operator: 'contains',
+        multipleInput: false,
+        nameShow: 'คีย์เวิร์ด'
       }
     ]
   });
+
+  const handleDelete = (id: string) => {
+    deleteData(
+      {
+        resource: 'data-ingestion',
+        id,
+        dataProviderName: 'custom'
+      },
+      {
+        onSuccess: () => {
+          open?.({
+            type: 'success',
+            message: 'ลบข้อมูลสำเร็จ',
+            description: 'ข้อมูลถูกลบออกจากระบบเรียบร้อยแล้ว'
+          });
+          // Refresh the table data
+          tableQueryResult.refetch();
+        },
+        onError: (error: Error) => {
+          open?.({
+            type: 'error',
+            message: 'เกิดข้อผิดพลาด',
+            description: error?.message || 'ไม่สามารถลบข้อมูลได้ กรุณาลองใหม่อีกครั้ง'
+          });
+        }
+      }
+    );
+  };
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -102,7 +142,12 @@ export const DataIngestionList = () => {
               <Space>
                 <ShowButton hideText size='small' recordItemId={record.id} />
                 <EditButton hideText size='small' recordItemId={record.id} />
-                <DeleteButton hideText size='small' recordItemId={record.id} />
+                <DeleteButton 
+                  hideText 
+                  size='small'
+                  recordItemId={record.id}
+                  onClick={() => handleDelete(record.id)}
+                />
               </Space>
             )}
           />

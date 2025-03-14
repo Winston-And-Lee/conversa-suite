@@ -9,7 +9,8 @@ from src.domain.models.user import User
 from src.domain.entity.data_ingestion import (
     SearchRequest,
     SearchResponse,
-    DataTypeEnum    
+    DataTypeEnum,
+    get_data_ingestion_schema
 )
 from src.usecase.data_ingestion import DataIngestionUseCase
 from src.infrastructure.services.s3_service import S3Service
@@ -95,6 +96,8 @@ async def get_data_ingestion(
     try:
         data_ingestion = await data_ingestion_usecase.get_data_ingestion(data_id, user=current_user)
         
+        # For single item responses, we don't need to include the schema
+        # as it's only used for list views with filtering
         return data_ingestion
     except HTTPException:
         raise
@@ -161,6 +164,9 @@ async def search_data_ingestion(
                 
             result_items.append(data_ingestion)
         
+        # Get schema for AutoRenderFilterV2 component
+        data_schema = get_data_ingestion_schema()
+        
         # Return standardized response format
         return SearchResponse(
             code=0,
@@ -170,7 +176,7 @@ async def search_data_ingestion(
             page_size=search_request.page_size,
             total_page=total_pages,
             total_data=total_count,
-            data_schema=None
+            data_schema=data_schema
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -218,6 +224,10 @@ async def list_data_ingestion(
     page_size: int = 10,
     query: str = "",
     data_type: Optional[str] = None,
+    keywords: Optional[str] = None,
+    title_like: Optional[str] = None,
+    data_type_like: Optional[str] = None,
+    keywords_like: Optional[str] = None,
     _page: Optional[int] = None,
     _pageSize: Optional[int] = None,
     _sort: Optional[str] = None,
@@ -232,44 +242,46 @@ async def list_data_ingestion(
     - **page_size**: Number of items per page (default: 10)
     - **query**: Optional search query to filter results
     - **data_type**: Optional data type filter (e.g., "ตัวบทกฎหมาย", "FAQ", "FICTION")
+    - **keywords**: Optional keywords filter
+    - **title_like**: Filter title containing this string
+    - **data_type_like**: Filter data_type containing this string
+    - **keywords_like**: Filter keywords containing this string
     - **_page**: Alternative page parameter (used by refine)
     - **_pageSize**: Alternative page size parameter (used by refine)
     - **_sort**: Field to sort by (used by refine)
     - **_order**: Sort order (asc or desc, used by refine)
     """
     try:
-        # Use refine parameters if provided
-        actual_page = _page if _page is not None else page
-        actual_page_size = _pageSize if _pageSize is not None else page_size
-        
-        # Get total count for pagination
-        total_count = await data_ingestion_usecase.count_data_ingestion(query, data_type, user=current_user)
-        
-        # Calculate pagination values
-        total_pages = (total_count + actual_page_size - 1) // actual_page_size
-        skip = (actual_page - 1) * actual_page_size
-        
-        # Get search results with pagination and sorting
-        result_items = await data_ingestion_usecase.list_data_ingestion(
+        # Process the request using the usecase
+        result = await data_ingestion_usecase.process_list_data_ingestion(
+            page=page,
+            page_size=page_size,
             query=query,
             data_type=data_type,
-            skip=skip,
-            limit=actual_page_size,
-            sort_field=_sort,
-            sort_order=_order,
+            keywords=keywords,
+            title_like=title_like,
+            data_type_like=data_type_like,
+            keywords_like=keywords_like,
+            _page=_page,
+            _pageSize=_pageSize,
+            _sort=_sort,
+            _order=_order,
             user=current_user
         )
+        
+        # Get schema for AutoRenderFilterV2 component
+        data_schema = get_data_ingestion_schema()
         
         # Return standardized response format
         return SearchResponse(
             code=0,
             message="",
-            data=result_items,
-            page=actual_page,
-            page_size=actual_page_size,
-            total_page=total_pages,
-            total_data=total_count,
-            data_schema=None
+            data=result["data"],
+            page=result["page"],
+            page_size=result["page_size"],
+            total_page=result["total_page"],
+            total_data=result["total_data"],
+            data_schema=data_schema
         )
     except Exception as e:
         import traceback

@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Dict
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field
@@ -30,4 +30,46 @@ class StandardResponse(BaseModel):
     
 # Search response schema
 class SearchResponse(StandardResponse):
-    data: List[DataIngestion] 
+    data: List[DataIngestion]
+
+# Schema definition for AutoRenderFilterV2 component
+def get_data_ingestion_schema() -> Dict[str, Any]:
+    """
+    Generate schema definition for data ingestion model.
+    This schema is used by the AutoRenderFilterV2 component in the frontend.
+    
+    Returns:
+        Dict[str, Any]: Schema definition
+    """
+    return {
+        "main": {
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "string",
+                    "label": "หัวข้อ"
+                },
+                {
+                    "name": "data_type",
+                    "type": "enum",
+                    "label": "ประเภทข้อมูล",
+                    "enum_values": ["ตัวบทกฎหมาย", "FAQ", "FICTION", "คำแนะนำ"]
+                },
+                {
+                    "name": "keywords",
+                    "type": "array",
+                    "label": "คีย์เวิร์ด"
+                },
+                {
+                    "name": "created_at",
+                    "type": "datetime",
+                    "label": "วันที่สร้าง"
+                },
+                {
+                    "name": "updated_at",
+                    "type": "datetime",
+                    "label": "วันที่แก้ไข"
+                }
+            ]
+        }
+    } 

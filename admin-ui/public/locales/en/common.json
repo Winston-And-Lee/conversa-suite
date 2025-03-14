@@ -4,18 +4,12 @@
       "label": {},
       "fields": {
         "paginationTotal": "Total {{total}} items",
-        "approvalGroupName": "Approval Group Name",
-        "approvalGroup": "Approval Group",
         "actions": "Actions",
-        "approvalNamePlaceholder": "Enter approval name",
-        "approvalGroupPlaceHolder": "Select approval group",
         "startDateEndDate": "Start Date - End Date",
         "startDate": "Start Date",
         "endDate": "End Date",
         "detail": "Detail",
         "detailPlaceholder": "Enter detail",
-        "approvalName": "Approval",
-        "approvalDescription": "Approval Description",
         "copy": "Copy",
         "view": "View",
         "edit": "Edit",
@@ -26,9 +20,6 @@
         "service": "Service",
         "createdAt": "Created At",
         "updatedAt": "Updated At",
-        "projectId": "Project ID",
-        "projectName": "Project Name",
-        "projectDescription": "Project Description"
       },
       "actions": {
         "list": "List",
@@ -778,51 +769,6 @@
         "color": "Color"
       }
     },
-    "project": {
-      "search": {
-        "items": "Items",
-        "add": "Add",
-        "import": "Import",
-        "export": "Export"
-      },
-      "table": {
-        "project": "Project",
-        "period": "Start-End Date",
-        "status": "Status",
-        "actions": {
-          "title": "Actions",
-          "addSubProject": "Add Sub Project",
-          "view": "View",
-          "edit": "Edit",
-          "delete": "Delete"
-        }
-      },
-      "buttons": {
-        "confirm": "Confirm",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "edit": "Edit",
-        "copy": "Copy"
-      },
-      "projectDetail": "Project Detail",
-      "projectCode": "Project Code",
-      "projectName": "Project Name",
-      "startDateEndDate": "Start-End Date",
-      "status": "Status",
-      "infoNo": "Info No.",
-      "infoName": "Info Name",
-      "infoType": "Info Type",
-      "selectInfoType": "Select Info Type",
-      "required": "Required",
-      "enter": "Enter",
-      "active": "Active",
-      "inactive": "Inactive",
-      "addInfo": "Add Info",
-      "option": "Option",
-      "fileType": "File Type",
-      "choose": "Choose",
-      "clickToUpload": "Click to Upload"
-    },
     "reports": {
       "list": {
         "name": "Name",
@@ -971,14 +917,11 @@
     }
   },
   "documentTitle": {
-    "default": "Khaojai AI",
-    "suffix": " | Khaojai AI"
+    "default": "Conversa Suite",
+    "suffix": " | Conversa Suite"
   },
   "table": {
     "actions": "Actions",
-    "projectId": "Project ID",
-    "projectName": "Project Name",
-    "projectDescription": "Project Description",
     "id": "ID",
     "name": "Name",
     "service": "Service",
@@ -986,40 +929,18 @@
     "updatedAt": "Updated At"
   },
   "sidebar": {
-    "organization": "Organization",
-    "Organization": "Organization",
-    "department": "Department",
-    "Project Management": "Project Management",
-    "project": "Project",
-    "Project": "Project",
     "workspace-role": "Role",
     "report-service": "Report Service",
     "Report": "Report",
     "reports": "Reports",
     "Reports": "Reports",
     "users": "Users",
-    "role-member": "Role-member",
-    "user-department": "User-department",
     "members": "Members",
     "Super Admin": "Super Admin",
-    "approval-group": "Approval",
-    "Approval": "Approval",
-    "form": "Form Approval",
     "Settings": "Settings",
-    "Approval Setting": "Approval Setting",
-    "ApprovalCenter": "Approval Center",
-    "ApprovalRequest": "Approval Request",
-    "Approval List": "Approval List",
     "workspace": "Workspace",
     "user-workspaces": "User",
     "workspaces": "Workspaces",
-    "approval-center": "Approval Center",
-    "approval-request": "Approval Request",
-    "approval-list": "Approval List",
-    "project-boq": "Project BOQ",
-    "business-partner-group": "Business Partner Group",
-    "business-partner": "Business Partner",
-    "business-partner-contact-person": "Contact Person"
   },
   "user_status": {
     "pending": "Pending",

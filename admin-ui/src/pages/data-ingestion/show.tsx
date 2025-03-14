@@ -13,7 +13,7 @@ export const DataIngestionShow = () => {
   const record = data?.data;
 
   return (
-    <Show isLoading={isLoading} title="ข้อมูลกฎหมาย">
+    <Show isLoading={isLoading} title="ข้อมูลสำหรับ AI">
       <Descriptions bordered column={1}>
         <Descriptions.Item label="หัวข้อ">{record?.title}</Descriptions.Item>
         <Descriptions.Item label="ประเภทข้อมูล">{record?.data_type}</Descriptions.Item>

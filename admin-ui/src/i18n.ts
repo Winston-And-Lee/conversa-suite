@@ -24,7 +24,6 @@ i18n
       'reports',
       'settings',
       'super-admin',
-      'project'
     ],
     defaultNS: 'common',
     fallbackLng: ['en', 'th'],

@@ -40,7 +40,7 @@ export const resources = [
     show: '/data-ingestion/:id',
     meta: {
       icon: <SolarIconSet.Document color='#1C274C' size={24} iconStyle='Outline' />,
-      label: 'ข้อมูลกฎหมาย',
+      label: 'ข้อมูลสำหรับ AI',
       parent: 'AI Assistant'
     }
   },
