@@ -34,7 +34,7 @@ from src.domain.entity.assistant import (
     ChatRequest
 )
 
-from src.domain.entity.common import StandardizedResponse, get_schema_field
+from src.domain.entity.common import StandardizedResponse, SingleItemResponse, get_schema_field
 
 __all__ = [
     # User entities
@@ -63,5 +63,6 @@ __all__ = [
     "ChatMessage",
     "ChatRequest",
     "StandardizedResponse",
+    "SingleItemResponse",
     "get_schema_field"
 ]

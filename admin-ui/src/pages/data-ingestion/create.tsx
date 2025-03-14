@@ -17,14 +17,6 @@ interface FileResponse {
   file_url: string;
   file_name: string;
 }
-
-// Reference options
-const referenceOptions = [
-  { value: 'option1', label: 'ตัวเลือกที่ 1' },
-  { value: 'option2', label: 'ตัวเลือกที่ 2' },
-  { value: 'option3', label: 'ตัวเลือกที่ 3' },
-];
-
 export const DataIngestionCreate = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -237,7 +229,7 @@ export const DataIngestionCreate = () => {
               name="reference"
               rules={[{ required: true, message: 'กรุณาระบุแหล่งอ้างอิง' }]}
             >
-              <Select placeholder="เลือก" options={referenceOptions} />
+              <Input placeholder="ระบุ" />   
             </Form.Item>
             
             <Form.Item

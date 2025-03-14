@@ -12,7 +12,7 @@ from src.domain.entity.data_ingestion import (
     ListDataIngestionResponse,
     get_data_ingestion_schema
 )
-from src.domain.entity.common import StandardizedResponse
+from src.domain.entity.common import StandardizedResponse, SingleItemResponse
 from src.usecase.data_ingestion import DataIngestionUseCase
 from src.infrastructure.services.s3_service import S3Service
 from src.infrastructure.fastapi.routes.user_routes import get_current_user
@@ -81,7 +81,7 @@ async def submit_data_ingestion(
 
 @router.get(
     "/{data_id}",
-    response_model=DataIngestion,
+    response_model=SingleItemResponse[DataIngestion],
     summary="Get data ingestion by ID"
 )
 async def get_data_ingestion(
@@ -97,9 +97,16 @@ async def get_data_ingestion(
     try:
         data_ingestion = await data_ingestion_usecase.get_data_ingestion(data_id, user=current_user)
         
-        # For single item responses, we don't need to include the schema
-        # as it's only used for list views with filtering
-        return data_ingestion
+        # Get schema for AutoRenderFilterV2 component
+        data_schema = get_data_ingestion_schema()
+        
+        # Return standardized response format for single item
+        return SingleItemResponse[DataIngestion](
+            code=0,
+            message="",
+            data=data_ingestion,
+            data_schema=data_schema
+        )
     except HTTPException:
         raise
     except Exception as e:

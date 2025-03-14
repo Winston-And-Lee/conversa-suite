@@ -35,6 +35,30 @@ class StandardizedResponse(BaseModel, Generic[T]):
             datetime: lambda dt: dt.isoformat()
         }
 
+
+class SingleItemResponse(BaseModel, Generic[T]):
+    """
+    Standardized response format for single item API endpoints.
+    This is a generic class that can be used with any data type.
+    
+    Attributes:
+        code: Response code (0 for success, non-zero for errors)
+        message: Response message
+        data: Response data (single item)
+        data_schema: Optional schema information for frontend rendering
+    """
+    code: int = 0
+    message: str = ""
+    data: T
+    data_schema: Optional[Dict[str, Any]] = None
+    
+    class Config:
+        """Pydantic configuration"""
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat()
+        }
+
+
 def get_schema_field(field_name: str, field_type: str, label: str, options: List[Dict[str, str]] = None) -> Dict[str, Any]:
     """
     Helper function to create a schema field definition
