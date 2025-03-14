@@ -4,6 +4,7 @@ export enum ROUTES {
   ADMIN_WORKSPACE = 'admin/workspace',
   ADMIN_REPORT_SERVICE = 'admin/report-service',
   ASSISTANT_UI = 'assistant-ui',
+  DATA_INGESTION = 'data-ingestion',
   LOGIN_WITH_OTP = 'login',
   REGISTER = 'register',
   VERIFY_ACCOUNT = 'verify-account',

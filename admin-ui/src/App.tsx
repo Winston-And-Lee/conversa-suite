@@ -18,13 +18,14 @@ import { BrowserRouter, Outlet, Route, Routes, Navigate } from 'react-router-dom
 import { resources } from './contexts/resources';
 import { authProvider } from './providers/authProvider';
 import { dataProvider } from './providers/data/dataProvider';
-import { datatableProvider } from './providers/data/datatable';
 import { accessControlProvider } from './providers/permissionProvider';
 
 import { HomePage } from './pages/home';
 import { LoginPage } from './pages/login';
 import { SignupPage, VerifyPage } from './pages/register';
 import { AssistantUIPage } from './pages/assistant-ui/page';
+import { DataIngestionList } from './pages/data-ingestion/list';
+import { DataIngestionShow } from './pages/data-ingestion/show';
 
 import { Avatar } from 'antd';
 import 'reactflow/dist/style.css';
@@ -86,9 +87,8 @@ function App() {
           <MsalProvider instance={MSAL_INSTANCE}>
             <Refine
               dataProvider={{
-                default: dataProvider(`${defaultUrl}/v1/data`),
-                datatable: datatableProvider(`${defaultUrl}/v1/datatable`),
-                custom: dataProvider(`${defaultUrl}/v1`)
+                default: dataProvider(`${defaultUrl}/api`),
+                custom: dataProvider(`${defaultUrl}/api`)
               }}
               notificationProvider={notificationProvider}
               authProvider={authProvider}
@@ -149,6 +149,11 @@ function App() {
 
                   <Route path={ROUTES.ASSISTANT_UI}>
                     <Route index={true} element={<AssistantUIPage />} />
+                  </Route>
+
+                  <Route path={ROUTES.DATA_INGESTION}>
+                    <Route index={true} element={<DataIngestionList />} />
+                    <Route path=':id' element={<DataIngestionShow />} />
                   </Route>
 
                   <Route path='' element={<HomePage />} />

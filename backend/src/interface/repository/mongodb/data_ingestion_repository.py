@@ -90,4 +90,110 @@ class DataIngestionRepository:
             return None
         
         result["id"] = str(result.pop("_id"))
-        return DataIngestion(**result) 
+        return DataIngestion(**result)
+    
+    async def find_all(self, skip: int = 0, limit: int = 10, sort: Optional[Dict[str, int]] = None) -> List[DataIngestion]:
+        """
+        Find all data ingestion entries with pagination and optional sorting.
+        
+        Args:
+            skip: Number of documents to skip
+            limit: Maximum number of documents to return
+            sort: Dictionary of field names and sort directions (1 for ascending, -1 for descending)
+            
+        Returns:
+            List[DataIngestion]: List of data ingestion items
+        """
+        # Create a cursor with pagination
+        cursor = self.collection.find()
+        
+        # Apply sorting if provided
+        if sort:
+            sort_list = []
+            for field, direction in sort.items():
+                sort_list.append((field, direction))
+            cursor = cursor.sort(sort_list)
+        else:
+            # Default sort by created_at descending
+            cursor = cursor.sort("created_at", -1)
+        
+        # Apply pagination
+        cursor = cursor.skip(skip).limit(limit)
+        
+        # Convert documents to DataIngestion objects
+        result = []
+        async for document in cursor:
+            document["id"] = str(document.pop("_id"))
+            result.append(DataIngestion(**document))
+        
+        return result
+    
+    async def find_by_criteria(self, criteria: Dict[str, Any], skip: int = 0, limit: int = 10, sort: Optional[Dict[str, int]] = None) -> List[DataIngestion]:
+        """
+        Find data ingestion entries by criteria with pagination and optional sorting.
+        
+        Args:
+            criteria: Dictionary of field names and values to filter by
+            skip: Number of documents to skip
+            limit: Maximum number of documents to return
+            sort: Dictionary of field names and sort directions (1 for ascending, -1 for descending)
+            
+        Returns:
+            List[DataIngestion]: List of data ingestion items matching the criteria
+        """
+        # Create a cursor with the filter criteria
+        cursor = self.collection.find(criteria)
+        
+        # Apply sorting if provided
+        if sort:
+            sort_list = []
+            for field, direction in sort.items():
+                sort_list.append((field, direction))
+            cursor = cursor.sort(sort_list)
+        else:
+            # Default sort by created_at descending
+            cursor = cursor.sort("created_at", -1)
+        
+        # Apply pagination
+        cursor = cursor.skip(skip).limit(limit)
+        
+        # Convert documents to DataIngestion objects
+        result = []
+        async for document in cursor:
+            document["id"] = str(document.pop("_id"))
+            result.append(DataIngestion(**document))
+        
+        return result
+    
+    async def find_by_id(self, id: str) -> Optional[DataIngestion]:
+        """
+        Find data ingestion by ID.
+        
+        Args:
+            id: MongoDB ID
+            
+        Returns:
+            Optional[DataIngestion]: Data ingestion item if found, None otherwise
+        """
+        return await self.get_by_id(id)
+    
+    async def count(self) -> int:
+        """
+        Count all data ingestion entries.
+        
+        Returns:
+            int: Total count of data ingestion items
+        """
+        return await self.collection.count_documents({})
+    
+    async def count_by_criteria(self, criteria: Dict[str, Any]) -> int:
+        """
+        Count data ingestion entries matching the criteria.
+        
+        Args:
+            criteria: Dictionary of field names and values to filter by
+            
+        Returns:
+            int: Count of data ingestion items matching the criteria
+        """
+        return await self.collection.count_documents(criteria) 

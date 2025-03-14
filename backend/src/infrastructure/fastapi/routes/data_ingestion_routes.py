@@ -1,5 +1,5 @@
 from typing import List, Optional, Union
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status, Body
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status, Body, Response
 from fastapi.responses import JSONResponse
 import json
 from pathlib import Path
@@ -197,10 +197,14 @@ async def delete_data_ingestion(
         if not deleted:
             raise HTTPException(status_code=404, detail="Data ingestion not found")
         
-        return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+        # Return a Response with no content for 204 status
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Error in delete_data_ingestion: {str(e)}\n{error_details}")
         raise HTTPException(status_code=500, detail=f"Error deleting data ingestion: {str(e)}")
 
 
@@ -212,20 +216,65 @@ async def delete_data_ingestion(
 async def list_data_ingestion(
     page: int = 1,
     page_size: int = 10,
+    query: str = "",
+    data_type: Optional[str] = None,
+    _page: Optional[int] = None,
+    _pageSize: Optional[int] = None,
+    _sort: Optional[str] = None,
+    _order: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     data_ingestion_usecase: DataIngestionUseCase = Depends(get_data_ingestion_usecase)
 ):
     """
-    List all data ingestion with pagination.
+    List all data ingestion with pagination and optional filtering.
     
     - **page**: Page number (default: 1)
     - **page_size**: Number of items per page (default: 10)
+    - **query**: Optional search query to filter results
+    - **data_type**: Optional data type filter (e.g., "ตัวบทกฎหมาย", "FAQ", "FICTION")
+    - **_page**: Alternative page parameter (used by refine)
+    - **_pageSize**: Alternative page size parameter (used by refine)
+    - **_sort**: Field to sort by (used by refine)
+    - **_order**: Sort order (asc or desc, used by refine)
     """
     try:
-        # Create a search request with empty query for listing all
-        search_request = SearchRequest(query="", page=page, page_size=page_size)
-        return await search_data_ingestion(search_request, current_user, data_ingestion_usecase)
+        # Use refine parameters if provided
+        actual_page = _page if _page is not None else page
+        actual_page_size = _pageSize if _pageSize is not None else page_size
+        
+        # Get total count for pagination
+        total_count = await data_ingestion_usecase.count_data_ingestion(query, data_type, user=current_user)
+        
+        # Calculate pagination values
+        total_pages = (total_count + actual_page_size - 1) // actual_page_size
+        skip = (actual_page - 1) * actual_page_size
+        
+        # Get search results with pagination and sorting
+        result_items = await data_ingestion_usecase.list_data_ingestion(
+            query=query,
+            data_type=data_type,
+            skip=skip,
+            limit=actual_page_size,
+            sort_field=_sort,
+            sort_order=_order,
+            user=current_user
+        )
+        
+        # Return standardized response format
+        return SearchResponse(
+            code=0,
+            message="",
+            data=result_items,
+            page=actual_page,
+            page_size=actual_page_size,
+            total_page=total_pages,
+            total_data=total_count,
+            data_schema=None
+        )
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Error in list_data_ingestion: {str(e)}\n{error_details}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

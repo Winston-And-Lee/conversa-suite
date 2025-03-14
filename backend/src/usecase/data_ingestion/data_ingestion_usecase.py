@@ -259,30 +259,132 @@ class DataIngestionUseCase:
             self.logger.error(f"Error searching data ingestion: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error searching data: {str(e)}")
     
-    async def count_data_ingestion(self, query: str = "", user: Optional[User] = None) -> int:
+    async def list_data_ingestion(
+        self, 
+        query: str = "", 
+        data_type: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 10,
+        sort_field: Optional[str] = None,
+        sort_order: Optional[str] = None,
+        user: Optional[User] = None
+    ) -> List[DataIngestion]:
         """
-        Count total data ingestion items, optionally filtered by query.
+        List data ingestion items with optional filtering, pagination, and sorting.
         
         Args:
             query: Optional text query to filter by
+            data_type: Optional data type to filter by
+            skip: Number of items to skip (for pagination)
+            limit: Maximum number of results to return
+            sort_field: Field to sort by
+            sort_order: Sort order (asc or desc)
+            user: User performing the search
+            
+        Returns:
+            List[DataIngestion]: List of data ingestion items
+        """
+        try:
+            # Prepare sort parameters
+            sort_params = None
+            if sort_field:
+                # Convert sort order to 1 (ascending) or -1 (descending)
+                sort_direction = -1 if sort_order and sort_order.lower() == 'desc' else 1
+                sort_params = {sort_field: sort_direction}
+            
+            if not query and not data_type:
+                # If no filters provided, return all data with pagination and sorting
+                data_items = await self.data_ingestion_repository.find_all(
+                    skip=skip, 
+                    limit=limit,
+                    sort=sort_params
+                )
+                return data_items
+            
+            # Build filter criteria
+            filter_criteria = {}
+            if data_type:
+                filter_criteria["data_type"] = data_type
+            
+            if not query:
+                # If only data_type filter is provided
+                data_items = await self.data_ingestion_repository.find_by_criteria(
+                    criteria=filter_criteria,
+                    skip=skip,
+                    limit=limit,
+                    sort=sort_params
+                )
+                return data_items
+            else:
+                # Search in Pinecone with query
+                search_results = await self.pinecone_repository.search(
+                    query=query,
+                    limit=limit,
+                    offset=skip
+                )
+                
+                # Get full data from MongoDB for each result
+                results = []
+                for result in search_results:
+                    mongodb_id = result["id"]
+                    data_item = await self.data_ingestion_repository.find_by_id(mongodb_id)
+                    
+                    # Apply data_type filter if provided
+                    if data_item and (not data_type or data_item.data_type == data_type):
+                        results.append(data_item)
+                
+                # For Pinecone results, we can't easily apply MongoDB sorting
+                # We could implement manual sorting here if needed
+                
+                return results
+        except Exception as e:
+            self.logger.error(f"Error listing data ingestion: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error listing data: {str(e)}")
+    
+    async def count_data_ingestion(self, query: str = "", data_type: Optional[str] = None, user: Optional[User] = None) -> int:
+        """
+        Count total data ingestion items, optionally filtered by query and data_type.
+        
+        Args:
+            query: Optional text query to filter by
+            data_type: Optional data type to filter by
             user: User performing the count
             
         Returns:
             int: Total count of matching items
         """
         try:
-            if not query:
-                # If no query, count all items
+            if not query and not data_type:
+                # If no filters, count all items
                 return await self.data_ingestion_repository.count()
+            
+            # Build filter criteria
+            filter_criteria = {}
+            if data_type:
+                filter_criteria["data_type"] = data_type
+            
+            if not query:
+                # If only data_type filter is provided
+                return await self.data_ingestion_repository.count_by_criteria(filter_criteria)
             else:
                 # For query-based search, we need to get IDs from Pinecone
-                # This is a simplified approach - in production, you might want to optimize this
                 search_results = await self.pinecone_repository.search(
                     query=query,
                     limit=1000  # Use a large limit to get most matches for counting
                 )
                 
-                return len(search_results)
+                if not data_type:
+                    return len(search_results)
+                
+                # Apply data_type filter
+                filtered_count = 0
+                for result in search_results:
+                    mongodb_id = result["id"]
+                    data_item = await self.data_ingestion_repository.find_by_id(mongodb_id)
+                    if data_item and data_item.data_type == data_type:
+                        filtered_count += 1
+                
+                return filtered_count
         except Exception as e:
             self.logger.error(f"Error counting data ingestion: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error counting data: {str(e)}")

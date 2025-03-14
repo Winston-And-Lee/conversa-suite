@@ -34,6 +34,17 @@ export const resources = [
     }
   },
   {
+    name: 'data-ingestion',
+    list: '/data-ingestion/',
+    identifier: 'DataIngestion',
+    show: '/data-ingestion/:id',
+    meta: {
+      icon: <SolarIconSet.Document color='#1C274C' size={24} iconStyle='Outline' />,
+      label: 'ข้อมูลกฎหมาย',
+      parent: 'AI Assistant'
+    }
+  },
+  {
     name: 'Settings',
     meta: {
       icon: <SolarIconSet.Settings color='#1C274C' size={24} iconStyle='Outline' />,
