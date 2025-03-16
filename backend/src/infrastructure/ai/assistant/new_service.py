@@ -2,22 +2,18 @@
 Service to manage assistant-ui interactions with LangGraph.
 """
 import logging
-import uuid
 import asyncio
 from anyio import get_cancelled_exc_class
 from typing import Dict, List, Optional, Any, AsyncIterator
 from datetime import datetime
 
-from .assistant import create_assistant_ui_agent
 from src.infrastructure.database.mongodb import MongoDB
 from src.interface.repository.database.db_repository import thread_repository
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from ..model import create_llm
+from .graph import create_streaming_assistant_graph, initialize_state, create_assistant_graph
 
 logger = logging.getLogger(__name__)
-
-# Create the assistant graph once
-assistant_graph = create_assistant_ui_agent()
 
 # Helper functions
 async def process_chat_request(messages: List[Dict[str, Any]], system_message: Optional[str] = None) -> str:
@@ -32,33 +28,17 @@ async def process_chat_request(messages: List[Dict[str, Any]], system_message: O
         The assistant's response text
     """
     try:
-        # Convert messages to LangChain format for the LLM
-        from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-        lc_messages = []
+        # Create the assistant graph
+        graph = create_assistant_graph()
         
-        # Add system message if provided
-        if system_message:
-            lc_messages.append(SystemMessage(content=system_message))
+        # Initialize the state
+        state = initialize_state("temp_thread", messages, system_message)
         
-        # Add conversation messages
-        for msg in messages:
-            if msg["role"] == "user":
-                lc_messages.append(HumanMessage(content=msg["content"]))
-            elif msg["role"] == "assistant":
-                lc_messages.append(AIMessage(content=msg["content"]))
-            elif msg["role"] == "system" and not system_message:
-                lc_messages.append(SystemMessage(content=msg["content"]))
+        # Execute the graph
+        result = await graph.ainvoke(state)
         
-        # Create the language model
-        from ..model import create_llm
-        llm = create_llm(
-            run_name=f"Chat Processing",
-            metadata={"source": "conversa_suite_api"}
-        )
-        
-        # Get response from LLM
-        response = llm.invoke(lc_messages)
-        return response.content
+        # Return the response
+        return result.get("current_response", "I apologize, but I'm experiencing technical difficulties. Please try again later.")
     except Exception as e:
         logger.error(f"Error processing chat request: {str(e)}")
         import traceback
@@ -168,8 +148,17 @@ class AssistantUIService:
                 # Get system message if available
                 system_message = thread.system_message if hasattr(thread, "system_message") else None
                 
-                # Run the assistant
-                assistant_response = await process_chat_request(thread_messages, system_message)
+                # Create the assistant graph
+                graph = create_assistant_graph()
+                
+                # Initialize the state
+                state = initialize_state(thread_id, thread_messages, system_message)
+                
+                # Execute the graph
+                result = await graph.ainvoke(state)
+                
+                # Get the assistant response
+                assistant_response = result.get("current_response", "I apologize, but I'm experiencing technical difficulties. Please try again later.")
                 
                 # Add assistant message to the thread messages
                 assistant_message = {
@@ -183,14 +172,34 @@ class AssistantUIService:
                 summary = await generate_thread_summary(thread_messages + [assistant_message])
                 await thread_repo.update_thread_summary(thread_id, summary)
                 
-                # Return the response
-                return {
+                # Prepare response with fiction detection info
+                response = {
                     "thread_id": thread_id,
                     "messages": [
                         {"role": "user", "content": content},
                         {"role": "assistant", "content": assistant_response}
                     ]
                 }
+                
+                # Add fiction detection info if available
+                if result.get("is_fiction_topic", False):
+                    response["is_fiction_topic"] = True
+                    
+                    # Include pinecone results summary if it's a fiction topic
+                    fiction_sources = result.get("fiction_sources", [])
+                    if fiction_sources:
+                        response["fiction_sources"] = [
+                            {
+                                "title": item.get("title", "Untitled"),
+                                "reference": item.get("reference", ""),
+                                "similarity_score": item.get("similarity_score", 0.0)
+                            }
+                            for item in fiction_sources
+                        ]
+                
+                # Return the response
+                return response
+                
             except CancelledExc:
                 logger.warning(f"Request for thread {thread_id} was cancelled")
                 raise
@@ -217,6 +226,9 @@ class AssistantUIService:
                 logger.error(f"Thread {thread_id} not found")
                 raise ValueError(f"Thread {thread_id} not found")
             
+            # Get the updated thread to ensure we have the latest messages
+            thread = await thread_repo.get_thread(thread_id)
+            
             # Get all messages from the thread object
             thread_messages = []
             if hasattr(thread, "messages"):
@@ -224,107 +236,14 @@ class AssistantUIService:
             else:
                 logger.warning(f"Thread {thread_id} has no messages attribute, using empty list")
             
-            # Create tracing metadata
-            metadata = {
-                "thread_id": thread_id,
-                "assistant_id": getattr(thread, "assistant_id", "default"),
-                "message_count": len(thread_messages),
-                "source": "conversa_suite_api"
-            }
-            
-            # Convert messages to LangChain format for the LLM
-            lc_messages = []
-            
-            # Add system message if available
+            # Get system message if available
             system_message = thread.system_message if hasattr(thread, "system_message") else None
-            if system_message:
-                lc_messages.append(SystemMessage(content=system_message))
             
-            # Add conversation messages
-            for msg in thread_messages:
-                if msg["role"] == "user":
-                    lc_messages.append(HumanMessage(content=msg["content"]))
-                elif msg["role"] == "assistant":
-                    lc_messages.append(AIMessage(content=msg["content"]))
-                elif msg["role"] == "system" and not system_message:
-                    lc_messages.append(SystemMessage(content=msg["content"]))
+            # Create the streaming assistant graph
+            graph = create_streaming_assistant_graph()
             
-            # Create the language model
-            llm = create_llm(
-                run_name=f"Thread {thread_id[:8]} - Streaming",
-                metadata=metadata,
-                streaming=True
-            )
-            
-            # First, check if the message is about fiction
-            is_fiction = False
-            fiction_results = []
-            try:
-                # Use a separate LLM call to classify the topic
-                classification_prompt = [
-                    SystemMessage(content="You are a topic classifier. Determine if the user's message is about fiction (novels, stories, fairy tales, etc.). Respond with only 'YES' if it's about fiction or 'NO' if it's not."),
-                    HumanMessage(content=content)
-                ]
-                
-                classification_llm = create_llm(
-                    run_name="Fiction Topic Classification - Streaming",
-                    metadata={"task": "fiction_classification"}
-                )
-                
-                classification_result = classification_llm.invoke(classification_prompt)
-                is_fiction = "YES" in classification_result.content.upper()
-                
-                # If it's about fiction, query Pinecone
-                if is_fiction:
-                    logger.info(f"Detected fiction topic in streaming message: {content[:50]}...")
-                    
-                    # Import and initialize Pinecone repository
-                    from src.interface.repository.database.db_repository import pinecone_repository
-                    pinecone_repo = pinecone_repository()
-                    
-                    # Query Pinecone
-                    search_results = await pinecone_repo.search(content, limit=5)
-                    
-                    # Filter results to only include fiction
-                    fiction_results = [
-                        result for result in search_results 
-                        if result.get("data_type") == "FICTION" or 
-                           result.get("source_type") == "fiction"
-                    ]
-                    
-                    # Ensure each result has a similarity_score field
-                    for result in fiction_results:
-                        if "similarity_score" not in result:
-                            # Use a default score if missing
-                            result["similarity_score"] = 0.0
-                    
-                    logger.info(f"Found {len(fiction_results)} fiction results in Pinecone for streaming")
-                    
-                    # Add context from Pinecone results
-                    if fiction_results:
-                        context = "I found the following fiction-related information that might be helpful:\n\n"
-                        for i, result in enumerate(fiction_results, 1):
-                            title = result.get("title", "Untitled")
-                            content_text = result.get("content", "")
-                            specified_text = result.get("specified_text", "")
-                            reference = result.get("reference", "")
-                            
-                            context += f"{i}. {title}\n"
-                            if specified_text:
-                                context += f"   Quote: \"{specified_text}\"\n"
-                            if content_text:
-                                context += f"   Summary: {content_text}\n"
-                            if reference:
-                                context += f"   Reference: {reference}\n"
-                            context += "\n"
-                        
-                        # Add context as a system message
-                        lc_messages.insert(0, SystemMessage(content=context))
-            except Exception as e:
-                logger.error(f"Error in fiction detection during streaming: {str(e)}")
-                import traceback
-                logger.error(traceback.format_exc())
-                # Continue without fiction detection
+            # Initialize the state
+            state = initialize_state(thread_id, thread_messages, system_message)
             
             # Stream the response
             assistant_response = ""
@@ -335,6 +254,16 @@ class AssistantUIService:
                     "content": ""
                 }]
                 
+                # Execute the graph up to the streaming LLM node
+                # This will handle fiction detection and search
+                result = await graph.ainvoke(state)
+
+                print(result)
+                # Get the LLM and messages from the result
+                llm = result.get("llm")
+                lc_messages = result.get("lc_messages", [])
+                
+                # Stream the response from the LLM
                 async for chunk in llm.astream(lc_messages):
                     # Append the new content to the assistant's response
                     assistant_response += chunk.content
@@ -349,18 +278,19 @@ class AssistantUIService:
                     }
                     
                     # Add fiction detection info if available
-                    if is_fiction:
-                        response["is_fiction_topic"] = is_fiction
+                    if result.get("is_fiction_topic", False):
+                        response["is_fiction_topic"] = True
                         
                         # Include pinecone results summary if it's a fiction topic
-                        if fiction_results:
+                        fiction_sources = result.get("fiction_sources", [])
+                        if fiction_sources:
                             response["fiction_sources"] = [
                                 {
                                     "title": item.get("title", "Untitled"),
                                     "reference": item.get("reference", ""),
                                     "similarity_score": item.get("similarity_score", 0.0)
                                 }
-                                for item in fiction_results
+                                for item in fiction_sources
                             ]
                     
                     # Yield the updated response

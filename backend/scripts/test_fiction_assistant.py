@@ -11,7 +11,7 @@ from pathlib import Path
 # Add the project root to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from backend.src.infrastructure.ai.langgraph.assistant_service import AssistantUIService
+from backend.src.infrastructure.ai.assistant.service import AssistantUIService
 from backend.src.config.settings import get_settings
 
 # Configure logging

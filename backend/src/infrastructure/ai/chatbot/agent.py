@@ -16,7 +16,7 @@ except ImportError:
     def create_react_agent(llm, tools):
         return lambda x: {"messages": x.get("messages", []) + [{"role": "assistant", "content": "Sorry, I'm having technical difficulties."}]}
 
-from ..model import create_llm, create_chat_prompt, format_chat_history
+from .model import create_llm, format_chat_history
 from ..config import ASSISTANT_ID
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,6 @@ def create_chat_agent():
             run_name="Conversa Suite Chatbot",
             metadata={"agent_type": "chat", "framework": "langgraph"}
         )
-        prompt = create_chat_prompt()
         
         # Create a simple ReAct agent
         agent_executor = create_react_agent(llm, [])

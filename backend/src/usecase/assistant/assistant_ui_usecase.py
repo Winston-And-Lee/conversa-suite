@@ -22,7 +22,7 @@ from src.domain.entity.assistant import (
     ThreadModel,
     ThreadListResponse
 )
-from src.infrastructure.ai.langgraph.assistant_service import assistant_service
+from src.infrastructure.ai.assistant import assistant_service
 from src.interface.repository.database.db_repository import thread_repository
 
 logger = logging.getLogger(__name__)

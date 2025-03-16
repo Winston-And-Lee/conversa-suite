@@ -4,12 +4,9 @@ Language model setup for the chatbot.
 import logging
 from typing import Dict, Any, Optional
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
-from langchain_core.callbacks import CallbackManager
 
-from .config import OPENAI_API_KEY, OPENAI_MODEL, DEFAULT_SYSTEM_MESSAGE
-from src.config.settings import get_settings
+from ..config import OPENAI_API_KEY, OPENAI_MODEL
 
 logger = logging.getLogger(__name__)
 

@@ -7,6 +7,7 @@ from src.config.settings import get_settings
 from src.infrastructure.database.mongodb import MongoDB
 from src.infrastructure.ai.tracing import setup_langchain_tracing
 from src.infrastructure.fastapi.routes import health_routes, user_routes, chatbot_routes, assistant_routes, assistant_ui_routes, data_ingestion_routes, file_routes
+from src.infrastructure.ai.assistant import assistant_service
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -50,7 +51,6 @@ async def lifespan(app: FastAPI):
             logger.info("Successfully initialized user repository")
         
         # Initialize assistant service
-        from src.infrastructure.ai.langgraph.assistant_service import assistant_service
         logger.info("Initializing assistant service...")
         # The assistant service will initialize MongoDB connection in the background
         

@@ -20,7 +20,7 @@ from src.domain.entity.assistant import (
     SendMessageRequest,
     SendMessageResponse
 )
-from src.infrastructure.ai.langgraph.assistant_service import assistant_service
+from src.infrastructure.ai.assistant import assistant_service
 
 logger = logging.getLogger(__name__)
 

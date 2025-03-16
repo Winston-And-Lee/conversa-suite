@@ -10,7 +10,7 @@ from src.domain.entity.chatbot import (
     ChatMessageResponse,
     ChatHistoryResponse
 )
-from src.infrastructure.ai.langgraph.service import chatbot_service, chat_sessions
+from src.infrastructure.ai.chatbot.service import chatbot_service
 
 router = APIRouter(prefix="/chatbot", tags=["chatbot"])
 
