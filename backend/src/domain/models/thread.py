@@ -2,12 +2,14 @@
 Thread models for the application.
 """
 from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
 class ThreadModel(BaseModel):
     """Model for storing thread information in MongoDB."""
+    model_config = ConfigDict(populate_by_name=True)
+    
     thread_id: str
     user_id: str
     title: str
@@ -17,6 +19,7 @@ class ThreadModel(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     is_archived: bool = False
+    state: Optional[Dict[str, Any]] = Field(default_factory=dict)
     
     def get(self, key: str, default: Any = None) -> Any:
         """
@@ -34,4 +37,6 @@ class ThreadModel(BaseModel):
 
 class ThreadListResponse(BaseModel):
     """Response model for listing threads."""
+    model_config = ConfigDict(populate_by_name=True)
+    
     threads: List[ThreadModel] 

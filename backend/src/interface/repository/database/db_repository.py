@@ -5,6 +5,7 @@ from src.interface.repository.mongodb.user_repository import MongoDBUserReposito
 from src.interface.repository.mongodb.user_verification_repository import MongoDBUserVerificationRepository
 from src.interface.repository.mongodb.data_ingestion_repository import DataIngestionRepository
 from src.interface.repository.mongodb.file_resource_repository import FileResourceRepository
+from src.interface.repository.mongodb.thread_repository import MongoDBThreadRepository
 from src.interface.repository.s3.s3_repository import S3Repository
 from src.interface.repository.file.file_repository import S3FileRepository
 from src.interface.repository.pinecone.pinecone_repository import PineconeRepository
@@ -141,6 +142,20 @@ def pinecone_repository() -> PineconeRepository:
         logger.error(f"Failed to create Pinecone repository: {str(e)}")
         raise
 
+def thread_repository():
+    """
+    Factory function that returns a MongoDBThreadRepository implementation.
+    This centralizes the creation of repository instances.
+    
+    Note: Make sure the database is connected by calling ensure_db_connected()
+    before using this function.
+    """
+    try:
+        db = MongoDB.get_db()
+        return MongoDBThreadRepository(db)
+    except RuntimeError as e:
+        logger.error(f"Failed to create thread repository: {str(e)}")
+        raise
 
 def get_repository(repository_name: str):
     """
@@ -162,7 +177,8 @@ def get_repository(repository_name: str):
         "file_resource": file_resource_repository,
         "s3": s3_repository,
         "file": file_repository,
-        "pinecone": pinecone_repository
+        "pinecone": pinecone_repository,
+        "thread": thread_repository
     }
     
     if repository_name not in repositories:

@@ -214,25 +214,3 @@ def create_assistant_ui_agent():
         workflow.set_entry_point("fallback")
         logger.info("Created fallback assistant-ui agent due to errors")
         return workflow.compile()
-
-def create_initial_state(assistant_id: Optional[str] = None, system_message: Optional[str] = None) -> AssistantUIState:
-    """Create the initial state for the assistant-ui graph."""
-    messages = []
-    
-    # Add system message if provided
-    if system_message:
-        messages.append({
-            "role": "system",
-            "content": system_message
-        })
-    
-    return {
-        "messages": messages,
-        "tools": {},
-        "metadata": {
-            "assistant_id": assistant_id or ASSISTANT_ID,
-            "session_id": str(uuid.uuid4())
-        },
-        "is_fiction_topic": False,
-        "pinecone_results": []
-    } 

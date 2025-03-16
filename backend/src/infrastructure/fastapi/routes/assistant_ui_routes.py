@@ -46,8 +46,11 @@ async def create_thread(
         A streaming response with the AI's reply
     """
     try:
+        # Create an instance of the usecase
+        assistant_usecase = AssistantUIUsecase()
+        
         # Create a new thread and stream response using the usecase
-        return await AssistantUIUsecase.create_thread_and_stream_response(
+        return await assistant_usecase.create_thread_and_stream_response(
             content=request.content,
             user_id=current_user.id
         )
@@ -74,8 +77,11 @@ async def add_message_to_thread(
         A streaming response with the AI's reply
     """
     try:
+        # Create an instance of the usecase
+        assistant_usecase = AssistantUIUsecase()
+        
         # Add message to thread and stream response using the usecase
-        return await AssistantUIUsecase.add_message_and_stream_response(
+        return await assistant_usecase.add_message_and_stream_response(
             thread_id=thread_id,
             content=request.content,
             user_id=current_user.id
@@ -97,6 +103,9 @@ async def add_message_to_thread(
 async def chat(request: Request, current_user: User = Depends(get_current_user)):
     """Chat endpoint for assistant-ui integration."""
     try:
+        # Create an instance of the usecase
+        assistant_usecase = AssistantUIUsecase()
+        
         # Parse the raw request to handle various formats
         raw_body = await request.json()
         logger.debug(f"Received request: {json.dumps(raw_body)}")
@@ -110,16 +119,16 @@ async def chat(request: Request, current_user: User = Depends(get_current_user))
             raise HTTPException(status_code=422, detail=f"Invalid request format: {str(e)}")
             
         # Process the chat request using the usecase
-        result = await AssistantUIUsecase.process_chat_request(chat_request, user_id=current_user.id)
+        result = await assistant_usecase.process_chat_request(chat_request, user_id=current_user.id)
         
         if "error" in result:
             return HTTPException(status_code=400, detail=result["error"])
         
         # Get the thread data
-        thread = await AssistantUIUsecase.get_thread(result["thread_id"], current_user.id)
+        thread = await assistant_usecase.get_thread(result["thread_id"], current_user.id)
         
         # Stream the response
-        return AssistantUIUsecase._stream_message_generator(
+        return assistant_usecase._stream_message_generator(
             thread_data=thread,
             content=result["content"],
             include_thread_id=True
@@ -149,7 +158,10 @@ async def list_threads(
         A list of threads
     """
     try:
-        return await AssistantUIUsecase.list_threads(current_user.id, limit, skip)
+        # Create an instance of the usecase
+        assistant_usecase = AssistantUIUsecase()
+        
+        return await assistant_usecase.list_threads(current_user.id, limit, skip)
     except Exception as e:
         logger.error(f"Error listing threads: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -170,7 +182,10 @@ async def get_thread(
         The thread with its messages
     """
     try:
-        return await AssistantUIUsecase.get_thread(thread_id, current_user.id)
+        # Create an instance of the usecase
+        assistant_usecase = AssistantUIUsecase()
+        
+        return await assistant_usecase.get_thread(thread_id, current_user.id)
     except ValueError as e:
         # Handle specific value errors with appropriate HTTP status codes
         if "not found" in str(e):
@@ -199,7 +214,10 @@ async def get_thread_messages(
         The messages for the thread
     """
     try:
-        return await AssistantUIUsecase.get_thread_messages(thread_id, current_user.id)
+        # Create an instance of the usecase
+        assistant_usecase = AssistantUIUsecase()
+        
+        return await assistant_usecase.get_thread_messages(thread_id, current_user.id)
     except ValueError as e:
         # Handle specific value errors with appropriate HTTP status codes
         if "not found" in str(e):

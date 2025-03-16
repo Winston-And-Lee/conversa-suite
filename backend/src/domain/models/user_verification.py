@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserVerification(BaseModel):
@@ -15,8 +15,9 @@ class UserVerification(BaseModel):
     is_verified: bool = False
     verified_at: Optional[datetime] = None
     
-    class Config:
-        populate_by_name = True
-        json_encoders = {
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_encoders={
             datetime: lambda dt: dt.isoformat()
-        } 
+        }
+    ) 

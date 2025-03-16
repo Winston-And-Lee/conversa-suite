@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class DataType(str, Enum):
@@ -31,5 +31,4 @@ class DataIngestion(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 
