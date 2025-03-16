@@ -20,7 +20,26 @@ async def lifespan(app: FastAPI):
     # Startup: Initialize database connection
     try:
         logger.info("Starting up: Connecting to MongoDB...")
-        await MongoDB.connect_to_database()
+        # Try to connect multiple times with backoff
+        max_retries = 3
+        retry_count = 0
+        connected = False
+        
+        while not connected and retry_count < max_retries:
+            try:
+                await MongoDB.connect_to_database()
+                connected = True
+                logger.info("Database connection established successfully during startup")
+            except Exception as e:
+                retry_count += 1
+                wait_time = 2 ** retry_count  # Exponential backoff
+                logger.warning(f"Failed to connect to MongoDB (attempt {retry_count}/{max_retries}): {str(e)}")
+                logger.warning(f"Retrying in {wait_time} seconds...")
+                import asyncio
+                await asyncio.sleep(wait_time)
+        
+        if not connected:
+            logger.error("Failed to connect to MongoDB after multiple attempts")
         
         # Force initialize the user_usecase to ensure it has a valid repository
         from src.usecase.user import get_user_usecase_async
@@ -29,14 +48,19 @@ async def lifespan(app: FastAPI):
             logger.error("Failed to initialize user repository during startup")
         else:
             logger.info("Successfully initialized user repository")
-            
-        logger.info("Database connection established successfully during startup")
+        
+        # Initialize assistant service
+        from src.infrastructure.ai.langgraph.assistant_service import assistant_service
+        logger.info("Initializing assistant service...")
+        # The assistant service will initialize MongoDB connection in the background
         
         # Set up LangChain tracing
         logger.info("Setting up LangChain tracing...")
         setup_langchain_tracing()
     except Exception as e:
-        logger.error(f"Failed to initialize database connection during startup: {str(e)}")
+        logger.error(f"Failed to initialize services during startup: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         # Don't crash the app, but log the error
     
     yield  # Application runs here

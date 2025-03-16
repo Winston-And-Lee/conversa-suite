@@ -17,6 +17,19 @@ class ThreadModel(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     is_archived: bool = False
+    
+    def get(self, key: str, default: Any = None) -> Any:
+        """
+        Get an attribute by key, similar to dictionary get method.
+        
+        Args:
+            key: The attribute name to get
+            default: The default value to return if the attribute doesn't exist
+            
+        Returns:
+            The attribute value or default if not found
+        """
+        return getattr(self, key, default)
 
 
 class ThreadListResponse(BaseModel):

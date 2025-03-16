@@ -10,42 +10,76 @@ from typing import Dict, List, Optional, Any, AsyncIterator
 import json
 
 from .assistant import create_assistant_ui_agent, create_initial_state, AssistantUIState
+from src.infrastructure.database.mongodb import MongoDB
 
 logger = logging.getLogger(__name__)
 
-# In-memory store for assistant sessions (in production, use a database)
-assistant_sessions: Dict[str, AssistantUIState] = {}
+# Create the assistant graph once
 assistant_graph = create_assistant_ui_agent()
 
 class AssistantUIService:
     """Service to manage assistant-ui interactions."""
     
-    @staticmethod
-    def create_thread(system_message: Optional[str] = None, assistant_id: Optional[str] = None) -> str:
+    def __init__(self):
+        """Initialize the service."""
+        # The repository will be lazily loaded when needed
+        self._session_repository = None
+        # Initialize MongoDB connection in the background
+        asyncio.create_task(self._init_mongodb())
+    
+    async def _init_mongodb(self):
+        """Initialize MongoDB connection in the background."""
+        try:
+            logger.info("Initializing MongoDB connection for AssistantUIService")
+            await MongoDB.connect_to_database()
+            logger.info("MongoDB connection initialized for AssistantUIService")
+        except Exception as e:
+            logger.error(f"Failed to initialize MongoDB connection: {str(e)}")
+    
+    async def _get_session_repository(self):
+        """Get the session repository lazily and ensure database connection."""
+        if self._session_repository is None:
+            # Import here to avoid circular imports
+            from src.interface.repository.mongodb.session_repository import MongoDBSessionRepository
+            
+            # Ensure MongoDB connection is established
+            try:
+                await MongoDB.reconnect_if_needed()
+            except Exception as e:
+                logger.error(f"Failed to connect to MongoDB: {str(e)}")
+                # Continue anyway, the repository will handle the error
+            
+            self._session_repository = MongoDBSessionRepository()
+        return self._session_repository
+    
+    async def create_thread(self, system_message: Optional[str] = None, assistant_id: Optional[str] = None) -> str:
         """Create a new assistant thread."""
         thread_id = str(uuid.uuid4())
         
         # Initialize state
         initial_state = create_initial_state(assistant_id, system_message)
-        assistant_sessions[thread_id] = initial_state
+        
+        # Store the state in the repository
+        session_repo = await self._get_session_repository()
+        await session_repo.save_session(thread_id, initial_state)
         
         logger.info(f"Created new assistant thread: {thread_id}")
         return thread_id
     
-    @staticmethod
-    async def send_message(thread_id: str, content: str) -> Dict[str, Any]:
+    async def send_message(self, thread_id: str, content: str) -> Dict[str, Any]:
         """Send a message to the assistant and get a response."""
         try:
             # Get the cancelled exception class inside the function scope
             CancelledExc = get_cancelled_exc_class()
             
+            # Get current state from repository
+            session_repo = await self._get_session_repository()
+            current_state = await session_repo.get_session(thread_id)
+            
             # Check if thread exists
-            if thread_id not in assistant_sessions:
+            if not current_state:
                 logger.warning(f"Thread not found: {thread_id}")
                 return {"error": "Thread not found"}
-            
-            # Get current state
-            current_state = assistant_sessions[thread_id]
             
             # Add user message to the messages
             current_state["messages"].append({
@@ -69,8 +103,8 @@ class AssistantUIService:
             # Run the agent graph
             result = await assistant_graph.ainvoke(current_state)
             
-            # Update session state
-            assistant_sessions[thread_id] = result
+            # Update session state in repository
+            await session_repo.save_session(thread_id, result)
             
             # Return formatted response with fiction detection info
             response = {
@@ -108,21 +142,21 @@ class AssistantUIService:
             logger.error(traceback.format_exc())
             return {"error": str(e)}
     
-    @staticmethod
-    async def stream_message(thread_id: str, content: str) -> AsyncIterator[Dict[str, Any]]:
+    async def stream_message(self, thread_id: str, content: str) -> AsyncIterator[Dict[str, Any]]:
         """Stream a message to the assistant and get streaming response."""
         try:
             # Get the cancelled exception class inside the function scope
             CancelledExc = get_cancelled_exc_class()
             
+            # Get current state from repository
+            session_repo = await self._get_session_repository()
+            current_state = await session_repo.get_session(thread_id)
+            
             # Check if thread exists
-            if thread_id not in assistant_sessions:
+            if not current_state:
                 logger.warning(f"Thread not found: {thread_id}")
                 yield {"error": "Thread not found"}
                 return
-            
-            # Get current state
-            current_state = assistant_sessions[thread_id]
             
             # Add user message to the messages
             current_state["messages"].append({
@@ -255,6 +289,10 @@ class AssistantUIService:
                     # Update the last message with the accumulated response
                     current_state["messages"][-1]["content"] = assistant_response
                     
+                    # Periodically save the state to the repository
+                    if len(assistant_response) % 100 == 0:  # Save every ~100 characters
+                        await session_repo.save_session(thread_id, current_state)
+                    
                     # Prepare response with fiction detection info
                     response = {
                         "thread_id": thread_id,
@@ -279,8 +317,8 @@ class AssistantUIService:
                     # Yield the updated response
                     yield response
                 
-                # Update session state with the final response
-                assistant_sessions[thread_id] = current_state
+                # Save the final state to the repository
+                await session_repo.save_session(thread_id, current_state)
                 logger.info(f"Successfully completed streaming for thread {thread_id}")
                 
             except (CancelledExc, asyncio.CancelledError) as e:
@@ -288,7 +326,7 @@ class AssistantUIService:
                 logger.info(f"Streaming cancelled for thread {thread_id}, saving partial response")
                 if assistant_response:
                     current_state["messages"][-1]["content"] = assistant_response
-                    assistant_sessions[thread_id] = current_state
+                    await session_repo.save_session(thread_id, current_state)
                 raise  # Re-raise to be caught by the outer handler
             
         except (CancelledExc, asyncio.CancelledError) as e:
@@ -301,22 +339,26 @@ class AssistantUIService:
             logger.error(traceback.format_exc())
             yield {"error": str(e)}
     
-    @staticmethod
-    def get_thread_messages(thread_id: str) -> List[Dict[str, str]]:
+    async def get_thread_messages(self, thread_id: str) -> List[Dict[str, str]]:
         """Get the message history for a thread."""
-        if thread_id not in assistant_sessions:
+        # Get state from repository
+        session_repo = await self._get_session_repository()
+        state = await session_repo.get_session(thread_id)
+        
+        if not state:
             logger.warning(f"Thread not found: {thread_id}")
             return []
         
         # Get messages from the state
-        state = assistant_sessions[thread_id]
         return state["messages"]
     
-    @staticmethod
-    def delete_thread(thread_id: str) -> bool:
+    async def delete_thread(self, thread_id: str) -> bool:
         """Delete an assistant thread."""
-        if thread_id in assistant_sessions:
-            del assistant_sessions[thread_id]
+        # Delete from repository
+        session_repo = await self._get_session_repository()
+        result = await session_repo.delete_session(thread_id)
+        
+        if result:
             logger.info(f"Deleted assistant thread: {thread_id}")
             return True
         

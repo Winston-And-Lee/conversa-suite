@@ -18,7 +18,7 @@ from src.domain.entity.assistant import (
     ChatRequest,
     ThreadListResponse
 )
-from src.usecase import AssistantUIUsecase
+from src.usecase.assistant.assistant_ui_usecase import AssistantUIUsecase
 from src.infrastructure.fastapi.routes.user_routes import get_current_user
 from src.domain.models.user import User
 from src.domain.models.thread import ThreadModel
@@ -46,20 +46,10 @@ async def create_thread(
         A streaming response with the AI's reply
     """
     try:
-        # Create a new thread using the usecase
-        thread_id = await AssistantUIUsecase.create_thread(
+        # Create a new thread and stream response using the usecase
+        return await AssistantUIUsecase.create_thread_and_stream_response(
             content=request.content,
             user_id=current_user.id
-        )
-        
-        logger.info(f"Created new thread {thread_id} for user {current_user.id}")
-        
-        # Return streaming response directly using assistant_service, with explicit thread_id
-        return AssistantUIUsecase.stream_message_generator(
-            thread_id,
-            request.content,
-            user_id=current_user.id,
-            include_thread_id=True  # Explicitly include thread_id in response
         )
         
     except Exception as e:
@@ -84,21 +74,11 @@ async def add_message_to_thread(
         A streaming response with the AI's reply
     """
     try:
-        # Add message to thread using the usecase
-        await AssistantUIUsecase.add_message_to_thread(
+        # Add message to thread and stream response using the usecase
+        return await AssistantUIUsecase.add_message_and_stream_response(
             thread_id=thread_id,
             content=request.content,
             user_id=current_user.id
-        )
-        
-        logger.info(f"Added message to thread {thread_id} for user {current_user.id}")
-        
-        # Return streaming response directly using assistant_service
-        return AssistantUIUsecase.stream_message_generator(
-            thread_id,
-            request.content,
-            user_id=current_user.id,
-            include_thread_id=True  # Also include thread_id in add_message responses
         )
         
     except ValueError as e:
@@ -135,11 +115,14 @@ async def chat(request: Request, current_user: User = Depends(get_current_user))
         if "error" in result:
             return HTTPException(status_code=400, detail=result["error"])
         
+        # Get the thread data
+        thread = await AssistantUIUsecase.get_thread(result["thread_id"], current_user.id)
+        
         # Stream the response
-        return AssistantUIUsecase.stream_message_generator(
-            result["thread_id"], 
-            result["content"],
-            user_id=current_user.id
+        return AssistantUIUsecase._stream_message_generator(
+            thread_data=thread,
+            content=result["content"],
+            include_thread_id=True
         )
     
     except Exception as e:
